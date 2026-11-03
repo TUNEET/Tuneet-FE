@@ -25,6 +25,7 @@ export const theme = {
     textBody: '#646B76', // 본문
     textSecondary: '#8E9299', // 보조 정보
     textPlaceholder: '#A08E99', // 안내 문구, 플레이스홀더
+    textMuted: '#918E99', // 입력칸 안내 문구
 
     /* 상태 */
     danger: '#FF0044', // 삭제, 차단 등 위험 동작

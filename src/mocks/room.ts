@@ -11,3 +11,13 @@ export async function mockCreateRoom(request: CreateRoomRequest): Promise<Create
     inviteUrl: `https://tuneet.com/invite/${roomCode}`,
   }
 }
+
+const MOCK_ROOM_PASSWORD = '1234'
+
+export async function mockGetInvitedRoom(inviteCode: string) {
+  return { inviteCode, hasPassword: true }
+}
+
+export async function mockJoinRoom(_inviteCode: string, password?: string) {
+  return password === undefined || password === MOCK_ROOM_PASSWORD
+}
