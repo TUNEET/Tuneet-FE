@@ -3,31 +3,23 @@ import editIcon from '@/assets/icons/edit.svg'
 import genreIcon from '@/assets/icons/genre.svg'
 import musicNoteIcon from '@/assets/icons/music-note.svg'
 import { Chip } from '@/components/common/Chip/Chip'
+import type { Profile } from '@/types/user'
 import * as S from './ProfileCard.styles'
 
 type ProfileCardProps = {
-  nickname: string
-  characterImage: string
-  song: { title: string; artist: string }
-  genres: string[]
-  artists: string[]
+  profile: Profile
   onEditClick?: () => void
 }
 
-export function ProfileCard({
-  nickname,
-  characterImage,
-  song,
-  genres,
-  artists,
-  onEditClick,
-}: ProfileCardProps) {
+export function ProfileCard({ profile, onEditClick }: ProfileCardProps) {
+  const { nickname, characterImageUrl, song, genres, artists } = profile
+
   return (
     <S.Card>
       <S.Content>
         <S.Profile>
           <S.Avatar>
-            <img src={characterImage} alt="" />
+            <img src={characterImageUrl} alt="" />
           </S.Avatar>
           <S.Info>
             <S.Nickname>{nickname}</S.Nickname>
