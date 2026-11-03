@@ -15,6 +15,7 @@ export const theme = {
     surfaceLavender: '#F2EDF8', // 추천 카드
     surfaceWhite: '#FAFAFA', // 밝은 요소
     border: '#E3D2DD', // 입력 영역, 테두리
+    divider: '#EEEEEE', // 구분선
 
     /* 텍스트 */
     textHeading: '#392C37', // 주요 제목
