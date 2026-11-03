@@ -9,6 +9,9 @@ import { MyPage } from '@/pages/my/MyPage'
 import { NotFoundPage } from '@/pages/not-found/NotFoundPage'
 import { CreateRoomPage } from '@/pages/matching/create-room/CreateRoomPage'
 import { JoinRoomPage } from '@/pages/matching/join-room/JoinRoomPage'
+import { LetterWritePage } from '@/pages/matching/letter-write/LetterWritePage'
+import { LetterDetailPage } from '@/pages/matching/letter-detail/LetterDetailPage'
+import { LetterboxPage } from '@/pages/matching/letterbox/LetterboxPage'
 import { RecommendedUsersPage } from '@/pages/matching/recommended-users/RecommendedUsersPage'
 import { RoomFeedsPage } from '@/pages/matching/room/feeds/RoomFeedsPage'
 import { RoomMembersPage } from '@/pages/matching/room/members/RoomMembersPage'
@@ -29,6 +32,9 @@ export const router = createBrowserRouter([
           { path: ROUTES.matching, element: <MatchingPage /> },
           { path: ROUTES.recommendedUsers, element: <RecommendedUsersPage /> },
           { path: ROUTES.userProfile, element: <UserProfilePage /> },
+          { path: ROUTES.letterWrite, element: <LetterWritePage /> },
+          { path: ROUTES.letterbox, element: <LetterboxPage /> },
+          { path: ROUTES.letter, element: <LetterDetailPage /> },
           { path: ROUTES.createRoom, element: <CreateRoomPage /> },
           { path: ROUTES.joinRoom, element: <JoinRoomPage /> },
           { path: ROUTES.room, element: <RoomHomePage /> },

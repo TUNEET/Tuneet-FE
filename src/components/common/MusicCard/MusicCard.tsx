@@ -1,12 +1,14 @@
 import type { KeyboardEvent, ReactNode } from 'react'
 import userBlueIcon from '@/assets/icons/user-blue.svg'
 import userPurpleIcon from '@/assets/icons/user-purple.svg'
+import userRoseIcon from '@/assets/icons/user-rose.svg'
 import * as S from './MusicCard.styles'
 import type { MusicCardTone } from './MusicCard.styles'
 
 const USER_ICONS = {
   blue: userBlueIcon,
   purple: userPurpleIcon,
+  rose: userRoseIcon,
 }
 
 export type MusicCardProps = {
@@ -62,8 +64,12 @@ export function MusicCard({
             <img src={image} alt="" />
           </S.Thumbnail>
           <S.Texts>
-            <S.Title $expanded={expanded}>{title}</S.Title>
-            <S.Description $expanded={expanded}>{description}</S.Description>
+            <S.Title $tone={tone} $expanded={expanded}>
+              {title}
+            </S.Title>
+            <S.Description $tone={tone} $expanded={expanded}>
+              {description}
+            </S.Description>
           </S.Texts>
         </S.Main>
         {action && <S.Action>{action}</S.Action>}

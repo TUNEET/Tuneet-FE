@@ -1,7 +1,8 @@
 import styled, { keyframes } from 'styled-components'
 
-export type ConfirmPopoverSurface = 'light' | 'dim'
+export type ConfirmPopoverSurface = 'light' | 'dim' | 'letter'
 export type ConfirmPopoverPlacement = 'top' | 'bottom'
+export type ConfirmPopoverTone = 'danger' | 'default'
 
 const SURFACES = {
   light: {
@@ -12,6 +13,12 @@ const SURFACES = {
   },
   dim: {
     popover: 'rgba(250, 250, 250, 0.7)',
+    button: 'rgba(234, 234, 234, 0.7)',
+    border: 'none',
+    shadow: 'none',
+  },
+  letter: {
+    popover: 'rgba(250, 250, 250, 0.4)',
     button: 'rgba(234, 234, 234, 0.7)',
     border: 'none',
     shadow: 'none',
@@ -46,8 +53,8 @@ export const Popover = styled.div<{
   border-radius: 2.4rem;
   background-color: ${({ $surface }) => SURFACES[$surface].popover};
   box-shadow: ${({ $surface }) => SURFACES[$surface].shadow};
-  -webkit-backdrop-filter: blur(2rem) saturate(180%);
-  backdrop-filter: blur(2rem) saturate(180%);
+  -webkit-backdrop-filter: blur(2rem);
+  backdrop-filter: blur(2rem);
   transform-origin: ${({ $placement }) => $placement} right;
   animation: ${popIn} 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
 
@@ -64,7 +71,10 @@ export const Message = styled.p`
   color: ${({ theme }) => theme.colors.textHeading};
 `
 
-export const ConfirmButton = styled.button<{ $surface: ConfirmPopoverSurface }>`
+export const ConfirmButton = styled.button<{
+  $surface: ConfirmPopoverSurface
+  $tone: ConfirmPopoverTone
+}>`
   width: 100%;
   padding: 1rem;
   border-radius: 100px;
@@ -72,7 +82,7 @@ export const ConfirmButton = styled.button<{ $surface: ConfirmPopoverSurface }>`
   font-size: ${({ theme }) => theme.fontSize.sm};
   font-weight: 500;
   line-height: 2rem;
-  color: ${({ theme }) => theme.colors.danger};
+  color: ${({ theme, $tone }) => ($tone === 'danger' ? theme.colors.danger : theme.colors.blue)};
   transition: background-color 0.15s;
 
   &:active {

@@ -27,11 +27,21 @@ export const theme = {
     textPlaceholder: '#A08E99', // 안내 문구, 플레이스홀더
     textMuted: '#918E99', // 입력칸 안내 문구
 
+    /* 편지 */
+    letterBackground: '#A84167', // 편지 쓰기 배경
+    letterDivider: '#B25477', // 편지 쓰기 구분선
+    letterAccent: '#FFD9E6', // 편지 쓰기 라벨, 노래 칩, 보내기 버튼
+    letterMuted: '#D6B4BF', // 편지 쓰기 보조 문구, 안내 문구
+    letterText: '#54464C', // 편지 입력 글자
+    letterCardBack: '#E8E0E8', // 받은 편지 노래 카드 배경
+    letterCardBorder: '#B782A4', // 받은 편지 노래 카드 테두리
+
     /* 상태 */
     danger: '#FF0044', // 삭제, 차단 등 위험 동작
   },
   fontFamily: {
     display: "'HiKR', 'Pretendard Variable', sans-serif",
+    handwriting: "'Ownglyph PDH', 'Pretendard Variable', sans-serif",
   },
   fontSize: {
     xxs: '1rem',

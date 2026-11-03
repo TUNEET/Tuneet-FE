@@ -5,8 +5,11 @@ export const ROUTES = {
   explore: '/explore',
   matching: '/matching',
   my: '/my',
+  letterbox: '/matching/letters',
+  letter: '/matching/letters/:letterId',
   recommendedUsers: '/matching/recommended',
   userProfile: '/matching/users/:userId',
+  letterWrite: '/matching/users/:userId/letter',
   createRoom: '/matching/rooms/new',
   joinRoom: '/matching/rooms/join',
   room: '/matching/rooms/:roomId',
@@ -17,6 +20,12 @@ export const ROUTES = {
 
 export const getUserProfilePath = (userId: number) =>
   generatePath(ROUTES.userProfile, { userId: String(userId) })
+
+export const getLetterWritePath = (userId: number) =>
+  generatePath(ROUTES.letterWrite, { userId: String(userId) })
+
+export const getLetterPath = (letterId: number) =>
+  generatePath(ROUTES.letter, { letterId: String(letterId) })
 
 export const getRoomPath = (roomId: number) => generatePath(ROUTES.room, { roomId: String(roomId) })
 
