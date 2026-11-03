@@ -33,6 +33,7 @@ export const router = createBrowserRouter([
           { path: ROUTES.recommendedUsers, element: <RecommendedUsersPage /> },
           { path: ROUTES.userProfile, element: <UserProfilePage /> },
           { path: ROUTES.letterWrite, element: <LetterWritePage /> },
+          { path: ROUTES.anonymousLetterWrite, element: <LetterWritePage /> },
           { path: ROUTES.letterbox, element: <LetterboxPage /> },
           { path: ROUTES.letter, element: <LetterDetailPage /> },
           { path: ROUTES.createRoom, element: <CreateRoomPage /> },

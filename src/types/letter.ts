@@ -6,7 +6,8 @@ export type LetterQuota = {
 }
 
 export type SendLetterRequest = {
-  recipientId: number
+  /** 없으면 받는 사람을 정하지 않은 익명 편지 */
+  recipientId?: number
   content: string
   song: Song
 }

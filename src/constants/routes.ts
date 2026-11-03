@@ -10,6 +10,7 @@ export const ROUTES = {
   recommendedUsers: '/matching/recommended',
   userProfile: '/matching/users/:userId',
   letterWrite: '/matching/users/:userId/letter',
+  anonymousLetterWrite: '/matching/letter',
   createRoom: '/matching/rooms/new',
   joinRoom: '/matching/rooms/join',
   room: '/matching/rooms/:roomId',
