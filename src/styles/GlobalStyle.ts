@@ -1,6 +1,15 @@
 import { createGlobalStyle } from 'styled-components'
+import { FRAME_BREAKPOINT, FRAME_MAX_HEIGHT } from './layout'
 
 export const GlobalStyle = createGlobalStyle`
+  :root {
+    --frame-height: var(--app-height, 100dvh);
+
+    ${FRAME_BREAKPOINT} {
+      --frame-height: min(${FRAME_MAX_HEIGHT}, var(--app-height, 100dvh));
+    }
+  }
+
   *,
   *::before,
   *::after {
@@ -17,8 +26,8 @@ export const GlobalStyle = createGlobalStyle`
   body {
     font-family: system-ui, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: ${({ theme }) => theme.fontSize.md};
-    color: ${({ theme }) => theme.colors.black};
-    background-color: ${({ theme }) => theme.colors.white};
+    color: ${({ theme }) => theme.colors.textPrimary};
+    background-color: ${({ theme }) => theme.colors.background};
     -webkit-font-smoothing: antialiased;
   }
 

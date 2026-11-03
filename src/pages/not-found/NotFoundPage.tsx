@@ -16,5 +16,5 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: center;
   gap: 1.6rem;
-  min-height: 100vh;
+  min-height: var(--frame-height);
 `

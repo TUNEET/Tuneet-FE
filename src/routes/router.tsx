@@ -1,13 +1,15 @@
 import { createBrowserRouter } from 'react-router'
-import { RootLayout } from '@/components/layout/RootLayout'
+import { MobileLayout } from '@/components/layout/MobileLayout'
 import { HomePage } from '@/pages/home/HomePage'
 import { NotFoundPage } from '@/pages/not-found/NotFoundPage'
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <RootLayout />,
-    children: [{ index: true, element: <HomePage /> }],
+    element: <MobileLayout />,
+    children: [
+      { index: true, element: <HomePage /> },
+      { path: '*', element: <NotFoundPage /> },
+    ],
   },
-  { path: '*', element: <NotFoundPage /> },
 ])
