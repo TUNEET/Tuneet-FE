@@ -33,7 +33,10 @@ export function MatchingPage() {
 
       <Divider />
 
-      <LetterSection quota={MOCK_LETTER_QUOTA} />
+      <LetterSection
+        quota={MOCK_LETTER_QUOTA}
+        onWriteClick={() => navigate(ROUTES.anonymousLetterWrite)}
+      />
 
       <Divider />
 

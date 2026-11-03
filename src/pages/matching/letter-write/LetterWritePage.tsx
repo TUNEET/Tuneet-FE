@@ -14,10 +14,12 @@ import { SongField } from './components/SongField/SongField'
 import * as S from './LetterWritePage.styles'
 
 const CONTENT_MAX_LENGTH = 100
+const ANONYMOUS_RECIPIENT = '누군가'
 
 export function LetterWritePage() {
   const navigate = useNavigate()
   const { userId } = useParams()
+  const recipientId = userId ? Number(userId) : undefined
   const fieldId = useId()
 
   const [recipientName, setRecipientName] = useState('')
@@ -30,8 +32,9 @@ export function LetterWritePage() {
   const senderName = MOCK_PROFILE.nickname
 
   useEffect(() => {
-    mockGetLetterRecipient(Number(userId)).then((recipient) => setRecipientName(recipient.nickname))
-  }, [userId])
+    if (recipientId === undefined) return
+    mockGetLetterRecipient(recipientId).then((recipient) => setRecipientName(recipient.nickname))
+  }, [recipientId])
 
   const canSend = content.trim() !== '' && song !== null && !isSent
 
@@ -45,7 +48,7 @@ export function LetterWritePage() {
     if (!canSend || !song) return
 
     await mockSendLetter({
-      recipientId: Number(userId),
+      recipientId,
       content: content.trim(),
       song,
     })
@@ -74,7 +77,9 @@ export function LetterWritePage() {
 
       <S.Form onSubmit={handleSubmit}>
         <S.Field>
-          <S.Label htmlFor={`${fieldId}-content`}>To. {recipientName}</S.Label>
+          <S.Label htmlFor={`${fieldId}-content`}>
+            To. {recipientId === undefined ? ANONYMOUS_RECIPIENT : recipientName}
+          </S.Label>
           <S.MessageInput
             id={`${fieldId}-content`}
             value={content}
