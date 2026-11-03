@@ -1,6 +1,7 @@
 import styled, { keyframes } from 'styled-components'
 
 export type ConfirmPopoverSurface = 'light' | 'dim'
+export type ConfirmPopoverPlacement = 'top' | 'bottom'
 
 const SURFACES = {
   light: {
@@ -28,9 +29,12 @@ const popIn = keyframes`
   }
 `
 
-export const Popover = styled.div<{ $surface: ConfirmPopoverSurface }>`
+export const Popover = styled.div<{
+  $surface: ConfirmPopoverSurface
+  $placement: ConfirmPopoverPlacement
+}>`
   position: absolute;
-  top: calc(100% + 1rem);
+  ${({ $placement }) => ($placement === 'top' ? 'bottom' : 'top')}: calc(100% + 1rem);
   right: 0;
   z-index: 10;
   display: flex;
@@ -44,7 +48,7 @@ export const Popover = styled.div<{ $surface: ConfirmPopoverSurface }>`
   box-shadow: ${({ $surface }) => SURFACES[$surface].shadow};
   -webkit-backdrop-filter: blur(2rem) saturate(180%);
   backdrop-filter: blur(2rem) saturate(180%);
-  transform-origin: top right;
+  transform-origin: ${({ $placement }) => $placement} right;
   animation: ${popIn} 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
 
   @media (prefers-reduced-motion: reduce) {

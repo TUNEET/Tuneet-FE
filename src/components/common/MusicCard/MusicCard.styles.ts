@@ -13,6 +13,10 @@ const ellipsis = css`
   white-space: nowrap;
 `
 
+const wrap = css`
+  overflow-wrap: anywhere;
+`
+
 export const Card = styled.article<{ $tone: MusicCardTone; $clickable: boolean }>`
   display: flex;
   flex-direction: column;
@@ -49,9 +53,9 @@ export const Body = styled.div`
   gap: 1rem;
 `
 
-export const Main = styled.div`
+export const Main = styled.div<{ $expanded: boolean }>`
   display: flex;
-  align-items: center;
+  align-items: ${({ $expanded }) => ($expanded ? 'flex-start' : 'center')};
   gap: 1rem;
   min-width: 0;
 `
@@ -106,16 +110,16 @@ export const Texts = styled.div`
   min-width: 0;
 `
 
-export const Title = styled.p`
-  ${ellipsis}
+export const Title = styled.p<{ $expanded: boolean }>`
+  ${({ $expanded }) => ($expanded ? wrap : ellipsis)}
   font-size: ${({ theme }) => theme.fontSize.sm};
   font-weight: 600;
   line-height: 1.8rem;
   color: ${({ theme }) => theme.colors.textPrimary};
 `
 
-export const Description = styled.p`
-  ${ellipsis}
+export const Description = styled.p<{ $expanded: boolean }>`
+  ${({ $expanded }) => ($expanded ? wrap : ellipsis)}
   font-size: ${({ theme }) => theme.fontSize.xs};
   font-weight: 500;
   line-height: 1.6rem;

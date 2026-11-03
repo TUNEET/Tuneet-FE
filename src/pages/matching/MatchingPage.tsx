@@ -3,7 +3,7 @@ import { Divider } from '@/components/common/Divider/Divider'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { TasteMatchCard } from '@/components/common/TasteMatchCard/TasteMatchCard'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
-import { getUserProfilePath, ROUTES } from '@/constants/routes'
+import { getRoomPath, getUserProfilePath, ROUTES } from '@/constants/routes'
 import { MOCK_LETTER_QUOTA, MOCK_ROOMS, MOCK_TASTE_MATCHES } from '@/mocks/data'
 import { LetterSection } from './components/LetterSection/LetterSection'
 import { RoomSection } from './components/RoomSection/RoomSection'
@@ -39,6 +39,7 @@ export function MatchingPage() {
 
       <RoomSection
         rooms={MOCK_ROOMS}
+        onRoomEnterClick={(room) => navigate(getRoomPath(room.id))}
         onJoinInvitedClick={() => navigate(ROUTES.joinRoom)}
         onCreateClick={() => navigate(ROUTES.createRoom)}
       />
