@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router'
 import characterSleeping from '@/assets/images/character-sleeping.png'
 import { FeedCard } from '@/components/common/FeedCard/FeedCard'
+import { ProfileCard } from '@/components/common/ProfileCard/ProfileCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { TasteMatchCard } from '@/components/common/TasteMatchCard/TasteMatchCard'
-import { ROUTES } from '@/constants/routes'
+import { getUserProfilePath, ROUTES } from '@/constants/routes'
 import { MOCK_FEEDS, MOCK_PROFILE, MOCK_TASTE_MATCHES } from '@/mocks/data'
-import { ProfileCard } from './components/ProfileCard/ProfileCard'
+
 import * as S from './HomePage.styles'
 
 export function HomePage() {
@@ -22,7 +23,7 @@ export function HomePage() {
       <S.Greeting>오늘도 새로운 음악을 만나보세요!</S.Greeting>
 
       <S.ProfileArea>
-        <ProfileCard profile={MOCK_PROFILE} />
+        <ProfileCard profile={MOCK_PROFILE} onEditClick={() => {}} />
         <S.SleepingCharacter src={characterSleeping} alt="" />
       </S.ProfileArea>
 
@@ -48,7 +49,11 @@ export function HomePage() {
           />
           <S.CardList>
             {MOCK_TASTE_MATCHES.map((match) => (
-              <TasteMatchCard key={match.id} match={match} />
+              <TasteMatchCard
+                key={match.id}
+                match={match}
+                onClick={() => navigate(getUserProfilePath(match.id))}
+              />
             ))}
           </S.CardList>
         </S.Section>

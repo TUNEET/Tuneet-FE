@@ -1,18 +1,34 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
-export const Card = styled.section`
+export type ProfileCardTone = 'pink' | 'purple'
+
+const AVATAR_GRADIENTS = {
+  pink: 'radial-gradient(ellipse 127.62% 133.72% at 24% 4.5%, #cf8fb8 0%, #946884 100%)',
+  purple: 'radial-gradient(ellipse 127.62% 133.72% at 24% 4.5%, #c68fcf 0%, #8b6894 100%)',
+}
+
+export const Card = styled.section<{ $tone: ProfileCardTone }>`
   display: flex;
   justify-content: space-between;
+  gap: 0.5rem;
   padding: 2rem;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.6);
   border-radius: 2.4rem;
-  background-color: rgba(255, 255, 255, 0.3);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    0 0.8rem 2.4rem rgba(207, 143, 184, 0.12);
-  -webkit-backdrop-filter: blur(2rem);
-  backdrop-filter: blur(2rem);
+
+  ${({ $tone, theme }) =>
+    $tone === 'pink'
+      ? css`
+          border: 1px solid rgba(255, 255, 255, 0.6);
+          background-color: rgba(255, 255, 255, 0.3);
+          box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.5),
+            0 0.8rem 2.4rem rgba(207, 143, 184, 0.12);
+          -webkit-backdrop-filter: blur(2rem);
+          backdrop-filter: blur(2rem);
+        `
+      : css`
+          background-color: ${theme.colors.surfaceLavender};
+        `}
 `
 
 export const Content = styled.div`
@@ -28,14 +44,14 @@ export const Profile = styled.div`
   gap: 1.6rem;
 `
 
-export const Avatar = styled.div`
+export const Avatar = styled.div<{ $tone: ProfileCardTone }>`
   position: relative;
   flex-shrink: 0;
   width: 6rem;
   height: 6rem;
   overflow: hidden;
   border-radius: 50%;
-  background: radial-gradient(ellipse 127.62% 133.72% at 24% 4.5%, #cf8fb8 0%, #946884 100%);
+  background: ${({ $tone }) => AVATAR_GRADIENTS[$tone]};
 
   img {
     position: absolute;
@@ -84,4 +100,11 @@ export const EditButton = styled.button`
   display: flex;
   flex-shrink: 0;
   align-self: flex-start;
+`
+
+export const Meta = styled.span`
+  flex-shrink: 0;
+  font-size: ${({ theme }) => theme.fontSize.xxs};
+  line-height: 1.4rem;
+  color: ${({ theme }) => theme.colors.purple};
 `

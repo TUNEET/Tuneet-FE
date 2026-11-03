@@ -6,6 +6,7 @@ export const theme = {
     blueLight: '#9BB3DF', // 보조 아이콘, 테두리
     blue: '#5783D4', // 피드 정보, 강조 텍스트
     lavender: '#9E76D7', // 버튼, 아이콘, 테두리
+    lavenderLight: '#DDCFF1', // 보조 칩, 아이콘 배경
     purple: '#8B57D4', // 추천 정보, 강조 텍스트
 
     /* 배경 */
