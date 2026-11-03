@@ -7,6 +7,7 @@ export const ROUTES = {
   my: '/my',
   recommendedUsers: '/matching/recommended',
   userProfile: '/matching/users/:userId',
+  createRoom: '/matching/rooms/new',
 } as const
 
 export const getUserProfilePath = (userId: number) =>

@@ -1,5 +1,22 @@
 import styled, { keyframes } from 'styled-components'
 
+export type ConfirmPopoverSurface = 'light' | 'dim'
+
+const SURFACES = {
+  light: {
+    popover: 'rgba(250, 250, 250, 0.2)',
+    button: 'rgba(234, 234, 234, 0.7)',
+    border: '1px solid rgba(255, 255, 255, 0.6)',
+    shadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 0 3rem rgba(0, 0, 0, 0.08)',
+  },
+  dim: {
+    popover: 'rgba(250, 250, 250, 0.7)',
+    button: 'rgba(234, 234, 234, 0.7)',
+    border: 'none',
+    shadow: 'none',
+  },
+}
+
 const popIn = keyframes`
   from {
     opacity: 0;
@@ -11,7 +28,7 @@ const popIn = keyframes`
   }
 `
 
-export const Popover = styled.div`
+export const Popover = styled.div<{ $surface: ConfirmPopoverSurface }>`
   position: absolute;
   top: calc(100% + 1rem);
   right: 0;
@@ -21,12 +38,10 @@ export const Popover = styled.div`
   gap: 1rem;
   width: 20.8rem;
   padding: 1.5rem 1rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: ${({ $surface }) => SURFACES[$surface].border};
   border-radius: 2.4rem;
-  background-color: rgba(250, 250, 250, 0.2);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    0 0 3rem rgba(0, 0, 0, 0.08);
+  background-color: ${({ $surface }) => SURFACES[$surface].popover};
+  box-shadow: ${({ $surface }) => SURFACES[$surface].shadow};
   -webkit-backdrop-filter: blur(2rem) saturate(180%);
   backdrop-filter: blur(2rem) saturate(180%);
   transform-origin: top right;
@@ -45,11 +60,11 @@ export const Message = styled.p`
   color: ${({ theme }) => theme.colors.textHeading};
 `
 
-export const ConfirmButton = styled.button`
+export const ConfirmButton = styled.button<{ $surface: ConfirmPopoverSurface }>`
   width: 100%;
   padding: 1rem;
   border-radius: 100px;
-  background-color: rgba(234, 234, 234, 0.7);
+  background-color: ${({ $surface }) => SURFACES[$surface].button};
   font-size: ${({ theme }) => theme.fontSize.sm};
   font-weight: 500;
   line-height: 2rem;

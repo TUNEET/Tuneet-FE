@@ -37,7 +37,7 @@ export function MatchingPage() {
 
       <Divider />
 
-      <RoomSection rooms={MOCK_ROOMS} />
+      <RoomSection rooms={MOCK_ROOMS} onCreateClick={() => navigate(ROUTES.createRoom)} />
     </SheetPage>
   )
 }
