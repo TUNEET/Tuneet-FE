@@ -8,6 +8,7 @@ export function formatTimeAgo(date: string, now = Date.now()) {
   if (diff < MINUTE) return '방금 전'
   if (diff < HOUR) return `${Math.floor(diff / MINUTE)}분 전`
   if (diff < DAY) return `${Math.floor(diff / HOUR)}시간 전`
+  if (diff < 2 * DAY) return '어제'
   if (diff < 7 * DAY) return `${Math.floor(diff / DAY)}일 전`
 
   const target = new Date(date)

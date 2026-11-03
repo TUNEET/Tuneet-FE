@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router'
 import { Divider } from '@/components/common/Divider/Divider'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
-import { ROUTES } from '@/constants/routes'
+import { getRoomPath } from '@/constants/routes'
 import { useToast } from '@/hooks/useToast'
 import { mockGetInvitedRoom, mockJoinRoom } from '@/mocks/room'
 import { parseInviteCode } from '@/utils/invite'
@@ -17,7 +17,7 @@ export function JoinRoomPage() {
   const showToast = useToast()
   const [link, setLink] = useState('')
   const [qrInviteCode, setQrInviteCode] = useState<string | null>(null)
-  const [lockedInviteCode, setLockedInviteCode] = useState<string | null>(null)
+  const [lockedRoom, setLockedRoom] = useState<{ roomId: number; inviteCode: string } | null>(null)
 
   const handleQrImageSelect = async (file: File) => {
     const text = await decodeQrFromImage(file).catch(() => null)
@@ -27,30 +27,30 @@ export function JoinRoomPage() {
     showToast(inviteCode ? 'QR 코드를 인식했어요' : '초대 QR 코드를 찾지 못했어요')
   }
 
-  const enterRoom = (inviteCode: string) => {
-    showToast(`방에 입장했어요 (${inviteCode})`)
-    navigate(ROUTES.matching)
+  const enterRoom = (roomId: number) => {
+    showToast('방에 입장했어요')
+    navigate(getRoomPath(roomId))
   }
 
   const handleJoin = async (inviteCode: string) => {
     const room = await mockGetInvitedRoom(inviteCode)
     if (room.hasPassword) {
-      setLockedInviteCode(inviteCode)
+      setLockedRoom(room)
       return
     }
-    enterRoom(inviteCode)
+    enterRoom(room.roomId)
   }
 
   const handlePasswordSubmit = async (password: string) => {
-    if (!lockedInviteCode) return
+    if (!lockedRoom) return
 
-    const isCorrect = await mockJoinRoom(lockedInviteCode, password)
+    const isCorrect = await mockJoinRoom(lockedRoom.inviteCode, password)
     if (!isCorrect) {
       showToast('비밀번호가 맞지 않아요')
       return
     }
-    setLockedInviteCode(null)
-    enterRoom(lockedInviteCode)
+    setLockedRoom(null)
+    enterRoom(lockedRoom.roomId)
   }
 
   return (
@@ -63,11 +63,8 @@ export function JoinRoomPage() {
         onImageSelect={handleQrImageSelect}
         onJoin={handleJoin}
       />
-      {lockedInviteCode && (
-        <RoomPasswordModal
-          onClose={() => setLockedInviteCode(null)}
-          onSubmit={handlePasswordSubmit}
-        />
+      {lockedRoom && (
+        <RoomPasswordModal onClose={() => setLockedRoom(null)} onSubmit={handlePasswordSubmit} />
       )}
     </SheetPage>
   )

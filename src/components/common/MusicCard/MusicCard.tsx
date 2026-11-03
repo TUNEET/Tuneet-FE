@@ -18,6 +18,7 @@ export type MusicCardProps = {
   description: string
   playable?: boolean
   action?: ReactNode
+  expanded?: boolean
   onClick?: () => void
 }
 
@@ -30,6 +31,7 @@ export function MusicCard({
   description,
   playable = false,
   action,
+  expanded = false,
   onClick,
 }: MusicCardProps) {
   const clickableProps = onClick && {
@@ -55,13 +57,13 @@ export function MusicCard({
         <S.Caption $tone={tone}>{meta}</S.Caption>
       </S.Top>
       <S.Body>
-        <S.Main>
+        <S.Main $expanded={expanded}>
           <S.Thumbnail $playable={playable}>
             <img src={image} alt="" />
           </S.Thumbnail>
           <S.Texts>
-            <S.Title>{title}</S.Title>
-            <S.Description>{description}</S.Description>
+            <S.Title $expanded={expanded}>{title}</S.Title>
+            <S.Description $expanded={expanded}>{description}</S.Description>
           </S.Texts>
         </S.Main>
         {action && <S.Action>{action}</S.Action>}

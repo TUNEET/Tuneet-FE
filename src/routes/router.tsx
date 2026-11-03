@@ -10,6 +10,10 @@ import { NotFoundPage } from '@/pages/not-found/NotFoundPage'
 import { CreateRoomPage } from '@/pages/matching/create-room/CreateRoomPage'
 import { JoinRoomPage } from '@/pages/matching/join-room/JoinRoomPage'
 import { RecommendedUsersPage } from '@/pages/matching/recommended-users/RecommendedUsersPage'
+import { RoomFeedsPage } from '@/pages/matching/room/feeds/RoomFeedsPage'
+import { RoomMembersPage } from '@/pages/matching/room/members/RoomMembersPage'
+import { RoomPlaylistPage } from '@/pages/matching/room/playlist/RoomPlaylistPage'
+import { RoomHomePage } from '@/pages/matching/room/RoomHomePage'
 import { UserProfilePage } from '@/pages/matching/user-profile/UserProfilePage'
 
 export const router = createBrowserRouter([
@@ -27,6 +31,10 @@ export const router = createBrowserRouter([
           { path: ROUTES.userProfile, element: <UserProfilePage /> },
           { path: ROUTES.createRoom, element: <CreateRoomPage /> },
           { path: ROUTES.joinRoom, element: <JoinRoomPage /> },
+          { path: ROUTES.room, element: <RoomHomePage /> },
+          { path: ROUTES.roomMembers, element: <RoomMembersPage /> },
+          { path: ROUTES.roomFeeds, element: <RoomFeedsPage /> },
+          { path: ROUTES.roomPlaylist, element: <RoomPlaylistPage /> },
           { path: ROUTES.my, element: <MyPage /> },
         ],
       },
