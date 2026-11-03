@@ -4,3 +4,14 @@ export type Room = {
   description: string
   imageUrl: string
 }
+
+export type CreatedRoom = Room & {
+  inviteUrl: string
+}
+
+export type CreateRoomRequest = {
+  name: string
+  description: string
+  image: File | null
+  password: string | null
+}

@@ -2,6 +2,7 @@ import { useEffect, useId, useRef } from 'react'
 import type { RefObject } from 'react'
 import { useClickOutside } from '@/hooks/useClickOutside'
 import * as S from './ConfirmPopover.styles'
+import type { ConfirmPopoverSurface } from './ConfirmPopover.styles'
 
 type ConfirmPopoverProps = {
   open: boolean
@@ -10,6 +11,7 @@ type ConfirmPopoverProps = {
   onConfirm: () => void
   onClose: () => void
   anchorRef?: RefObject<HTMLElement | null>
+  surface?: ConfirmPopoverSurface
 }
 
 export function ConfirmPopover({
@@ -19,6 +21,7 @@ export function ConfirmPopover({
   onConfirm,
   onClose,
   anchorRef,
+  surface = 'light',
 }: ConfirmPopoverProps) {
   const popoverRef = useRef<HTMLDivElement>(null)
   const confirmRef = useRef<HTMLButtonElement>(null)
@@ -32,18 +35,20 @@ export function ConfirmPopover({
     confirmRef.current?.focus()
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose()
+      if (event.key !== 'Escape') return
+      event.preventDefault()
+      onClose()
     }
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
+    document.addEventListener('keydown', handleKeyDown, true)
+    return () => document.removeEventListener('keydown', handleKeyDown, true)
   }, [open, onClose])
 
   if (!open) return null
 
   return (
-    <S.Popover ref={popoverRef} role="alertdialog" aria-labelledby={messageId}>
+    <S.Popover ref={popoverRef} $surface={surface} role="alertdialog" aria-labelledby={messageId}>
       <S.Message id={messageId}>{message}</S.Message>
-      <S.ConfirmButton ref={confirmRef} type="button" onClick={onConfirm}>
+      <S.ConfirmButton ref={confirmRef} $surface={surface} type="button" onClick={onConfirm}>
         {confirmLabel}
       </S.ConfirmButton>
     </S.Popover>

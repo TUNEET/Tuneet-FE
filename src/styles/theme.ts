@@ -17,6 +17,7 @@ export const theme = {
     surfaceWhite: '#FAFAFA', // 밝은 요소
     border: '#E3D2DD', // 입력 영역, 테두리
     divider: '#EEEEEE', // 구분선
+    dividerLavender: '#E1DBEB', // 보라 배경 위 구분선
 
     /* 텍스트 */
     textHeading: '#392C37', // 주요 제목
