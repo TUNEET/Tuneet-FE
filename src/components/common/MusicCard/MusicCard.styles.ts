@@ -13,7 +13,7 @@ const ellipsis = css`
   white-space: nowrap;
 `
 
-export const Card = styled.article<{ $tone: MusicCardTone }>`
+export const Card = styled.article<{ $tone: MusicCardTone; $clickable: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 1.6rem;
@@ -21,6 +21,7 @@ export const Card = styled.article<{ $tone: MusicCardTone }>`
   padding: 1rem;
   border-radius: 1rem;
   background-color: ${({ theme, $tone }) => theme.colors[TONES[$tone].background]};
+  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
 `
 
 export const Top = styled.div`
@@ -43,8 +44,21 @@ export const Caption = styled.span<{ $tone: MusicCardTone }>`
 
 export const Body = styled.div`
   display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+`
+
+export const Main = styled.div`
+  display: flex;
   align-items: center;
   gap: 1rem;
+  min-width: 0;
+`
+
+export const Action = styled.div`
+  display: flex;
+  flex-shrink: 0;
 `
 
 export const Thumbnail = styled.div<{ $playable: boolean }>`

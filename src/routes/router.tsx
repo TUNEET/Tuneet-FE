@@ -7,6 +7,8 @@ import { HomePage } from '@/pages/home/HomePage'
 import { MatchingPage } from '@/pages/matching/MatchingPage'
 import { MyPage } from '@/pages/my/MyPage'
 import { NotFoundPage } from '@/pages/not-found/NotFoundPage'
+import { RecommendedUsersPage } from '@/pages/matching/recommended-users/RecommendedUsersPage'
+import { UserProfilePage } from '@/pages/matching/user-profile/UserProfilePage'
 
 export const router = createBrowserRouter([
   {
@@ -19,6 +21,8 @@ export const router = createBrowserRouter([
           { path: ROUTES.home, element: <HomePage /> },
           { path: ROUTES.explore, element: <ExplorePage /> },
           { path: ROUTES.matching, element: <MatchingPage /> },
+          { path: ROUTES.recommendedUsers, element: <RecommendedUsersPage /> },
+          { path: ROUTES.userProfile, element: <UserProfilePage /> },
           { path: ROUTES.my, element: <MyPage /> },
         ],
       },

@@ -3,7 +3,7 @@ import type { Feed } from '@/types/feed'
 import type { LetterQuota } from '@/types/letter'
 import type { TasteMatch } from '@/types/match'
 import type { Room } from '@/types/room'
-import type { Profile } from '@/types/user'
+import type { Profile, UserProfile } from '@/types/user'
 
 const minutesAgo = (minutes: number) => new Date(Date.now() - minutes * 60 * 1000).toISOString()
 
@@ -73,3 +73,28 @@ export const MOCK_ROOMS: Room[] = [
     imageUrl: 'https://placehold.co/80x80',
   },
 ]
+
+export const MOCK_RECOMMENDED_USERS: TasteMatch[] = [
+  ...MOCK_TASTE_MATCHES,
+  { ...MOCK_TASTE_MATCHES[0], id: 3 },
+  { ...MOCK_TASTE_MATCHES[1], id: 4 },
+  { ...MOCK_TASTE_MATCHES[0], id: 5 },
+]
+
+export const MOCK_USER_PROFILE: UserProfile = {
+  id: 2,
+  nickname: '산책하는 튜니',
+  characterImageUrl: characterProfile,
+  song: { title: 'Runaway', artist: 'RESCENE' },
+  genres: ['K-POP', 'POP', 'HIP-HOP'],
+  artists: ['RESCENE', 'IVE', 'Crush'],
+  similarity: 92,
+  distanceKm: 1.2,
+  commonTaste: {
+    artists: [{ name: 'RESCENE', imageUrl: 'https://placehold.co/24x24' }],
+    songs: [
+      { title: 'Pretty Girl', artist: 'RESCENE', albumImageUrl: 'https://placehold.co/24x24' },
+    ],
+    genres: ['K-POP', 'POP', 'HIP-HOP'],
+  },
+}
