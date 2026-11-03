@@ -8,6 +8,7 @@ import { MatchingPage } from '@/pages/matching/MatchingPage'
 import { MyPage } from '@/pages/my/MyPage'
 import { NotFoundPage } from '@/pages/not-found/NotFoundPage'
 import { CreateRoomPage } from '@/pages/matching/create-room/CreateRoomPage'
+import { JoinRoomPage } from '@/pages/matching/join-room/JoinRoomPage'
 import { RecommendedUsersPage } from '@/pages/matching/recommended-users/RecommendedUsersPage'
 import { UserProfilePage } from '@/pages/matching/user-profile/UserProfilePage'
 
@@ -25,6 +26,7 @@ export const router = createBrowserRouter([
           { path: ROUTES.recommendedUsers, element: <RecommendedUsersPage /> },
           { path: ROUTES.userProfile, element: <UserProfilePage /> },
           { path: ROUTES.createRoom, element: <CreateRoomPage /> },
+          { path: ROUTES.joinRoom, element: <JoinRoomPage /> },
           { path: ROUTES.my, element: <MyPage /> },
         ],
       },

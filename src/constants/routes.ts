@@ -8,6 +8,7 @@ export const ROUTES = {
   recommendedUsers: '/matching/recommended',
   userProfile: '/matching/users/:userId',
   createRoom: '/matching/rooms/new',
+  joinRoom: '/matching/rooms/join',
 } as const
 
 export const getUserProfilePath = (userId: number) =>
