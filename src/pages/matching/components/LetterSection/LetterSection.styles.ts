@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 export const Wrapper = styled.section`
   display: flex;
@@ -24,9 +24,13 @@ export const Remaining = styled.p`
   font-weight: 500;
   line-height: 1.6rem;
   color: ${({ theme }) => theme.colors.textSecondary};
+`
 
-  strong {
-    font-weight: 600;
-    color: ${({ theme }) => theme.colors.lavender};
-  }
+export const Count = styled.span<{ $exhausted: boolean }>`
+  ${({ $exhausted, theme }) =>
+    !$exhausted &&
+    css`
+      font-weight: 600;
+      color: ${theme.colors.lavender};
+    `}
 `
