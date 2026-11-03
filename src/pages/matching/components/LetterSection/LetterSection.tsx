@@ -8,18 +8,22 @@ type LetterSectionProps = {
 }
 
 export function LetterSection({ quota, onWriteClick }: LetterSectionProps) {
+  const isExhausted = quota.remaining <= 0
+
   return (
     <S.Wrapper>
       <S.Info>
         <S.Title>편지 보내기</S.Title>
         <S.Remaining>
           오늘 남은 편지지 |{' '}
-          <strong>
+          <S.Count $exhausted={isExhausted}>
             {quota.remaining}/{quota.total}장
-          </strong>
+          </S.Count>
         </S.Remaining>
       </S.Info>
-      <Button onClick={onWriteClick}>편지 쓰기</Button>
+      <Button disabled={isExhausted} onClick={onWriteClick}>
+        편지 쓰기
+      </Button>
     </S.Wrapper>
   )
 }

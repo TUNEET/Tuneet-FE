@@ -25,4 +25,11 @@ export const Button = styled.button<{ $variant: ButtonVariant }>`
           background-color: transparent;
           color: ${theme.colors.lavender};
         `}
+
+  &:disabled {
+    border-color: ${({ theme }) => theme.colors.divider};
+    background-color: ${({ theme }) => theme.colors.divider};
+    color: ${({ theme }) => theme.colors.textSecondary};
+    cursor: default;
+  }
 `
