@@ -34,7 +34,7 @@ const Wrapper = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 6rem;
+  height: var(--header-height);
   margin: 0 3rem;
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 `

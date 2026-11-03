@@ -1,8 +1,9 @@
 import { createGlobalStyle } from 'styled-components'
-import { BOTTOM_NAV_HEIGHT, FRAME_BREAKPOINT, FRAME_MAX_HEIGHT } from './layout'
+import { BOTTOM_NAV_HEIGHT, FRAME_BREAKPOINT, FRAME_MAX_HEIGHT, HEADER_HEIGHT } from './layout'
 
 export const GlobalStyle = createGlobalStyle`
   :root {
+    --header-height: ${HEADER_HEIGHT};
     --bottom-nav-height: ${BOTTOM_NAV_HEIGHT};
     --frame-height: var(--app-height, 100dvh);
 
@@ -30,6 +31,7 @@ export const GlobalStyle = createGlobalStyle`
     font-size: ${({ theme }) => theme.fontSize.md};
     color: ${({ theme }) => theme.colors.textPrimary};
     background-color: ${({ theme }) => theme.colors.background};
+    letter-spacing: 0.02em;
     -webkit-font-smoothing: antialiased;
   }
 
