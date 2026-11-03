@@ -51,7 +51,13 @@ const Item = styled(NavLink)`
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  font-size: ${({ theme }) => theme.fontSize.xs};
+  font-size: ${({ theme }) => theme.fontSize.xxs};
   font-weight: 500;
+  line-height: 1.6rem;
   color: ${({ theme }) => theme.colors.textPlaceholder};
+
+  &.active {
+    font-weight: 600;
+    color: ${({ theme }) => theme.colors.primary};
+  }
 `

@@ -26,7 +26,11 @@ export const theme = {
     /* 상태 */
     danger: '#FF0044', // 삭제, 차단 등 위험 동작
   },
+  fontFamily: {
+    display: "'HiKR', 'Pretendard Variable', sans-serif",
+  },
   fontSize: {
+    xxs: '1rem',
     xs: '1.2rem',
     sm: '1.4rem',
     md: '1.6rem',

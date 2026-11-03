@@ -1,11 +1,60 @@
-import styled from 'styled-components'
+import { useNavigate } from 'react-router'
+import characterSleeping from '@/assets/images/character-sleeping.png'
+import { FeedCard } from '@/components/common/FeedCard/FeedCard'
+import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
+import { TasteMatchCard } from '@/components/common/TasteMatchCard/TasteMatchCard'
+import { ROUTES } from '@/constants/routes'
+import { ProfileCard } from './components/ProfileCard/ProfileCard'
+import * as S from './HomePage.styles'
+import { MOCK_FEEDS, MOCK_PROFILE, MOCK_TASTE_MATCHES } from './mocks'
 
 export function HomePage() {
-  return <Title>TUNEET</Title>
-}
+  const navigate = useNavigate()
 
-const Title = styled.h1`
-  padding: 4rem;
-  font-size: ${({ theme }) => theme.fontSize.xl};
-  color: ${({ theme }) => theme.colors.primary};
-`
+  return (
+    <S.Page>
+      <S.Glows aria-hidden>
+        <S.Glow $size="35.9rem" $top="14.8rem" $left="-4.5rem" $color="#FFBBD3" $blur="100px" />
+        <S.Glow $size="23rem" $top="21.3rem" $left="18.1rem" $color="#E5C3FF" $blur="100px" />
+        <S.Glow $size="12.4rem" $top="22.8rem" $left="9.4rem" $color="#CFE8FF" $blur="75px" />
+      </S.Glows>
+
+      <S.Greeting>오늘도 새로운 음악을 만나보세요!</S.Greeting>
+
+      <S.ProfileArea>
+        <ProfileCard {...MOCK_PROFILE} />
+        <S.SleepingCharacter src={characterSleeping} alt="" />
+      </S.ProfileArea>
+
+      <S.Sheet>
+        <S.Section>
+          <SectionHeader
+            title="탐색 피드 최근 게시글"
+            actionLabel="더보기"
+            onActionClick={() => navigate(ROUTES.explore)}
+          />
+          <S.CardList>
+            {MOCK_FEEDS.map(({ id, ...feed }) => (
+              <FeedCard key={id} {...feed} />
+            ))}
+          </S.CardList>
+        </S.Section>
+
+        <S.Section>
+          <SectionHeader
+            title="나와 음악 취향이 닮은 사람들"
+            actionLabel="더보기"
+            onActionClick={() => navigate(ROUTES.matching)}
+          />
+          <S.CardList>
+            {MOCK_TASTE_MATCHES.map(({ id, ...match }) => (
+              <TasteMatchCard key={id} {...match} />
+            ))}
+          </S.CardList>
+        </S.Section>
+      </S.Sheet>
+
+      <S.BottomFade />
+    </S.Page>
+  )
+}
