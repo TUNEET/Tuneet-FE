@@ -1,8 +1,9 @@
 import { createGlobalStyle } from 'styled-components'
-import { FRAME_BREAKPOINT, FRAME_MAX_HEIGHT } from './layout'
+import { BOTTOM_NAV_HEIGHT, FRAME_BREAKPOINT, FRAME_MAX_HEIGHT } from './layout'
 
 export const GlobalStyle = createGlobalStyle`
   :root {
+    --bottom-nav-height: ${BOTTOM_NAV_HEIGHT};
     --frame-height: var(--app-height, 100dvh);
 
     ${FRAME_BREAKPOINT} {
@@ -24,7 +25,8 @@ export const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    font-family: system-ui, -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
+      'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: ${({ theme }) => theme.fontSize.md};
     color: ${({ theme }) => theme.colors.textPrimary};
     background-color: ${({ theme }) => theme.colors.background};
