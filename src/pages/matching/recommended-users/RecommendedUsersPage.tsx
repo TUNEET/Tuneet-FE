@@ -3,7 +3,7 @@ import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { TasteMatchCard } from '@/components/common/TasteMatchCard/TasteMatchCard'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { MAX_RECOMMENDED_USERS } from '@/constants/matching'
-import { getUserProfilePath } from '@/constants/routes'
+import { getLetterWritePath, getUserProfilePath } from '@/constants/routes'
 import { MOCK_RECOMMENDED_USERS } from '@/mocks/data'
 import * as S from './RecommendedUsersPage.styles'
 
@@ -20,7 +20,7 @@ export function RecommendedUsersPage() {
             key={user.id}
             match={user}
             onClick={() => navigate(getUserProfilePath(user.id))}
-            onLetterClick={() => {}}
+            onLetterClick={() => navigate(getLetterWritePath(user.id))}
           />
         ))}
       </S.CardList>

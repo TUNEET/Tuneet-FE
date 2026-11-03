@@ -1,10 +1,21 @@
 import styled, { css } from 'styled-components'
 
-export type MusicCardTone = 'blue' | 'purple'
+export type MusicCardTone = 'blue' | 'purple' | 'rose'
 
 const TONES = {
-  blue: { background: 'surfaceBlue', text: 'blue' },
-  purple: { background: 'surfaceLavender', text: 'purple' },
+  blue: { background: 'surfaceBlue', text: 'blue', title: 'textPrimary', description: 'textBody' },
+  purple: {
+    background: 'surfaceLavender',
+    text: 'purple',
+    title: 'textPrimary',
+    description: 'textBody',
+  },
+  rose: {
+    background: 'background',
+    text: 'primary',
+    title: 'textHeading',
+    description: 'textPlaceholder',
+  },
 } as const
 
 const ellipsis = css`
@@ -110,18 +121,18 @@ export const Texts = styled.div`
   min-width: 0;
 `
 
-export const Title = styled.p<{ $expanded: boolean }>`
+export const Title = styled.p<{ $tone: MusicCardTone; $expanded: boolean }>`
   ${({ $expanded }) => ($expanded ? wrap : ellipsis)}
   font-size: ${({ theme }) => theme.fontSize.sm};
   font-weight: 600;
   line-height: 1.8rem;
-  color: ${({ theme }) => theme.colors.textPrimary};
+  color: ${({ theme, $tone }) => theme.colors[TONES[$tone].title]};
 `
 
-export const Description = styled.p<{ $expanded: boolean }>`
+export const Description = styled.p<{ $tone: MusicCardTone; $expanded: boolean }>`
   ${({ $expanded }) => ($expanded ? wrap : ellipsis)}
   font-size: ${({ theme }) => theme.fontSize.xs};
   font-weight: 500;
   line-height: 1.6rem;
-  color: ${({ theme }) => theme.colors.textBody};
+  color: ${({ theme, $tone }) => theme.colors[TONES[$tone].description]};
 `

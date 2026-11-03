@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
-import { getRoomPath, getUserProfilePath } from '@/constants/routes'
+import { getLetterWritePath, getRoomPath, getUserProfilePath } from '@/constants/routes'
 import { MOCK_ROOM_DETAIL } from '@/mocks/room'
 import { RoomHeader } from '../components/RoomHeader/RoomHeader'
 import { MemberRow } from './components/MemberRow/MemberRow'
@@ -22,6 +22,7 @@ export function RoomMembersPage() {
             key={member.id}
             member={member}
             onClick={() => navigate(getUserProfilePath(member.id))}
+            onLetterClick={() => navigate(getLetterWritePath(member.id))}
           />
         ))}
       </S.List>

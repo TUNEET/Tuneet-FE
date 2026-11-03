@@ -6,6 +6,7 @@ import { Divider } from '@/components/common/Divider/Divider'
 import { ProfileCard } from '@/components/common/ProfileCard/ProfileCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
+import { getLetterWritePath } from '@/constants/routes'
 import { MOCK_LETTER_QUOTA, MOCK_USER_PROFILE } from '@/mocks/data'
 import { formatDistance } from '@/utils/format'
 import { CommonTasteSection } from './components/CommonTasteSection/CommonTasteSection'
@@ -43,7 +44,9 @@ export function UserProfilePage() {
         >
           차단하기
         </Button>
-        <Button disabled={!canSendLetter}>편지 쓰기</Button>
+        <Button disabled={!canSendLetter} onClick={() => navigate(getLetterWritePath(user.id))}>
+          편지 쓰기
+        </Button>
         <ConfirmPopover
           open={isBlockOpen}
           message="이 사용자를 차단하시겠어요?"

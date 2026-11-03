@@ -2,7 +2,11 @@ import { useEffect, useId, useRef } from 'react'
 import type { RefObject } from 'react'
 import { useClickOutside } from '@/hooks/useClickOutside'
 import * as S from './ConfirmPopover.styles'
-import type { ConfirmPopoverPlacement, ConfirmPopoverSurface } from './ConfirmPopover.styles'
+import type {
+  ConfirmPopoverPlacement,
+  ConfirmPopoverSurface,
+  ConfirmPopoverTone,
+} from './ConfirmPopover.styles'
 
 type ConfirmPopoverProps = {
   open: boolean
@@ -13,6 +17,7 @@ type ConfirmPopoverProps = {
   anchorRef?: RefObject<HTMLElement | null>
   surface?: ConfirmPopoverSurface
   placement?: ConfirmPopoverPlacement
+  tone?: ConfirmPopoverTone
 }
 
 export function ConfirmPopover({
@@ -24,6 +29,7 @@ export function ConfirmPopover({
   anchorRef,
   surface = 'light',
   placement = 'bottom',
+  tone = 'danger',
 }: ConfirmPopoverProps) {
   const popoverRef = useRef<HTMLDivElement>(null)
   const confirmRef = useRef<HTMLButtonElement>(null)
@@ -56,7 +62,13 @@ export function ConfirmPopover({
       aria-labelledby={messageId}
     >
       <S.Message id={messageId}>{message}</S.Message>
-      <S.ConfirmButton ref={confirmRef} $surface={surface} type="button" onClick={onConfirm}>
+      <S.ConfirmButton
+        ref={confirmRef}
+        $surface={surface}
+        $tone={tone}
+        type="button"
+        onClick={onConfirm}
+      >
         {confirmLabel}
       </S.ConfirmButton>
     </S.Popover>
