@@ -7,9 +7,10 @@ type FeedCardProps = {
   feed: Feed
   tone?: MusicCardTone
   expanded?: boolean
+  onClick?: (feed: Feed) => void
 }
 
-export function FeedCard({ feed, tone = 'blue', expanded = false }: FeedCardProps) {
+export function FeedCard({ feed, tone = 'blue', expanded = false, onClick }: FeedCardProps) {
   const { nickname, song, content, createdAt } = feed
 
   return (
@@ -22,6 +23,7 @@ export function FeedCard({ feed, tone = 'blue', expanded = false }: FeedCardProp
       description={content}
       playable
       expanded={expanded}
+      onClick={onClick && (() => onClick(feed))}
     />
   )
 }

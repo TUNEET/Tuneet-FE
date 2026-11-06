@@ -25,15 +25,12 @@ export function MobileLayout() {
         {isSplashVisible ? (
           <SplashScreen />
         ) : (
-          <ScrollArea>
-            <Outlet />
-          </ScrollArea>
+          <ToastProvider>
+            <ScrollArea>
+              <Outlet />
+            </ScrollArea>
+          </ToastProvider>
         )}
-        <ToastProvider>
-          <ScrollArea>
-            <Outlet />
-          </ScrollArea>
-        </ToastProvider>
       </PhoneFrame>
     </PageFrame>
   )
