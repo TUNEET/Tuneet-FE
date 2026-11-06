@@ -2,6 +2,7 @@ import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router'
 import logo from '@/assets/images/logo.svg'
 import { ROUTES } from '@/constants/routes'
+import { markProfileSetupPending } from '@/utils/auth'
 import * as S from './SignupPage.styles'
 
 const FIELDS = [
@@ -38,6 +39,8 @@ export function SignupPage() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    markProfileSetupPending()
+    navigate(ROUTES.login)
   }
 
   return (
