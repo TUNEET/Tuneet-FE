@@ -149,6 +149,9 @@ vite.config.ts.timestamp-*
 .turbo
 !.env.example
 
+# Vercel
+.vercel
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
