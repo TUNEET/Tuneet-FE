@@ -13,6 +13,7 @@ export const theme = {
     background: '#F2EBF2', // 화면 배경
     surfacePink: '#F6EBF2', // 카드, 보조 영역
     surfaceBlue: '#EDF1F8', // 피드 카드
+    inputBlue: '#DBE1EB', // 피드 카드 위 입력칸
     surfaceLavender: '#F2EDF8', // 추천 카드
     surfaceWhite: '#FAFAFA', // 밝은 요소
     border: '#E3D2DD', // 입력 영역, 테두리

@@ -3,6 +3,7 @@ import { generatePath } from 'react-router'
 export const ROUTES = {
   home: '/',
   explore: '/explore',
+  exploreWrite: '/explore/write',
   matching: '/matching',
   my: '/my',
   onboarding: '/onboarding',
