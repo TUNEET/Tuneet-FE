@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import frameImage from '@/assets/icons/profile-Frame.svg'
 
 const FRAME_IMAGE_URL = `url("${frameImage}")`
@@ -35,12 +35,23 @@ export const Frame = styled.div`
   pointer-events: none;
 `
 
-export const Tags = styled.div`
+export const PlainFrame = styled.div`
+  position: absolute;
+  inset: 0;
+  border: 2px solid ${({ theme }) => theme.colors.surfaceWhite};
+  border-radius: 2.4rem;
+  background-color: rgba(242, 235, 242, 0.4);
+  pointer-events: none;
+`
+
+export const Tags = styled.div<{ $clickable: boolean }>`
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   width: 25.1rem;
+  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
+  pointer-events: ${({ $clickable }) => ($clickable ? 'auto' : 'none')};
 `
 
 export const StartButton = styled.button`
@@ -128,6 +139,7 @@ export const Nickname = styled.p`
   top: 46.3rem;
   right: 0;
   left: 0;
+  z-index: 1;
   font-size: ${({ theme }) => theme.fontSize.lg};
   font-weight: 600;
   letter-spacing: 0.04rem;
@@ -135,7 +147,30 @@ export const Nickname = styled.p`
   color: ${({ theme }) => theme.colors.textHeading};
 `
 
-export const Avatar = styled.div`
+export const NicknameInput = styled.input`
+  position: absolute;
+  top: 46.3rem;
+  left: 7.1rem;
+  z-index: 1;
+  width: 25.1rem;
+  height: 2.4rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-size: ${({ theme }) => theme.fontSize.lg};
+  font-weight: 600;
+  letter-spacing: 0.04rem;
+  text-align: center;
+  text-decoration: underline;
+  color: ${({ theme }) => theme.colors.textPlaceholder};
+  pointer-events: auto;
+
+  &:focus {
+    outline: none;
+  }
+`
+
+const avatarSurface = css`
   position: absolute;
   top: 34.8rem;
   left: 14.7rem;
@@ -148,6 +183,30 @@ export const Avatar = styled.div`
     ${({ theme }) => theme.colors.primary} 0%,
     #946884 100%
   );
+`
+
+export const Avatar = styled.div`
+  ${avatarSurface}
+`
+
+export const AvatarButton = styled.button`
+  ${avatarSurface}
+  pointer-events: auto;
+`
+
+export const AvatarOverlay = styled.span`
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background-color: rgba(0, 0, 0, 0.4);
+`
+
+export const AvatarIcon = styled.img`
+  position: absolute;
+  top: 4rem;
+  left: 4rem;
+  width: 2rem;
+  height: 2rem;
 `
 
 export const AvatarCharacter = styled.img`

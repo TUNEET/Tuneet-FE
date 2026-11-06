@@ -1,3 +1,5 @@
+import type { KeyboardEvent, ReactNode } from 'react'
+import editIcon from '@/assets/icons/edit-outline.svg'
 import boltLargeIcon from '@/assets/icons/fa6-solid_bolt-lightning-1.svg'
 import boltSmallIcon from '@/assets/icons/fa6-solid_bolt-lightning.svg'
 import musicLargeIcon from '@/assets/icons/flowbite_music-alt-solid-1.svg'
@@ -48,7 +50,12 @@ type ProfileCompleteProps = {
   previewUrl: string | null
   songs: { title: string; artist: string; albumImage: string }[]
   genres: string[]
-  onStart: () => void
+  frame?: 'image' | 'plain'
+  isEditing?: boolean
+  onNicknameChange?: (nickname: string) => void
+  onTagsClick?: () => void
+  onStart?: () => void
+  children?: ReactNode
 }
 
 export function ProfileComplete({
@@ -56,13 +63,37 @@ export function ProfileComplete({
   previewUrl,
   songs,
   genres,
+  frame = 'image',
+  isEditing = false,
+  onNicknameChange,
+  onTagsClick,
   onStart,
+  children,
 }: ProfileCompleteProps) {
+  const tagsButtonProps = onTagsClick && {
+    role: 'button',
+    tabIndex: 0,
+    'aria-label': '노래, 아티스트, 장르 수정',
+    onClick: onTagsClick,
+    onKeyDown: (event: KeyboardEvent) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault()
+        onTagsClick()
+      }
+    },
+  }
+
+  const avatarImage = previewUrl ? (
+    <S.AvatarPreview src={previewUrl} alt="" />
+  ) : (
+    <S.AvatarCharacter src={characterImage} alt="" />
+  )
+
   return (
     <S.Stage>
       <S.Card>
-        <S.Frame aria-hidden />
-        <S.Tags>
+        {frame === 'plain' ? <S.PlainFrame aria-hidden /> : <S.Frame aria-hidden />}
+        <S.Tags $clickable={!!onTagsClick} {...tagsButtonProps}>
           {songs.map(({ title, artist, albumImage }) => (
             <Song as="div" key={`${title}-${artist}`}>
               <img src={albumImage} alt="" width={12} height={12} />
@@ -87,24 +118,39 @@ export function ProfileComplete({
           </S.TagRow>
         </S.Tags>
       </S.Card>
-      <S.StartButton type="button" onClick={onStart}>
-        TUNEET 시작하기
-        <svg width="8" height="14" viewBox="0 0 8 14" fill="none" aria-hidden>
-          <path d="m1 1 6 6-6 6" stroke="currentColor" strokeWidth="1.8" />
-        </svg>
-      </S.StartButton>
+      {onStart && (
+        <S.StartButton type="button" onClick={onStart}>
+          TUNEET 시작하기
+          <svg width="8" height="14" viewBox="0 0 8 14" fill="none" aria-hidden>
+            <path d="m1 1 6 6-6 6" stroke="currentColor" strokeWidth="1.8" />
+          </svg>
+        </S.StartButton>
+      )}
+      {children}
       <S.Glow aria-hidden />
       {RAYS.map(({ angle, spread }) => (
         <S.Ray key={angle} aria-hidden $angle={angle} $spread={spread} />
       ))}
-      <S.Nickname>{nickname}</S.Nickname>
-      <S.Avatar>
-        {previewUrl ? (
-          <S.AvatarPreview src={previewUrl} alt="" />
-        ) : (
-          <S.AvatarCharacter src={characterImage} alt="" />
-        )}
-      </S.Avatar>
+      {isEditing ? (
+        <>
+          <S.NicknameInput
+            type="text"
+            aria-label="닉네임"
+            value={nickname}
+            onChange={(event) => onNicknameChange?.(event.target.value)}
+          />
+          <S.AvatarButton type="button" aria-label="프로필 사진 변경">
+            {avatarImage}
+            <S.AvatarOverlay />
+            <S.AvatarIcon src={editIcon} alt="" />
+          </S.AvatarButton>
+        </>
+      ) : (
+        <>
+          <S.Nickname>{nickname}</S.Nickname>
+          <S.Avatar>{avatarImage}</S.Avatar>
+        </>
+      )}
       {DECORATIONS.map(({ src, width, height, left, top, rotate }) => (
         <S.Decoration
           key={`${left}-${top}`}
