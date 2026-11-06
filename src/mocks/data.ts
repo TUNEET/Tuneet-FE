@@ -3,6 +3,7 @@ import type { Feed } from '@/types/feed'
 import type { LetterQuota } from '@/types/letter'
 import type { TasteMatch } from '@/types/match'
 import type { Room } from '@/types/room'
+import type { Song } from '@/types/song'
 import type { Profile, UserProfile } from '@/types/user'
 
 const minutesAgo = (minutes: number) => new Date(Date.now() - minutes * 60 * 1000).toISOString()
@@ -35,6 +36,20 @@ export const MOCK_FEEDS: Feed[] = [
     createdAt: minutesAgo(12),
   },
 ]
+
+export const MOCK_EXPLORE_FEEDS: Feed[] = [
+  ...MOCK_FEEDS,
+  { ...MOCK_FEEDS[0], id: 3, createdAt: minutesAgo(20) },
+  { ...MOCK_FEEDS[1], id: 4, createdAt: minutesAgo(45) },
+  { ...MOCK_FEEDS[0], id: 5, createdAt: minutesAgo(60) },
+  { ...MOCK_FEEDS[1], id: 6, createdAt: minutesAgo(120) },
+]
+
+export const MOCK_WRITE_SONG: Song = {
+  title: 'Pretty Girl',
+  artist: 'RESCENE',
+  albumImageUrl: 'https://placehold.co/24x24',
+}
 
 export const MOCK_TASTE_MATCHES: TasteMatch[] = [
   {
