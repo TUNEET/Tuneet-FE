@@ -36,6 +36,7 @@ export const theme = {
     md: '1.6rem',
     lg: '2rem',
     xl: '2.4rem',
+    xxl: '3rem',
   },
   breakpoints: {
     mobile: '@media (max-width: 767px)',
