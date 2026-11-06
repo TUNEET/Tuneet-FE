@@ -1,10 +1,21 @@
 import styled, { css } from 'styled-components'
 
-export type MusicCardTone = 'blue' | 'purple'
+export type MusicCardTone = 'blue' | 'purple' | 'rose'
 
 const TONES = {
-  blue: { background: 'surfaceBlue', text: 'blue' },
-  purple: { background: 'surfaceLavender', text: 'purple' },
+  blue: { background: 'surfaceBlue', text: 'blue', title: 'textPrimary', description: 'textBody' },
+  purple: {
+    background: 'surfaceLavender',
+    text: 'purple',
+    title: 'textPrimary',
+    description: 'textBody',
+  },
+  rose: {
+    background: 'background',
+    text: 'primary',
+    title: 'textHeading',
+    description: 'textPlaceholder',
+  },
 } as const
 
 const ellipsis = css`
@@ -13,7 +24,11 @@ const ellipsis = css`
   white-space: nowrap;
 `
 
-export const Card = styled.article<{ $tone: MusicCardTone }>`
+const wrap = css`
+  overflow-wrap: anywhere;
+`
+
+export const Card = styled.article<{ $tone: MusicCardTone; $clickable: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 1.6rem;
@@ -21,6 +36,7 @@ export const Card = styled.article<{ $tone: MusicCardTone }>`
   padding: 1rem;
   border-radius: 1rem;
   background-color: ${({ theme, $tone }) => theme.colors[TONES[$tone].background]};
+  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
 `
 
 export const Top = styled.div`
@@ -43,8 +59,21 @@ export const Caption = styled.span<{ $tone: MusicCardTone }>`
 
 export const Body = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-end;
+  justify-content: space-between;
   gap: 1rem;
+`
+
+export const Main = styled.div<{ $expanded: boolean }>`
+  display: flex;
+  align-items: ${({ $expanded }) => ($expanded ? 'flex-start' : 'center')};
+  gap: 1rem;
+  min-width: 0;
+`
+
+export const Action = styled.div`
+  display: flex;
+  flex-shrink: 0;
 `
 
 export const Thumbnail = styled.div<{ $playable: boolean }>`
@@ -92,18 +121,18 @@ export const Texts = styled.div`
   min-width: 0;
 `
 
-export const Title = styled.p`
-  ${ellipsis}
+export const Title = styled.p<{ $tone: MusicCardTone; $expanded: boolean }>`
+  ${({ $expanded }) => ($expanded ? wrap : ellipsis)}
   font-size: ${({ theme }) => theme.fontSize.sm};
   font-weight: 600;
   line-height: 1.8rem;
-  color: ${({ theme }) => theme.colors.textPrimary};
+  color: ${({ theme, $tone }) => theme.colors[TONES[$tone].title]};
 `
 
-export const Description = styled.p`
-  ${ellipsis}
+export const Description = styled.p<{ $tone: MusicCardTone; $expanded: boolean }>`
+  ${({ $expanded }) => ($expanded ? wrap : ellipsis)}
   font-size: ${({ theme }) => theme.fontSize.xs};
   font-weight: 500;
   line-height: 1.6rem;
-  color: ${({ theme }) => theme.colors.textBody};
+  color: ${({ theme, $tone }) => theme.colors[TONES[$tone].description]};
 `

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Outlet } from 'react-router'
 import styled from 'styled-components'
+import { ToastProvider } from '@/components/common/Toast/ToastProvider'
 import { useAppHeight } from '@/hooks/useAppHeight'
 import { FRAME_BREAKPOINT, FRAME_MAX_WIDTH } from '@/styles/layout'
 import { SplashScreen } from './SplashScreen'
@@ -28,6 +29,11 @@ export function MobileLayout() {
             <Outlet />
           </ScrollArea>
         )}
+        <ToastProvider>
+          <ScrollArea>
+            <Outlet />
+          </ScrollArea>
+        </ToastProvider>
       </PhoneFrame>
     </PageFrame>
   )
