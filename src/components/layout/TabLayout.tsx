@@ -12,7 +12,7 @@ export function TabLayout() {
   return (
     <>
       {isExplore ? (
-        <Header action="notification" />
+        <Header action="notification" onActionClick={() => navigate(ROUTES.exploreNotifications)} />
       ) : (
         <Header action="message" onActionClick={() => navigate(ROUTES.letterbox)} />
       )}

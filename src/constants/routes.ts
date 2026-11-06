@@ -4,6 +4,7 @@ export const ROUTES = {
   home: '/',
   explore: '/explore',
   exploreWrite: '/explore/write',
+  exploreNotifications: '/explore/notifications',
   matching: '/matching',
   my: '/my',
   onboarding: '/onboarding',
