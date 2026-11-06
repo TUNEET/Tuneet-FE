@@ -1,12 +1,13 @@
 import { useNavigate } from 'react-router'
 import characterSleeping from '@/assets/images/character-sleeping.png'
 import { FeedCard } from '@/components/common/FeedCard/FeedCard'
+import { ProfileCard } from '@/components/common/ProfileCard/ProfileCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { TasteMatchCard } from '@/components/common/TasteMatchCard/TasteMatchCard'
-import { ROUTES } from '@/constants/routes'
-import { ProfileCard } from './components/ProfileCard/ProfileCard'
+import { getUserProfilePath, ROUTES } from '@/constants/routes'
+import { MOCK_FEEDS, MOCK_PROFILE, MOCK_TASTE_MATCHES } from '@/mocks/data'
+
 import * as S from './HomePage.styles'
-import { MOCK_FEEDS, MOCK_PROFILE, MOCK_TASTE_MATCHES } from './mocks'
 
 export function HomePage() {
   const navigate = useNavigate()
@@ -22,7 +23,7 @@ export function HomePage() {
       <S.Greeting>오늘도 새로운 음악을 만나보세요!</S.Greeting>
 
       <S.ProfileArea>
-        <ProfileCard {...MOCK_PROFILE} />
+        <ProfileCard profile={MOCK_PROFILE} onEditClick={() => {}} />
         <S.SleepingCharacter src={characterSleeping} alt="" />
       </S.ProfileArea>
 
@@ -34,8 +35,8 @@ export function HomePage() {
             onActionClick={() => navigate(ROUTES.explore)}
           />
           <S.CardList>
-            {MOCK_FEEDS.map(({ id, ...feed }) => (
-              <FeedCard key={id} {...feed} />
+            {MOCK_FEEDS.map((feed) => (
+              <FeedCard key={feed.id} feed={feed} />
             ))}
           </S.CardList>
         </S.Section>
@@ -47,8 +48,12 @@ export function HomePage() {
             onActionClick={() => navigate(ROUTES.matching)}
           />
           <S.CardList>
-            {MOCK_TASTE_MATCHES.map(({ id, ...match }) => (
-              <TasteMatchCard key={id} {...match} />
+            {MOCK_TASTE_MATCHES.map((match) => (
+              <TasteMatchCard
+                key={match.id}
+                match={match}
+                onClick={() => navigate(getUserProfilePath(match.id))}
+              />
             ))}
           </S.CardList>
         </S.Section>

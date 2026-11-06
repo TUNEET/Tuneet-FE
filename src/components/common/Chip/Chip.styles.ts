@@ -1,8 +1,20 @@
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 export type ChipVariant = 'filled' | 'soft'
+export type ChipTone = 'pink' | 'purple'
 
-export const Chip = styled.span<{ $variant: ChipVariant }>`
+const COLORS = {
+  pink: {
+    filled: { background: 'primary', text: 'surfaceWhite' },
+    soft: { background: 'surfacePink', text: 'textPlaceholder' },
+  },
+  purple: {
+    filled: { background: 'lavender', text: 'surfaceWhite' },
+    soft: { background: 'lavenderLight', text: 'lavender' },
+  },
+} as const
+
+export const Chip = styled.span<{ $variant: ChipVariant; $tone: ChipTone }>`
   display: inline-flex;
   align-items: center;
   height: 1.8rem;
@@ -11,15 +23,7 @@ export const Chip = styled.span<{ $variant: ChipVariant }>`
   font-size: ${({ theme }) => theme.fontSize.xxs};
   font-weight: 500;
   white-space: nowrap;
-
-  ${({ $variant, theme }) =>
-    $variant === 'filled'
-      ? css`
-          background-color: ${theme.colors.primary};
-          color: ${theme.colors.surfaceWhite};
-        `
-      : css`
-          background-color: ${theme.colors.surfacePink};
-          color: ${theme.colors.textPlaceholder};
-        `}
+  background-color: ${({ theme, $tone, $variant }) =>
+    theme.colors[COLORS[$tone][$variant].background]};
+  color: ${({ theme, $tone, $variant }) => theme.colors[COLORS[$tone][$variant].text]};
 `
