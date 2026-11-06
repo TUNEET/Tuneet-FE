@@ -1,15 +1,34 @@
+import { useEffect, useState } from 'react'
 import { Outlet } from 'react-router'
 import styled from 'styled-components'
 import { ToastProvider } from '@/components/common/Toast/ToastProvider'
 import { useAppHeight } from '@/hooks/useAppHeight'
 import { FRAME_BREAKPOINT, FRAME_MAX_WIDTH } from '@/styles/layout'
+import { SplashScreen } from './SplashScreen'
+
+const SPLASH_DURATION_MS = 2000
 
 export function MobileLayout() {
   useAppHeight()
 
+  const [isSplashVisible, setIsSplashVisible] = useState(true)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsSplashVisible(false), SPLASH_DURATION_MS)
+
+    return () => clearTimeout(timer)
+  }, [])
+
   return (
     <PageFrame>
       <PhoneFrame>
+        {isSplashVisible ? (
+          <SplashScreen />
+        ) : (
+          <ScrollArea>
+            <Outlet />
+          </ScrollArea>
+        )}
         <ToastProvider>
           <ScrollArea>
             <Outlet />
