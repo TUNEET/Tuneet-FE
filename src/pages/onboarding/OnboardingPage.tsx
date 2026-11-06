@@ -18,7 +18,7 @@ export function OnboardingPage() {
       </S.Heading>
       <S.Logo src={logo} alt="TUNEET" />
       <S.Buttons>
-        <S.Button type="button" $variant="primary">
+        <S.Button type="button" $variant="primary" onClick={() => navigate(ROUTES.login)}>
           로그인
         </S.Button>
         <S.Button type="button" $variant="secondary" onClick={() => navigate(ROUTES.signup)}>
