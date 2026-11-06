@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router'
 import styled from 'styled-components'
+import { ToastProvider } from '@/components/common/Toast/ToastProvider'
 import { useAppHeight } from '@/hooks/useAppHeight'
 import { FRAME_BREAKPOINT, FRAME_MAX_WIDTH } from '@/styles/layout'
 
@@ -9,9 +10,11 @@ export function MobileLayout() {
   return (
     <PageFrame>
       <PhoneFrame>
-        <ScrollArea>
-          <Outlet />
-        </ScrollArea>
+        <ToastProvider>
+          <ScrollArea>
+            <Outlet />
+          </ScrollArea>
+        </ToastProvider>
       </PhoneFrame>
     </PageFrame>
   )
