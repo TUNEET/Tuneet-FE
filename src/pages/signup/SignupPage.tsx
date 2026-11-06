@@ -1,5 +1,7 @@
 import type { FormEvent } from 'react'
+import { useNavigate } from 'react-router'
 import logo from '@/assets/images/logo.svg'
+import { ROUTES } from '@/constants/routes'
 import * as S from './SignupPage.styles'
 
 const FIELDS = [
@@ -32,6 +34,8 @@ const TERMS = [
 ]
 
 export function SignupPage() {
+  const navigate = useNavigate()
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
   }
@@ -78,7 +82,9 @@ export function SignupPage() {
         <S.SubmitButton type="submit">회원가입</S.SubmitButton>
       </form>
 
-      <S.LoginButton type="button">로그인</S.LoginButton>
+      <S.LoginButton type="button" onClick={() => navigate(ROUTES.login)}>
+        로그인
+      </S.LoginButton>
     </S.Page>
   )
 }

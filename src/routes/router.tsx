@@ -4,6 +4,7 @@ import { TabLayout } from '@/components/layout/TabLayout'
 import { ROUTES } from '@/constants/routes'
 import { ExplorePage } from '@/pages/explore/ExplorePage'
 import { HomePage } from '@/pages/home/HomePage'
+import { LoginPage } from '@/pages/login/LoginPage'
 import { MatchingPage } from '@/pages/matching/MatchingPage'
 import { MyPage } from '@/pages/my/MyPage'
 import { NotFoundPage } from '@/pages/not-found/NotFoundPage'
@@ -32,6 +33,7 @@ export const router = createBrowserRouter([
       },
       { path: ROUTES.onboarding, element: <OnboardingPage /> },
       { path: ROUTES.signup, element: <SignupPage /> },
+      { path: ROUTES.login, element: <LoginPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },
