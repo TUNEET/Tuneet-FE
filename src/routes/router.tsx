@@ -9,6 +9,7 @@ import { MatchingPage } from '@/pages/matching/MatchingPage'
 import { MyPage } from '@/pages/my/MyPage'
 import { NotFoundPage } from '@/pages/not-found/NotFoundPage'
 import { OnboardingPage } from '@/pages/onboarding/OnboardingPage'
+import { ProfileSetupPage } from '@/pages/profile-setup/ProfileSetupPage'
 import { SignupPage } from '@/pages/signup/SignupPage'
 import { RequireAuth } from './RequireAuth'
 
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
       {
         element: <RequireAuth />,
         children: [
+          { path: ROUTES.profileSetup, element: <ProfileSetupPage /> },
           {
             element: <TabLayout />,
             children: [

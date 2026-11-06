@@ -5,6 +5,7 @@ import genieIcon from '@/assets/icons/genie.svg'
 import melonIcon from '@/assets/icons/melon.svg'
 import logo from '@/assets/images/logo.svg'
 import { ROUTES } from '@/constants/routes'
+import { isProfileSetupPending, setAccessToken } from '@/utils/auth'
 import * as S from './LoginPage.styles'
 
 const FIELDS = [
@@ -24,6 +25,8 @@ const FIELDS = [
   },
 ]
 
+const TEMP_ACCESS_TOKEN = 'temp-access-token'
+
 const SOCIAL_LOGINS = [
   { id: 'appleMusic', label: 'Apple Music으로 로그인', icon: appleMusicIcon },
   { id: 'melon', label: '멜론으로 로그인', icon: melonIcon },
@@ -35,6 +38,8 @@ export function LoginPage() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    setAccessToken(TEMP_ACCESS_TOKEN)
+    navigate(isProfileSetupPending() ? ROUTES.profileSetup : ROUTES.home, { replace: true })
   }
 
   return (
