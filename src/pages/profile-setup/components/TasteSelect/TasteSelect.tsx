@@ -1,11 +1,6 @@
 import { useState } from 'react'
+import { GENRE_ROWS } from '@/constants/genres'
 import * as S from './TasteSelect.styles'
-
-const GENRE_ROWS = [
-  ['K-POP', 'POP', 'HIP-HOP', 'R&B / SOUL'],
-  ['BALLAD', 'INDIE', 'J-POP', 'JAZZ'],
-  ['EDM / ELECTRONIC', 'ROCK', 'OST'],
-]
 
 type TasteSelectProps = {
   selectedGenres: string[]

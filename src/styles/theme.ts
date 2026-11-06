@@ -22,6 +22,7 @@ export const theme = {
 
     /* 텍스트 */
     textHeading: '#392C37', // 주요 제목
+    textProfile: '#483743', // 마이페이지 제목
     textPrimary: '#464B54', // 제목, 주요 텍스트
     textBody: '#646B76', // 본문
     textSecondary: '#8E9299', // 보조 정보
