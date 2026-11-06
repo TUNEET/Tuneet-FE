@@ -3,6 +3,7 @@ import { MobileLayout } from '@/components/layout/MobileLayout'
 import { TabLayout } from '@/components/layout/TabLayout'
 import { ROUTES } from '@/constants/routes'
 import { ExplorePage } from '@/pages/explore/ExplorePage'
+import { NotificationsPage } from '@/pages/explore/notifications/NotificationsPage'
 import { ExploreWritePage } from '@/pages/explore/write/ExploreWritePage'
 import { HomePage } from '@/pages/home/HomePage'
 import { LoginPage } from '@/pages/login/LoginPage'
@@ -40,6 +41,7 @@ export const router = createBrowserRouter([
               { path: ROUTES.home, element: <HomePage /> },
               { path: ROUTES.explore, element: <ExplorePage /> },
               { path: ROUTES.exploreWrite, element: <ExploreWritePage /> },
+              { path: ROUTES.exploreNotifications, element: <NotificationsPage /> },
               { path: ROUTES.matching, element: <MatchingPage /> },
               { path: ROUTES.recommendedUsers, element: <RecommendedUsersPage /> },
               { path: ROUTES.userProfile, element: <UserProfilePage /> },
