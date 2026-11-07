@@ -1,8 +1,8 @@
 import styled, { keyframes } from 'styled-components'
 
-export type ConfirmPopoverSurface = 'light' | 'dim' | 'letter'
+export type ConfirmPopoverSurface = 'light' | 'dim' | 'letter' | 'sheet'
 export type ConfirmPopoverPlacement = 'top' | 'bottom'
-export type ConfirmPopoverTone = 'danger' | 'default'
+export type ConfirmPopoverTone = 'danger' | 'default' | 'muted'
 
 const SURFACES = {
   light: {
@@ -10,18 +10,28 @@ const SURFACES = {
     button: 'rgba(234, 234, 234, 0.7)',
     border: '1px solid rgba(255, 255, 255, 0.6)',
     shadow: 'inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 0 3rem rgba(0, 0, 0, 0.08)',
+    paddingBottom: '1rem',
   },
   dim: {
     popover: 'rgba(250, 250, 250, 0.7)',
     button: 'rgba(234, 234, 234, 0.7)',
     border: 'none',
     shadow: 'none',
+    paddingBottom: '1rem',
   },
   letter: {
     popover: 'rgba(250, 250, 250, 0.4)',
     button: 'rgba(234, 234, 234, 0.7)',
     border: 'none',
     shadow: 'none',
+    paddingBottom: '1rem',
+  },
+  sheet: {
+    popover: 'rgba(250, 250, 250, 0.7)',
+    button: 'rgba(234, 234, 234, 0.7)',
+    border: 'none',
+    shadow: '0 0 3rem rgba(0, 0, 0, 0.08)',
+    paddingBottom: '1.5rem',
   },
 }
 
@@ -48,7 +58,7 @@ export const Popover = styled.div<{
   flex-direction: column;
   gap: 1rem;
   width: 20.8rem;
-  padding: 1.5rem 1rem 1rem;
+  padding: 1.5rem 1rem ${({ $surface }) => SURFACES[$surface].paddingBottom};
   border: ${({ $surface }) => SURFACES[$surface].border};
   border-radius: 2.4rem;
   background-color: ${({ $surface }) => SURFACES[$surface].popover};
@@ -82,7 +92,12 @@ export const ConfirmButton = styled.button<{
   font-size: ${({ theme }) => theme.fontSize.sm};
   font-weight: 500;
   line-height: 2rem;
-  color: ${({ theme, $tone }) => ($tone === 'danger' ? theme.colors.danger : theme.colors.blue)};
+  color: ${({ theme, $tone }) =>
+    ({
+      danger: theme.colors.danger,
+      default: theme.colors.blue,
+      muted: theme.colors.textPlaceholder,
+    })[$tone]};
   transition: background-color 0.15s;
 
   &:active {

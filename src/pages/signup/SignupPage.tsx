@@ -1,9 +1,14 @@
+import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router'
+import eyeClosedIcon from '@/assets/icons/deye.svg'
+import eyeIcon from '@/assets/icons/eye.svg'
 import logo from '@/assets/images/logo.svg'
 import { ROUTES } from '@/constants/routes'
 import { markProfileSetupPending } from '@/utils/auth'
+import { TermDetailModal } from './components/TermDetailModal/TermDetailModal'
 import * as S from './SignupPage.styles'
+import { TERMS } from './terms'
 
 const FIELDS = [
   {
@@ -29,16 +34,38 @@ const FIELDS = [
   },
 ]
 
-const TERMS = [
-  { id: 'termsOfService', label: '서비스 이용약관 동의 (필수)' },
-  { id: 'privacyPolicy', label: '개인정보 처리방침 동의 (필수)' },
-]
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export function SignupPage() {
   const navigate = useNavigate()
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [visiblePasswords, setVisiblePasswords] = useState<Record<string, boolean>>({})
+  const [openTermId, setOpenTermId] = useState<string | null>(null)
+  const openTermDetail = TERMS.find(({ id }) => id === openTermId)?.detail
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+
+    const formData = new FormData(event.currentTarget)
+    const email = String(formData.get('email'))
+    const password = String(formData.get('password'))
+    const passwordConfirm = String(formData.get('passwordConfirm'))
+
+    if (!EMAIL_PATTERN.test(email)) {
+      setErrorMessage('올바른 이메일 주소를 입력해 주세요.')
+      return
+    }
+
+    if (!password || password !== passwordConfirm) {
+      setErrorMessage('올바른 비밀번호를 입력해 주세요.')
+      return
+    }
+
+    if (TERMS.some(({ id, required }) => required && !formData.has(id))) {
+      setErrorMessage('필수 약관에 동의해 주세요.')
+      return
+    }
+
     markProfileSetupPending()
     navigate(ROUTES.login)
   }
@@ -56,18 +83,42 @@ export function SignupPage() {
 
       <form onSubmit={handleSubmit} noValidate>
         <S.Fields>
-          {FIELDS.map(({ id, label, type, placeholder, autoComplete }) => (
-            <S.Field key={id}>
-              <S.Label htmlFor={id}>{label}</S.Label>
-              <S.Input
-                id={id}
-                name={id}
-                type={type}
-                placeholder={placeholder}
-                autoComplete={autoComplete}
-              />
-            </S.Field>
-          ))}
+          {FIELDS.map(({ id, label, type, placeholder, autoComplete }) => {
+            const isPassword = type === 'password'
+            const isVisible = Boolean(visiblePasswords[id])
+            const InputComponent = isPassword ? S.PasswordInput : S.Input
+
+            return (
+              <S.Field key={id}>
+                <S.Label htmlFor={id}>{label}</S.Label>
+                <S.InputBox>
+                  <InputComponent
+                    id={id}
+                    name={id}
+                    type={isPassword && isVisible ? 'text' : type}
+                    placeholder={placeholder}
+                    autoComplete={autoComplete}
+                  />
+                  {isPassword && (
+                    <S.EyeButton
+                      type="button"
+                      aria-label={`${label} ${isVisible ? '숨기기' : '표시'}`}
+                      aria-pressed={isVisible}
+                      onClick={() =>
+                        setVisiblePasswords((prev) => ({ ...prev, [id]: !isVisible }))
+                      }
+                    >
+                      {isVisible ? (
+                        <img src={eyeIcon} alt="" width={16} height={12} />
+                      ) : (
+                        <img src={eyeClosedIcon} alt="" width={14} height={6} />
+                      )}
+                    </S.EyeButton>
+                  )}
+                </S.InputBox>
+              </S.Field>
+            )
+          })}
         </S.Fields>
 
         <S.Terms>
@@ -77,7 +128,9 @@ export function SignupPage() {
                 <S.Checkbox type="checkbox" name={id} />
                 {label}
               </S.TermLabel>
-              <S.TermDetail type="button">자세히보기</S.TermDetail>
+              <S.TermDetail type="button" onClick={() => setOpenTermId(id)}>
+                자세히보기
+              </S.TermDetail>
             </S.Term>
           ))}
         </S.Terms>
@@ -88,6 +141,19 @@ export function SignupPage() {
       <S.LoginButton type="button" onClick={() => navigate(ROUTES.login)}>
         로그인
       </S.LoginButton>
+
+      {errorMessage && (
+        <S.ErrorPopup role="alertdialog" aria-labelledby="signup-error">
+          <S.ErrorMessage id="signup-error">{errorMessage}</S.ErrorMessage>
+          <S.ErrorCloseButton type="button" onClick={() => setErrorMessage(null)} autoFocus>
+            닫기
+          </S.ErrorCloseButton>
+        </S.ErrorPopup>
+      )}
+
+      {openTermDetail && (
+        <TermDetailModal detail={openTermDetail} onClose={() => setOpenTermId(null)} />
+      )}
     </S.Page>
   )
 }

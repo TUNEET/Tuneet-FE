@@ -1,3 +1,5 @@
+import { useCallback, useRef, useState } from 'react'
+import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { MusicCard } from '@/components/common/MusicCard/MusicCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { MOCK_NOTIFICATIONS } from '@/mocks/data'
@@ -5,6 +7,17 @@ import * as S from '@/pages/explore/ExplorePage.styles'
 import { formatTimeAgo } from '@/utils/format'
 
 export function NotificationsPage() {
+  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS)
+  const [isClearOpen, setIsClearOpen] = useState(false)
+  const headerRef = useRef<HTMLDivElement>(null)
+  const closeClear = useCallback(() => setIsClearOpen(false), [])
+  const isEmpty = notifications.length === 0
+
+  const handleClear = () => {
+    closeClear()
+    setNotifications([])
+  }
+
   return (
     <S.Page>
       <S.Glows aria-hidden>
@@ -15,9 +28,25 @@ export function NotificationsPage() {
 
       <S.ExploreSheet>
         <S.Section>
-          <SectionHeader title="알림" actionLabel="전체삭제" />
+          <S.NotificationHeader ref={headerRef}>
+            <SectionHeader
+              title="알림"
+              actionLabel="전체삭제"
+              onActionClick={() => setIsClearOpen((prev) => !prev)}
+            />
+            <ConfirmPopover
+              open={isClearOpen}
+              message={isEmpty ? '삭제할 알림이 없어요.' : '모든 알림을 삭제하시겠어요?'}
+              confirmLabel={isEmpty ? '닫기' : '전체삭제'}
+              onConfirm={isEmpty ? closeClear : handleClear}
+              onClose={closeClear}
+              anchorRef={headerRef}
+              surface="sheet"
+              tone={isEmpty ? 'muted' : 'danger'}
+            />
+          </S.NotificationHeader>
           <S.CardList>
-            {MOCK_NOTIFICATIONS.map(({ id, nickname, message, song, createdAt }) => (
+            {notifications.map(({ id, nickname, message, song, createdAt }) => (
               <MusicCard
                 key={id}
                 tone="blue"

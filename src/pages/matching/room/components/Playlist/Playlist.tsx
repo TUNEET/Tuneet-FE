@@ -1,8 +1,6 @@
 import playCircleIcon from '@/assets/icons/play-circle.svg'
-import type { Song } from '@/types/song'
+import type { PlaylistSong } from '@/types/room'
 import * as S from './Playlist.styles'
-
-type PlaylistSong = Song & { id: number }
 
 type PlaylistProps = {
   songs: PlaylistSong[]
