@@ -21,11 +21,13 @@ export type RoomMember = {
   distanceKm: number
 }
 
+export type PlaylistSong = Song & { id: number }
+
 export type RoomDetail = Room & {
   myRole: RoomMemberRole
   members: RoomMember[]
   feeds: Feed[]
-  playlist: (Song & { id: number })[]
+  playlist: PlaylistSong[]
 }
 
 export type CreatedRoom = Room & {

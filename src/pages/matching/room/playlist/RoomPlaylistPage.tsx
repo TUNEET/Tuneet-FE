@@ -7,8 +7,10 @@ import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { getRoomPath } from '@/constants/routes'
 import { useToast } from '@/hooks/useToast'
 import { MOCK_ROOM_DETAIL } from '@/mocks/room'
+import type { PlaylistSong } from '@/types/room'
 import { Playlist } from '../components/Playlist/Playlist'
 import { RoomHeader } from '../components/RoomHeader/RoomHeader'
+import { SongSearchSheet } from './components/SongSearchSheet/SongSearchSheet'
 import * as S from './RoomPlaylistPage.styles'
 
 export function RoomPlaylistPage() {
@@ -22,11 +24,17 @@ export function RoomPlaylistPage() {
   const [isClearOpen, setIsClearOpen] = useState(false)
   const clearButtonRef = useRef<HTMLButtonElement>(null)
   const closeClear = useCallback(() => setIsClearOpen(false), [])
+  const [isSongSearchOpen, setIsSongSearchOpen] = useState(false)
+  const closeSongSearch = useCallback(() => setIsSongSearchOpen(false), [])
 
   const handleClear = () => {
     closeClear()
     setSongs([])
     showToast('플레이리스트를 비웠어요')
+  }
+
+  const handleAddSong = (song: PlaylistSong) => {
+    setSongs((prev) => [...prev, { ...song, id: Date.now() }])
   }
 
   return (
@@ -47,7 +55,7 @@ export function RoomPlaylistPage() {
               전체삭제
             </Button>
           )}
-          <Button>노래 추가하기</Button>
+          <Button onClick={() => setIsSongSearchOpen(true)}>노래 추가하기</Button>
           <ConfirmPopover
             open={isClearOpen}
             message="모든 노래를 삭제하시겠어요?"
@@ -59,6 +67,7 @@ export function RoomPlaylistPage() {
           />
         </S.Actions>
       </S.Content>
+      {isSongSearchOpen && <SongSearchSheet onAdd={handleAddSong} onClose={closeSongSearch} />}
     </SheetPage>
   )
 }
