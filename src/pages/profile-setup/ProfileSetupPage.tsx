@@ -27,8 +27,6 @@ import { MOCK_PROFILE_MUSIC } from './mocks'
 import type { ProfileArtist } from './mocks'
 import * as S from './ProfileSetupPage.styles'
 
-const MIN_ARTIST_COUNT = 3
-
 const DECORATIONS = [
   { src: musicSmallIcon, width: '3.18rem', height: '3.18rem', left: '28.088rem', top: '36.7rem' },
   { src: musicLargeIcon, width: '5.14rem', height: '5.14rem', left: '1.7rem', top: '40.194rem' },
@@ -183,7 +181,6 @@ export function ProfileSetupPage() {
         <S.TasteNextButton
           type="button"
           aria-label="다음"
-          disabled={selectedGenres.length === 0 || selectedArtists.length < MIN_ARTIST_COUNT}
           onClick={() => setStep('song')}
         >
           <svg width="8" height="14" viewBox="0 0 8 14" fill="none" aria-hidden>
