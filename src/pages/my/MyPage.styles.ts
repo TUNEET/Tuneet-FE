@@ -13,7 +13,7 @@ export const ProfileArea = styled.div`
   pointer-events: none;
 
   > div {
-    padding-bottom: 0;
+    padding-bottom: 3rem;
   }
 `
 

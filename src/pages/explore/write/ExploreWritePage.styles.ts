@@ -108,7 +108,8 @@ export const CommentInput = styled.textarea`
 
 export const SubmitButton = styled.button`
   position: absolute;
-  top: 55.2rem;
+  /* 852px 화면 기준 55.2rem. 화면 높이에 맞춰 움직이되 카드(약 35.3rem) 아래로는 유지 */
+  top: max(37.5rem, calc(100% - 16.6rem));
   right: 3rem;
   display: flex;
   width: 4rem;

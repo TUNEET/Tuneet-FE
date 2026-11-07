@@ -1,9 +1,22 @@
 import styled from 'styled-components'
 import { glass } from '@/styles/glass'
 
+/** 디자인 기준 top 값에 화면 높이 차이(--diff)의 ratio만큼을 더한다. */
+export const shiftTop = (top: string, ratio: number) => `calc(${top} + var(--diff) * ${ratio})`
+
+const SIGNUP_SHIFT = 0.2
+
+/**
+ * 디자인 기준 높이(85.2rem)와 실제 화면 높이의 차이.
+ * 화면이 작으면 음수, 크면 양수이며 --max-shrink 이상으로는 줄어들지 않는다.
+ * 아래쪽 요소는 `shiftTop`으로 이 차이의 일부만큼 위치를 옮겨 화면 높이에 맞춘다.
+ */
 export const Page = styled.div`
+  --max-shrink: 11rem;
+  --diff: max(calc(var(--frame-height) - 85.2rem), calc(var(--max-shrink) * -1));
+
   position: relative;
-  min-height: max(80.4rem, calc(var(--frame-height) + 4.9rem));
+  min-height: calc(90.1rem + var(--diff));
   margin-top: -4.9rem;
   overflow: hidden;
   background-color: ${({ theme }) => theme.colors.background};
@@ -53,7 +66,7 @@ export const Description = styled.p`
 
 export const Fields = styled.div`
   position: absolute;
-  top: 31.1rem;
+  top: ${shiftTop('31.1rem', SIGNUP_SHIFT)};
   right: 3rem;
   left: 3rem;
   display: flex;
@@ -125,7 +138,7 @@ export const EyeButton = styled.button`
 
 export const Terms = styled.div`
   position: absolute;
-  top: 59rem;
+  top: ${shiftTop('59rem', SIGNUP_SHIFT)};
   right: 3rem;
   left: 3rem;
   display: flex;
@@ -175,7 +188,7 @@ export const TermDetail = styled.button`
 
 export const SubmitButton = styled.button`
   position: absolute;
-  top: 70.1rem;
+  top: ${shiftTop('70.1rem', SIGNUP_SHIFT)};
   right: 3rem;
   left: 3rem;
   height: 5rem;
@@ -189,7 +202,7 @@ export const SubmitButton = styled.button`
 
 export const LoginButton = styled.button`
   position: absolute;
-  top: 76.1rem;
+  top: ${shiftTop('76.1rem', SIGNUP_SHIFT)};
   left: 50%;
   font-size: ${({ theme }) => theme.fontSize.xs};
   font-weight: 400;
@@ -202,7 +215,7 @@ export const LoginButton = styled.button`
 export const ErrorPopup = styled.div`
   ${glass}
   position: absolute;
-  top: 63.2rem;
+  top: ${shiftTop('63.2rem', SIGNUP_SHIFT)};
   left: 50%;
   display: flex;
   flex-direction: column;

@@ -1,4 +1,6 @@
 import styled, { css } from 'styled-components'
+import { SETUP_SHIFT } from '@/pages/profile-setup/ProfileSetupPage.styles'
+import { shiftTop } from '@/pages/signup/SignupPage.styles'
 
 export const glassSurface = css`
   background-color: rgba(227, 210, 221, 0.2);
@@ -10,7 +12,7 @@ export const glassSurface = css`
 
 export const Card = styled.div`
   position: absolute;
-  top: 41.7rem;
+  top: ${shiftTop('41.7rem', SETUP_SHIFT.platform)};
   right: 3rem;
   left: 3rem;
   display: flex;
@@ -96,7 +98,7 @@ export const MusicChip = styled.div`
 
 export const Platforms = styled.div`
   position: absolute;
-  top: 51.7rem;
+  top: ${shiftTop('51.7rem', SETUP_SHIFT.platform)};
   right: 3rem;
   left: 3rem;
   display: flex;
@@ -237,7 +239,7 @@ export const SuccessButton = styled.button`
 
 export const SleepingCharacter = styled.img`
   position: absolute;
-  top: 35.9rem;
+  top: ${shiftTop('35.9rem', SETUP_SHIFT.platform)};
   right: 4.7rem;
   width: 7.7rem;
   height: 6rem;
