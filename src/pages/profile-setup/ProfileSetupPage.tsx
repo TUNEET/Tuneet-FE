@@ -3,6 +3,7 @@ import type { ChangeEvent } from 'react'
 import { Navigate, useNavigate } from 'react-router'
 import heartImage from '@/assets/icons/back-H.svg'
 import editIcon from '@/assets/icons/edit-outline.svg'
+import musicEditIcon from '@/assets/icons/eva_edit-outline.svg'
 import boltLargeIcon from '@/assets/icons/fa6-solid_bolt-lightning-1.svg'
 import boltSmallIcon from '@/assets/icons/fa6-solid_bolt-lightning.svg'
 import musicLargeIcon from '@/assets/icons/flowbite_music-alt-solid-1.svg'
@@ -16,13 +17,17 @@ import waveformSmallIcon from '@/assets/icons/withicons_audio-waveform-duo.svg'
 import characterImage from '@/assets/images/character-profile.png'
 import logo from '@/assets/images/logo.svg'
 import { ROUTES } from '@/constants/routes'
+import { SongSearchSheet } from '@/pages/matching/room/playlist/components/SongSearchSheet/SongSearchSheet'
 import { clearProfileSetupPending, isProfileSetupPending } from '@/utils/auth'
 import { PlatformConnect } from './components/PlatformConnect/PlatformConnect'
 import { ProfileComplete } from './components/ProfileComplete/ProfileComplete'
 import { SongSelect } from './components/SongSelect/SongSelect'
 import { TasteSelect } from './components/TasteSelect/TasteSelect'
 import { MOCK_PROFILE_MUSIC } from './mocks'
+import type { ProfileArtist } from './mocks'
 import * as S from './ProfileSetupPage.styles'
+
+const MIN_ARTIST_COUNT = 3
 
 const DECORATIONS = [
   { src: musicSmallIcon, width: '3.18rem', height: '3.18rem', left: '28.088rem', top: '36.7rem' },
@@ -45,8 +50,10 @@ export function ProfileSetupPage() {
   >('profile')
   const [nickname, setNickname] = useState('')
   const [music, setMusic] = useState<typeof MOCK_PROFILE_MUSIC | null>(null)
+  const [isMusicSearchOpen, setIsMusicSearchOpen] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
+  const [selectedArtists, setSelectedArtists] = useState<ProfileArtist[]>([])
   const [songs, setSongs] = useState<(typeof MOCK_PROFILE_MUSIC)[]>([])
 
   useEffect(() => {
@@ -70,6 +77,20 @@ export function ProfileSetupPage() {
   const toggleGenre = (genre: string) => {
     setSelectedGenres((genres) =>
       genres.includes(genre) ? genres.filter((item) => item !== genre) : [...genres, genre],
+    )
+  }
+
+  const addArtist = ({ name, image }: ProfileArtist) => {
+    setSelectedArtists((artists) =>
+      artists.some((artist) => artist.name === name) ? artists : [...artists, { name, image }],
+    )
+  }
+
+  const addSong = (song: typeof MOCK_PROFILE_MUSIC) => {
+    setSongs((prevSongs) =>
+      prevSongs.some(({ title, artist }) => title === song.title && artist === song.artist)
+        ? prevSongs
+        : [...prevSongs, song],
     )
   }
 
@@ -103,6 +124,7 @@ export function ProfileSetupPage() {
           previewUrl={previewUrl}
           songs={songs}
           genres={selectedGenres}
+          artists={selectedArtists}
           onStart={finishSetup}
         />
       </S.Page>
@@ -121,7 +143,7 @@ export function ProfileSetupPage() {
         <S.Logo src={logo} alt="TUNEET" />
         <S.Heading>좋아하는 노래를 들려주세요!</S.Heading>
         <S.PlatformDescription>나를 표현하는 노래를 1개 이상 선택해 주세요.</S.PlatformDescription>
-        <SongSelect songs={songs} onSearchSubmit={() => setSongs([MOCK_PROFILE_MUSIC])} />
+        <SongSelect songs={songs} onAddSong={addSong} />
         <S.TasteNextButton
           type="button"
           aria-label="다음"
@@ -152,11 +174,16 @@ export function ProfileSetupPage() {
           <br />
           아티스트 3팀 이상을 선택해 주세요.
         </S.PlatformDescription>
-        <TasteSelect selectedGenres={selectedGenres} onToggleGenre={toggleGenre} />
+        <TasteSelect
+          selectedGenres={selectedGenres}
+          onToggleGenre={toggleGenre}
+          selectedArtists={selectedArtists}
+          onAddArtist={addArtist}
+        />
         <S.TasteNextButton
           type="button"
           aria-label="다음"
-          disabled={selectedGenres.length === 0}
+          disabled={selectedGenres.length === 0 || selectedArtists.length < MIN_ARTIST_COUNT}
           onClick={() => setStep('song')}
         >
           <svg width="8" height="14" viewBox="0 0 8 14" fill="none" aria-hidden>
@@ -207,14 +234,23 @@ export function ProfileSetupPage() {
           <>
             <S.AvatarGlow $color="#ffc2e5" aria-hidden />
             {music ? (
-              <S.SelectedMusicButton type="button">
-                <img src={music.albumImage} alt="" width={17} height={17} />
-                <span>
-                  {music.title} - {music.artist}
-                </span>
-              </S.SelectedMusicButton>
+              <>
+                <S.SelectedMusicButton type="button">
+                  <img src={music.albumImage} alt="" width={17} height={17} />
+                  <span>
+                    {music.title} - {music.artist}
+                  </span>
+                </S.SelectedMusicButton>
+                <S.MusicEditButton
+                  type="button"
+                  aria-label="프로필 음악 수정"
+                  onClick={() => setIsMusicSearchOpen(true)}
+                >
+                  <img src={musicEditIcon} alt="" width={20} height={20} />
+                </S.MusicEditButton>
+              </>
             ) : (
-              <S.MusicButton type="button" onClick={() => setMusic(MOCK_PROFILE_MUSIC)}>
+              <S.MusicButton type="button" onClick={() => setIsMusicSearchOpen(true)}>
                 프로필 음악 추가하기
               </S.MusicButton>
             )}
@@ -290,6 +326,16 @@ export function ProfileSetupPage() {
       <S.LaterButton type="button" onClick={finishSetup}>
         나중에 설정하기
       </S.LaterButton>
+
+      {isMusicSearchOpen && (
+        <SongSearchSheet
+          variant="profile"
+          onAdd={({ title, artist, albumImageUrl }) =>
+            setMusic({ title, artist, albumImage: albumImageUrl })
+          }
+          onClose={() => setIsMusicSearchOpen(false)}
+        />
+      )}
     </S.Page>
   )
 }

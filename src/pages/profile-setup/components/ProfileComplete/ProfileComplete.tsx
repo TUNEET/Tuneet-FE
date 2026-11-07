@@ -50,6 +50,7 @@ type ProfileCompleteProps = {
   previewUrl: string | null
   songs: { title: string; artist: string; albumImage: string }[]
   genres: string[]
+  artists?: { name: string; image: string }[]
   frame?: 'image' | 'plain'
   isEditing?: boolean
   onNicknameChange?: (nickname: string) => void
@@ -63,6 +64,7 @@ export function ProfileComplete({
   previewUrl,
   songs,
   genres,
+  artists = MOCK_PROFILE_ARTISTS,
   frame = 'image',
   isEditing = false,
   onNicknameChange,
@@ -104,7 +106,7 @@ export function ProfileComplete({
             </Song>
           ))}
           <S.TagRow>
-            {MOCK_PROFILE_ARTISTS.map(({ name, image }) => (
+            {artists.map(({ name, image }) => (
               <S.ArtistTag key={name}>
                 <img src={image} alt="" width={12} height={12} />
                 {name}
