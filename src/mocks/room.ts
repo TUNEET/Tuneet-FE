@@ -1,4 +1,4 @@
-import type { CreatedRoom, CreateRoomRequest, RoomDetail } from '@/types/room'
+import type { CreatedRoom, CreateRoomRequest, PlaylistSong, RoomDetail } from '@/types/room'
 
 const ALBUM = 'https://placehold.co/80x80'
 const minutesAgo = (minutes: number) => new Date(Date.now() - minutes * 60 * 1000).toISOString()
@@ -101,6 +101,36 @@ export const MOCK_ROOM_DETAIL: RoomDetail = {
     artist: 'RESCENE',
     albumImageUrl: ALBUM,
   })),
+}
+
+const MOCK_SEARCHABLE_SONGS: PlaylistSong[] = [
+  { id: 101, title: 'Pretty Girl', artist: 'RESCENE', albumImageUrl: ALBUM },
+  { id: 102, title: 'Deja Vu', artist: 'RESCENE', albumImageUrl: ALBUM },
+  { id: 103, title: 'LOVE ATTACK', artist: 'RESCENE', albumImageUrl: ALBUM },
+  { id: 104, title: 'Glow Up', artist: 'RESCENE', albumImageUrl: ALBUM },
+  { id: 105, title: 'Yoyo', artist: 'RESCENE', albumImageUrl: ALBUM },
+  { id: 106, title: 'not the same', artist: 'ROSÉ', albumImageUrl: ALBUM },
+  { id: 107, title: 'Looks Can Kill', artist: 'IVE', albumImageUrl: ALBUM },
+  {
+    id: 108,
+    title: '어떻게 이별까지 사랑하겠어, 널 사랑하는 거지',
+    artist: '악동뮤지션',
+    albumImageUrl: ALBUM,
+  },
+]
+
+const MOCK_EXTRA_SEARCHABLE_SONGS: PlaylistSong[] = Array.from({ length: 8 }, (_, index) => ({
+  id: 109 + index,
+  title: `Track ${index + 1}`,
+  artist: 'RESCENE',
+  albumImageUrl: ALBUM,
+}))
+
+export async function mockSearchPlaylistSongs(query: string) {
+  const keyword = query.trim().toLowerCase()
+  return [...MOCK_SEARCHABLE_SONGS, ...MOCK_EXTRA_SEARCHABLE_SONGS].filter(({ title, artist }) =>
+    `${title} ${artist}`.toLowerCase().includes(keyword),
+  )
 }
 
 export async function mockCreateRoom(request: CreateRoomRequest): Promise<CreatedRoom> {
