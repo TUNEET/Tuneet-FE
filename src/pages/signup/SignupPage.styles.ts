@@ -103,6 +103,8 @@ export const InputBox = styled.div`
 
 export const PasswordInput = styled(Input)`
   padding-right: 5rem;
+  font-family: 'PasswordMask', 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
+    system-ui, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 
   &::-ms-reveal {
     display: none;
@@ -112,13 +114,12 @@ export const PasswordInput = styled(Input)`
 export const EyeButton = styled.button`
   position: absolute;
   top: 0.5rem;
-  right: 0.5rem;
+  right: 0.6rem;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 4rem;
   height: 4rem;
-  color: ${({ theme }) => theme.colors.textPlaceholder};
 `
 
 export const Terms = styled.div`
