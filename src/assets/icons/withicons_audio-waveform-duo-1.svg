@@ -1,0 +1,27 @@
+<svg width="41" height="41" viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g filter="url(#filter0_g_1_44)">
+<g clip-path="url(#clip0_1_44)">
+<use xlink:href="#stroke0_1_44" stroke="#FAFAFA"/>
+<use xlink:href="#stroke0_1_44" stroke="url(#paint0_linear_1_44)"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_g_1_44" x="-2.68818" y="-2.68815" width="46.3073" height="46.3073" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feTurbulence type="fractalNoise" baseFrequency="0.074399814009666443 0.074399814009666443" numOctaves="3" seed="6814" />
+<feDisplacementMap in="shape" scale="5.3763580322265625" xChannelSelector="R" yChannelSelector="G" result="displacedImage" width="100%" height="100%" />
+<feMerge result="effect1_texture_1_44">
+<feMergeNode in="displacedImage"/>
+</feMerge>
+</filter>
+<linearGradient id="paint0_linear_1_44" x1="11.0346" y1="18.5166" x2="25.3286" y2="19.3739" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FAFAFA"/>
+<stop offset="1" stop-color="#FFF2FA"/>
+</linearGradient>
+<clipPath id="clip0_1_44">
+<rect width="32.2581" height="32.2581" fill="white" transform="translate(0 10.3929) rotate(-18.7947)"/>
+</clipPath>
+<path id="stroke0_1_44" d="M7.74132 24.7959L10.2862 23.9298L11.5186 17.1213L18.8135 28.1267L17.0013 10.2861L27.7471 29.3458L25.9482 13.6303L30.6583 19.1264L31.2811 16.7847L33.1898 16.1351" stroke-width="2.41936" stroke-linecap="round" stroke-linejoin="round"/>
+</defs>
+</svg>
