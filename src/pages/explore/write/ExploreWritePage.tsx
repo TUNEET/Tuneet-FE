@@ -7,6 +7,7 @@ import upIcon from '@/assets/icons/upIcon.svg'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { ROUTES } from '@/constants/routes'
 import { MOCK_PROFILE, MOCK_WRITE_SONG } from '@/mocks/data'
+import { SongSearchSheet } from '@/pages/matching/room/playlist/components/SongSearchSheet/SongSearchSheet'
 import type { Feed } from '@/types/feed'
 import { FeedDetailModal } from '../components/FeedDetailModal/FeedDetailModal'
 import * as S from './ExploreWritePage.styles'
@@ -15,7 +16,9 @@ const COMMENT_MAX_LENGTH = 100
 
 export function ExploreWritePage() {
   const navigate = useNavigate()
-  const { title, artist, albumImageUrl } = MOCK_WRITE_SONG
+  const [song, setSong] = useState(MOCK_WRITE_SONG)
+  const [isSongSearchOpen, setIsSongSearchOpen] = useState(false)
+  const { title, artist, albumImageUrl } = song
   const [comment, setComment] = useState('')
   const [postedFeed, setPostedFeed] = useState<Feed | null>(null)
 
@@ -23,7 +26,7 @@ export function ExploreWritePage() {
     setPostedFeed({
       id: 0,
       nickname: MOCK_PROFILE.nickname,
-      song: MOCK_WRITE_SONG,
+      song,
       content: comment.trim(),
       createdAt: new Date().toISOString(),
     })
@@ -49,7 +52,16 @@ export function ExploreWritePage() {
               <img src={musicIcon} alt="" width={20} height={20} />
               게시할 노래
             </S.Label>
-            <S.SearchInput id="explore-song" type="search" placeholder="노래 검색하기" />
+            <S.SearchInput
+              id="explore-song"
+              type="search"
+              readOnly
+              placeholder="노래 검색하기"
+              onClick={() => setIsSongSearchOpen(true)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') setIsSongSearchOpen(true)
+              }}
+            />
             <S.SelectedSong>
               <img src={albumImageUrl} alt="" width={12} height={12} />
               <span>
@@ -75,6 +87,14 @@ export function ExploreWritePage() {
       <S.SubmitButton type="button" aria-label="게시하기" onClick={handleSubmit}>
         <img src={upIcon} alt="" width={40} height={40} />
       </S.SubmitButton>
+
+      {isSongSearchOpen && (
+        <SongSearchSheet
+          variant="explore"
+          onAdd={({ title, artist, albumImageUrl }) => setSong({ title, artist, albumImageUrl })}
+          onClose={() => setIsSongSearchOpen(false)}
+        />
+      )}
 
       {postedFeed && (
         <FeedDetailModal
