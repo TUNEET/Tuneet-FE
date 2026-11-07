@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router'
+import eyeClosedIcon from '@/assets/icons/deye.svg'
+import eyeIcon from '@/assets/icons/eye.svg'
 import logo from '@/assets/images/logo.svg'
 import termCharacter from '@/assets/images/tunee6.svg'
 import { ROUTES } from '@/constants/routes'
@@ -33,26 +35,6 @@ const FIELDS = [
 ]
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-function EyeIcon({ crossed }: { crossed: boolean }) {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 20 20"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M1.5 10S4.5 4 10 4s8.5 6 8.5 6-3 6-8.5 6-8.5-6-8.5-6Z" />
-      <circle cx="10" cy="10" r="2.5" />
-      {crossed && <path d="m3 3 14 14" />}
-    </svg>
-  )
-}
 
 export function SignupPage() {
   const navigate = useNavigate()
@@ -126,7 +108,11 @@ export function SignupPage() {
                         setVisiblePasswords((prev) => ({ ...prev, [id]: !isVisible }))
                       }
                     >
-                      <EyeIcon crossed={!isVisible} />
+                      {isVisible ? (
+                        <img src={eyeIcon} alt="" width={16} height={12} />
+                      ) : (
+                        <img src={eyeClosedIcon} alt="" width={14} height={6} />
+                      )}
                     </S.EyeButton>
                   )}
                 </S.InputBox>
