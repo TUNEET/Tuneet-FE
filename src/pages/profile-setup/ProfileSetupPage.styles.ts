@@ -1,7 +1,18 @@
 import styled from 'styled-components'
-import { Description } from '@/pages/signup/SignupPage.styles'
+import { Page as BasePage, Description, shiftTop } from '@/pages/signup/SignupPage.styles'
 
-export { Blob, Heading, Logo, Page } from '@/pages/signup/SignupPage.styles'
+export { Blob, Heading, Logo } from '@/pages/signup/SignupPage.styles'
+
+/** 화면 높이 차이 중 각 영역 위 여백이 흡수하는 비율 (나머지는 하단 여백) */
+export const SETUP_SHIFT = {
+  stage: 0.17,
+  platform: 0.44,
+  bottom: 0.5,
+}
+
+export const Page = styled(BasePage)`
+  --max-shrink: 18rem;
+`
 
 export const SetupDescription = styled(Description)`
   top: 20.6rem;
@@ -44,7 +55,7 @@ export const TasteNextButton = styled.button`
 
 export const Stage = styled.div`
   position: absolute;
-  top: 0;
+  top: ${shiftTop('0rem', SETUP_SHIFT.stage)};
   left: calc(50% - 19.65rem);
   width: 39.3rem;
   height: 85.2rem;
@@ -223,7 +234,7 @@ export const Decoration = styled.img<{
 
 export const StepButtons = styled.div`
   position: absolute;
-  top: 66.1rem;
+  top: ${shiftTop('66.1rem', SETUP_SHIFT.bottom)};
   right: 3rem;
   left: 3rem;
   display: flex;
@@ -263,7 +274,7 @@ export const NextButton = styled.button`
 
 export const LaterButton = styled.button`
   position: absolute;
-  top: 76.1rem;
+  top: ${shiftTop('76.1rem', SETUP_SHIFT.bottom)};
   left: 50%;
   font-size: ${({ theme }) => theme.fontSize.xs};
   font-weight: 400;
