@@ -90,7 +90,8 @@ export const Sheet = styled.div<VariantProps>`
     `}
 `
 
-export const Title = styled.h2<VariantProps>`
+export const Title = styled.h2<VariantProps & { $isHidden: boolean }>`
+  visibility: ${({ $isHidden }) => ($isHidden ? 'hidden' : 'visible')};
   display: flex;
   align-items: center;
   height: 3rem;
