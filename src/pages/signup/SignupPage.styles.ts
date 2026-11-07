@@ -51,7 +51,7 @@ export const Description = styled.p`
 
 export const Fields = styled.div`
   position: absolute;
-  top: 32.8rem;
+  top: 31.1rem;
   right: 3rem;
   left: 3rem;
   display: flex;
@@ -81,18 +81,19 @@ export const Input = styled.input`
   border-radius: 1rem;
   background-color: ${({ theme }) => theme.colors.border};
   font-size: ${({ theme }) => theme.fontSize.sm};
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: 0.028rem;
   color: ${({ theme }) => theme.colors.textHeading};
 
   &::placeholder {
+    font-weight: 400;
     color: ${({ theme }) => theme.colors.textPlaceholder};
   }
 `
 
 export const Terms = styled.div`
   position: absolute;
-  top: 60.7rem;
+  top: 59rem;
   right: 3rem;
   left: 3rem;
   display: flex;
@@ -128,6 +129,7 @@ export const Checkbox = styled.input`
 
   &:checked {
     background-color: ${({ theme }) => theme.colors.primary};
+    box-shadow: inset 0 0 0 0.3rem ${({ theme }) => theme.colors.border};
   }
 `
 

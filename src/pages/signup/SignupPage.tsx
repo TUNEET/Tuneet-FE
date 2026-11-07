@@ -32,6 +32,7 @@ const FIELDS = [
 const TERMS = [
   { id: 'termsOfService', label: '서비스 이용약관 동의 (필수)' },
   { id: 'privacyPolicy', label: '개인정보 처리방침 동의 (필수)' },
+  { id: 'locationConsent', label: '위치정보 수집 및 이용 동의 (선택)' },
 ]
 
 export function SignupPage() {
