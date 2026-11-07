@@ -24,14 +24,13 @@ export const BackButton = styled.button`
 `
 
 export const TasteNextButton = styled.button`
-  position: absolute;
-  top: 66.1rem;
-  right: 3rem;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 4rem;
   height: 4rem;
+  margin: 0 3rem 3rem auto;
   border-radius: 10000px;
   background-color: ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.surfaceWhite};
@@ -117,6 +116,15 @@ export const SelectedMusicButton = styled(MusicButton)`
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+`
+
+export const MusicEditButton = styled.button`
+  position: absolute;
+  top: 55.2rem;
+  left: 18.7rem;
+  display: flex;
+  width: 2rem;
+  height: 2rem;
 `
 
 export const Nickname = styled.p`

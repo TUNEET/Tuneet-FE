@@ -2,13 +2,13 @@ import styled, { css } from 'styled-components'
 import { glassSurface } from '../PlatformConnect/PlatformConnect.styles'
 
 export const Panels = styled.div`
-  position: absolute;
-  top: 26.6rem;
-  right: 3rem;
-  left: 3rem;
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  min-height: 39.5rem;
+  margin: 26.6rem 3rem 0;
+  padding-bottom: 2rem;
 `
 
 export const Panel = styled.div<{ $openHeight: string; $isOpen: boolean }>`
@@ -85,6 +85,37 @@ export const GenreChip = styled.button<{ $isSelected: boolean }>`
           outline-offset: -1px;
           color: ${theme.colors.textPlaceholder};
         `}
+`
+
+export const SelectedArtists = styled.ul`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 25rem;
+  margin: 3.9rem 0 2.2rem 5.5rem;
+`
+
+export const SelectedArtist = styled.li`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.8rem;
+  border-radius: 1000px;
+  background-color: ${({ theme }) => theme.colors.surfacePink};
+  font-size: ${({ theme }) => theme.fontSize.xxs};
+  font-weight: 500;
+  letter-spacing: 0.02rem;
+  color: ${({ theme }) => theme.colors.textPlaceholder};
+
+  img {
+    flex-shrink: 0;
+    border-radius: 9999px;
+  }
+
+  span {
+    white-space: nowrap;
+  }
 `
 
 export const ArtistSearch = styled.input`

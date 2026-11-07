@@ -1,5 +1,9 @@
-import styled, { keyframes } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { Item, List, PlayButton, Song } from '../../../components/Playlist/Playlist.styles'
+
+export type SongSearchSheetVariant = 'playlist' | 'profile'
+
+type VariantProps = { $variant: SongSearchSheetVariant }
 
 const fadeIn = keyframes`
   from {
@@ -19,9 +23,9 @@ const slideUp = keyframes`
   }
 `
 
-export const Overlay = styled.div`
+export const Overlay = styled.div<VariantProps>`
   position: fixed;
-  inset: 0 0 var(--bottom-nav-height);
+  inset: 0 0 ${({ $variant }) => ($variant === 'profile' ? '0' : 'var(--bottom-nav-height)')};
   z-index: 100;
   display: flex;
   flex-direction: column;
@@ -51,7 +55,7 @@ export const CloseButton = styled.button`
   color: white;
 `
 
-export const Sheet = styled.div`
+export const Sheet = styled.div<VariantProps>`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -73,18 +77,31 @@ export const Sheet = styled.div`
     background: linear-gradient(180deg, rgba(250, 250, 250, 0) 0%, rgba(250, 250, 250, 0.8) 100%);
     pointer-events: none;
   }
+
+  ${({ $variant, theme }) =>
+    $variant === 'profile' &&
+    css`
+      height: 50rem;
+      background-color: ${theme.colors.surfacePink};
+
+      &::before {
+        display: none;
+      }
+    `}
 `
 
-export const Title = styled.h2`
+export const Title = styled.h2<VariantProps & { $isHidden: boolean }>`
+  visibility: ${({ $isHidden }) => ($isHidden ? 'hidden' : 'visible')};
   display: flex;
   align-items: center;
   height: 3rem;
   font-size: ${({ theme }) => theme.fontSize.xxs};
   font-weight: 400;
-  color: ${({ theme }) => theme.colors.lavender};
+  color: ${({ theme, $variant }) =>
+    $variant === 'profile' ? theme.colors.primary : theme.colors.lavender};
 `
 
-export const SearchInput = styled.input`
+export const SearchInput = styled.input<VariantProps>`
   flex-shrink: 0;
   width: 100%;
   height: 2.8rem;
@@ -106,6 +123,20 @@ export const SearchInput = styled.input`
   &:focus {
     outline: none;
   }
+
+  ${({ $variant, theme }) =>
+    $variant === 'profile' &&
+    css`
+      background-color: ${theme.colors.border};
+      font-weight: 600;
+      letter-spacing: 0.02rem;
+      color: ${theme.colors.textHeading};
+
+      &::placeholder {
+        font-weight: 500;
+        color: ${theme.colors.textPlaceholder};
+      }
+    `}
 `
 
 export const ResultList = styled(List)`
@@ -113,19 +144,29 @@ export const ResultList = styled(List)`
   margin-top: 2rem;
 `
 
-export const ResultItem = styled(Item)`
+export const ResultItem = styled(Item)<VariantProps>`
   position: relative;
-  background-color: ${({ theme }) => theme.colors.lavenderLight};
+  background-color: ${({ theme, $variant }) =>
+    $variant === 'profile' ? theme.colors.border : theme.colors.lavenderLight};
+
+  ${({ $variant, theme }) =>
+    $variant === 'profile' &&
+    css`
+      p {
+        letter-spacing: 0.02rem;
+        color: ${theme.colors.textHeading};
+      }
+    `}
 `
 
 export const ResultSong = Song
 
 export const AddButton = PlayButton
 
-export const Pagination = styled.div`
+export const Pagination = styled.div<VariantProps>`
   position: absolute;
   right: 3rem;
-  bottom: 5rem;
+  bottom: ${({ $variant }) => ($variant === 'profile' ? '12.4rem' : '5rem')};
   left: 3rem;
   display: flex;
   align-items: center;
@@ -153,13 +194,15 @@ export const PageButton = styled.button<{ $direction: 'prev' | 'next' }>`
   }
 `
 
-export const PageLabel = styled.span`
+export const PageLabel = styled.span<VariantProps>`
   font-size: ${({ theme }) => theme.fontSize.xxs};
   font-weight: 500;
-  color: ${({ theme }) => theme.colors.textPrimary};
+  letter-spacing: ${({ $variant }) => ($variant === 'profile' ? '0.02rem' : 'normal')};
+  color: ${({ theme, $variant }) =>
+    $variant === 'profile' ? theme.colors.textHeading : theme.colors.textPrimary};
 `
 
-export const Empty = styled.div`
+export const Empty = styled.div<VariantProps>`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -179,6 +222,8 @@ export const Empty = styled.div`
     font-weight: 600;
     line-height: 2rem;
     text-align: center;
-    color: ${({ theme }) => theme.colors.textPrimary};
+    letter-spacing: ${({ $variant }) => ($variant === 'profile' ? '0.032rem' : 'normal')};
+    color: ${({ theme, $variant }) =>
+      $variant === 'profile' ? theme.colors.textHeading : theme.colors.textPrimary};
   }
 `

@@ -1,15 +1,18 @@
 import { useCallback, useEffect, useId, useState } from 'react'
+import plusCircleRoseIcon from '@/assets/icons/plus-circle-rose.svg'
 import plusCircleIcon from '@/assets/icons/plus-circle.svg'
 import characterMusicSearch from '@/assets/images/character-music-search.png'
+import characterProfileSearch from '@/assets/images/tunee7.svg'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { mockSearchPlaylistSongs } from '@/mocks/room'
 import type { PlaylistSong } from '@/types/room'
 import * as S from './SongSearchSheet.styles'
+import type { SongSearchSheetVariant } from './SongSearchSheet.styles'
 
 const SEARCH_DEBOUNCE_MS = 200
 const PAGE_SIZE = 5
 
-function PageArrow() {
+export function PageArrow() {
   return (
     <svg width="4" height="7" viewBox="0 0 6 10" fill="currentColor" aria-hidden="true">
       <path d="M0.229482 9.77964C0.0825448 9.63852 2.41668e-08 9.44713 3.28898e-08 9.24757C4.16128e-08 9.04801 0.0825449 8.85662 0.229482 8.7155L4.10882 4.9904L0.229482 1.26531C0.0912136 1.12269 0.0159468 0.934126 0.0195188 0.739299C0.0230903 0.544471 0.105222 0.358569 0.248632 0.220709C0.392043 0.0828474 0.585552 0.00377536 0.788442 0.000130426C0.991332 -0.00351451 1.18778 0.0685518 1.33646 0.201165L5.77052 4.45774C5.91745 4.59887 6 4.79026 6 4.98982C6 5.18937 5.91745 5.38076 5.77052 5.52189L1.33769 9.77964C1.19072 9.92074 0.991408 10 0.783586 10C0.575763 10 0.37645 9.92074 0.229482 9.77964Z" />
@@ -20,9 +23,16 @@ function PageArrow() {
 type SongSearchSheetProps = {
   onAdd: (song: PlaylistSong) => void
   onClose: () => void
+  variant?: SongSearchSheetVariant
+  hiddenTitle?: string
 }
 
-export function SongSearchSheet({ onAdd, onClose }: SongSearchSheetProps) {
+export function SongSearchSheet({
+  onAdd,
+  onClose,
+  variant = 'playlist',
+  hiddenTitle,
+}: SongSearchSheetProps) {
   const titleId = useId()
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<PlaylistSong[] | null>(null)
@@ -63,16 +73,22 @@ export function SongSearchSheet({ onAdd, onClose }: SongSearchSheetProps) {
   const hasResults = keyword !== '' && results !== null && results.length > 0
   const isNoResult = keyword !== '' && results !== null && results.length === 0
   const totalPages = Math.ceil((results?.length ?? 0) / PAGE_SIZE)
+  const isProfile = variant === 'profile'
+  const characterImage = isProfile ? characterProfileSearch : characterMusicSearch
+  const addIcon = isProfile ? plusCircleRoseIcon : plusCircleIcon
 
   return (
-    <S.Overlay>
+    <S.Overlay $variant={variant}>
       <S.Content role="dialog" aria-modal="true" aria-labelledby={titleId}>
         <S.CloseButton type="button" onClick={onClose}>
           닫기
         </S.CloseButton>
-        <S.Sheet>
-          <S.Title id={titleId}>플레이리스트</S.Title>
+        <S.Sheet $variant={variant}>
+          <S.Title id={titleId} $variant={variant} $isHidden={hiddenTitle !== undefined}>
+            {hiddenTitle ?? (isProfile ? '프로필' : '플레이리스트')}
+          </S.Title>
           <S.SearchInput
+            $variant={variant}
             type="text"
             enterKeyHint="search"
             value={query}
@@ -86,7 +102,7 @@ export function SongSearchSheet({ onAdd, onClose }: SongSearchSheetProps) {
           {hasResults && (
             <S.ResultList>
               {results.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((song) => (
-                <S.ResultItem key={song.id}>
+                <S.ResultItem key={song.id} $variant={variant}>
                   <S.ResultSong>
                     <img src={song.albumImageUrl} alt="" />
                     <span>
@@ -98,23 +114,23 @@ export function SongSearchSheet({ onAdd, onClose }: SongSearchSheetProps) {
                     aria-label={`${song.title} 추가`}
                     onClick={() => handleAdd(song)}
                   >
-                    <img src={plusCircleIcon} alt="" width={16} height={16} />
+                    <img src={addIcon} alt="" width={16} height={16} />
                   </S.AddButton>
                   <ConfirmPopover
                     open={addedSongId === song.id}
                     message="노래가 추가되었습니다."
-                    confirmLabel="플레이리스트로 이동"
-                    onConfirm={onClose}
+                    confirmLabel={isProfile ? '닫기' : '플레이리스트로 이동'}
+                    onConfirm={isProfile ? closeAddedPopover : onClose}
                     onClose={closeAddedPopover}
                     surface="sheet"
-                    tone="default"
+                    tone={isProfile ? 'muted' : 'default'}
                   />
                 </S.ResultItem>
               ))}
             </S.ResultList>
           )}
           {hasResults && (
-            <S.Pagination>
+            <S.Pagination $variant={variant}>
               <S.PageButton
                 type="button"
                 $direction="prev"
@@ -124,7 +140,7 @@ export function SongSearchSheet({ onAdd, onClose }: SongSearchSheetProps) {
               >
                 <PageArrow />
               </S.PageButton>
-              <S.PageLabel>
+              <S.PageLabel $variant={variant}>
                 {page}/{totalPages}
               </S.PageLabel>
               <S.PageButton
@@ -139,8 +155,8 @@ export function SongSearchSheet({ onAdd, onClose }: SongSearchSheetProps) {
             </S.Pagination>
           )}
           {!keyword && (
-            <S.Empty>
-              <img src={characterMusicSearch} alt="" />
+            <S.Empty $variant={variant}>
+              <img src={characterImage} alt="" />
               <p>
                 노래를 검색해서
                 <br />
@@ -149,8 +165,8 @@ export function SongSearchSheet({ onAdd, onClose }: SongSearchSheetProps) {
             </S.Empty>
           )}
           {isNoResult && (
-            <S.Empty>
-              <img src={characterMusicSearch} alt="" />
+            <S.Empty $variant={variant}>
+              <img src={characterImage} alt="" />
               <p>검색 결과가 없어요</p>
             </S.Empty>
           )}

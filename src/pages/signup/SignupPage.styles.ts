@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { glass } from '@/styles/glass'
 
 export const Page = styled.div`
   position: relative;
@@ -51,7 +52,7 @@ export const Description = styled.p`
 
 export const Fields = styled.div`
   position: absolute;
-  top: 32.8rem;
+  top: 31.1rem;
   right: 3rem;
   left: 3rem;
   display: flex;
@@ -81,18 +82,48 @@ export const Input = styled.input`
   border-radius: 1rem;
   background-color: ${({ theme }) => theme.colors.border};
   font-size: ${({ theme }) => theme.fontSize.sm};
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: 0.028rem;
   color: ${({ theme }) => theme.colors.textHeading};
 
   &::placeholder {
+    font-weight: 400;
     color: ${({ theme }) => theme.colors.textPlaceholder};
   }
+
+  &:-webkit-autofill {
+    box-shadow: inset 0 0 0 5rem ${({ theme }) => theme.colors.border};
+    -webkit-text-fill-color: ${({ theme }) => theme.colors.textHeading};
+  }
+`
+
+export const InputBox = styled.div`
+  position: relative;
+`
+
+export const PasswordInput = styled(Input)`
+  padding-right: 5rem;
+
+  &::-ms-reveal {
+    display: none;
+  }
+`
+
+export const EyeButton = styled.button`
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  color: ${({ theme }) => theme.colors.textPlaceholder};
 `
 
 export const Terms = styled.div`
   position: absolute;
-  top: 60.7rem;
+  top: 59rem;
   right: 3rem;
   left: 3rem;
   display: flex;
@@ -128,6 +159,7 @@ export const Checkbox = styled.input`
 
   &:checked {
     background-color: ${({ theme }) => theme.colors.primary};
+    box-shadow: inset 0 0 0 0.3rem ${({ theme }) => theme.colors.border};
   }
 `
 
@@ -163,4 +195,114 @@ export const LoginButton = styled.button`
   text-decoration: underline;
   color: ${({ theme }) => theme.colors.textPlaceholder};
   transform: translateX(-50%);
+`
+
+export const ErrorPopup = styled.div`
+  ${glass}
+  position: absolute;
+  top: 63.2rem;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 24.5rem;
+  height: 10rem;
+  padding: 1.5rem 1rem;
+  border-radius: 2.4rem;
+  background: rgba(250, 250, 250, 0.55);
+  -webkit-backdrop-filter: blur(0.4rem);
+  backdrop-filter: blur(0.4rem);
+  transform: translateX(-50%);
+`
+
+export const ErrorMessage = styled.p`
+  padding-left: 1rem;
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-weight: 500;
+  line-height: 2rem;
+  letter-spacing: 0.028rem;
+  color: ${({ theme }) => theme.colors.textHeading};
+`
+
+export const ErrorCloseButton = styled.button`
+  width: 100%;
+  padding: 1rem;
+  border-radius: 100px;
+  background-color: rgba(233.92, 233.92, 233.92, 0.7);
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-weight: 500;
+  line-height: 2rem;
+  letter-spacing: 0.028rem;
+  color: ${({ theme }) => theme.colors.textPlaceholder};
+`
+
+export const TermModalOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+`
+
+export const TermModal = styled.div<{ $top: string; $height: string }>`
+  ${glass}
+  position: absolute;
+  top: ${({ $top }) => $top};
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  width: 29.3rem;
+  height: ${({ $height }) => $height};
+  padding: 1.5rem 1rem;
+  border: none;
+  border-radius: 2.4rem;
+  background: rgba(250, 250, 250, 0.7);
+  -webkit-backdrop-filter: blur(0.4rem);
+  backdrop-filter: blur(0.4rem);
+  transform: translateX(-50%);
+`
+
+export const TermModalTitle = styled.h2`
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-weight: 600;
+  line-height: 2rem;
+  letter-spacing: 0.028rem;
+  color: ${({ theme }) => theme.colors.textHeading};
+`
+
+export const TermSections = styled.div<{ $gap: string }>`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ $gap }) => $gap};
+  padding: 0 1rem;
+`
+
+export const TermSection = styled.section`
+  font-size: 1rem;
+  line-height: 1.6rem;
+  letter-spacing: 0.02rem;
+  color: ${({ theme }) => theme.colors.textHeading};
+`
+
+export const TermSectionHeading = styled.h3`
+  font-size: inherit;
+  font-weight: 500;
+`
+
+export const TermSectionBody = styled.p`
+  font-weight: 400;
+  white-space: pre-line;
+`
+
+export const TermModalCloseButton = styled(ErrorCloseButton)`
+  margin-top: auto;
+`
+
+export const TermCharacter = styled.img<{ $modalTop: string }>`
+  position: absolute;
+  top: calc(${({ $modalTop }) => $modalTop} - 5.8rem);
+  left: calc(50% - 11.65rem);
+  width: 4.3rem;
+  height: 6rem;
+  pointer-events: none;
 `
