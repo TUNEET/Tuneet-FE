@@ -238,15 +238,16 @@ export const ErrorCloseButton = styled.button`
 `
 
 export const TermModalOverlay = styled.div`
-  position: absolute;
+  position: fixed;
   inset: 0;
+  z-index: 100;
   background-color: rgba(0, 0, 0, 0.5);
 `
 
-export const TermModal = styled.div<{ $top: string; $height: string }>`
+export const TermModal = styled.div<{ $height: string }>`
   ${glass}
   position: absolute;
-  top: ${({ $top }) => $top};
+  bottom: 12rem;
   left: 50%;
   display: flex;
   flex-direction: column;
@@ -299,9 +300,9 @@ export const TermModalCloseButton = styled(ErrorCloseButton)`
   margin-top: auto;
 `
 
-export const TermCharacter = styled.img<{ $modalTop: string }>`
+export const TermCharacter = styled.img<{ $modalHeight: string }>`
   position: absolute;
-  top: calc(${({ $modalTop }) => $modalTop} - 5.8rem);
+  bottom: calc(12rem + ${({ $modalHeight }) => $modalHeight} - 0.2rem);
   left: calc(50% - 11.65rem);
   width: 4.3rem;
   height: 6rem;
