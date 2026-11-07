@@ -1,11 +1,20 @@
 import styled from 'styled-components'
+import { Blob as BaseBlob } from '@/pages/signup/SignupPage.styles'
 
 export { Glow, Glows, Greeting, Page } from '@/pages/home/HomePage.styles'
+
+export const Blob = styled(BaseBlob)`
+  top: calc(100% + 3.6rem);
+`
 
 export const ProfileArea = styled.div`
   position: relative;
   margin-top: -10.9rem;
   pointer-events: none;
+
+  > div {
+    padding-bottom: 0;
+  }
 `
 
 export const TopArea = styled.div`
@@ -13,6 +22,15 @@ export const TopArea = styled.div`
   top: 0;
   right: 0;
   left: 0;
+`
+
+export const SettingButton = styled.button`
+  position: absolute;
+  top: 3.4rem;
+  right: 3.3rem;
+  display: flex;
+  width: 2.2rem;
+  height: 2.2rem;
 `
 
 export const Divider = styled.hr`
@@ -49,6 +67,15 @@ export const Actions = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
+  margin-top: 2rem;
+  pointer-events: auto;
+`
+
+export const BlockedHeader = styled.div`
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
   margin-top: 2rem;
   pointer-events: auto;
 `

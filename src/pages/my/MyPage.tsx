@@ -1,8 +1,12 @@
 import { useRef, useState } from 'react'
+import settingIcon from '@/assets/icons/setting.svg'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { MOCK_PROFILE, MOCK_WRITE_SONG } from '@/mocks/data'
 import { ProfileComplete } from '@/pages/profile-setup/components/ProfileComplete/ProfileComplete'
+import { BlockedUsers } from './components/BlockedUsers/BlockedUsers'
 import { ProfileEditModal } from './components/ProfileEditModal/ProfileEditModal'
+import { DEFAULT_SETTINGS } from './components/SettingsPanel/settings'
+import { SettingsPanel } from './components/SettingsPanel/SettingsPanel'
 import * as S from './MyPage.styles'
 
 const SONGS = [
@@ -22,6 +26,8 @@ export function MyPage() {
   const [isTasteOpen, setIsTasteOpen] = useState(false)
   const [isSavedOpen, setIsSavedOpen] = useState(false)
   const [confirmType, setConfirmType] = useState<'delete' | 'logout' | null>(null)
+  const [subView, setSubView] = useState<'blocked' | 'settings' | null>(null)
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS)
   const saveButtonRef = useRef<HTMLButtonElement>(null)
   const deleteButtonRef = useRef<HTMLButtonElement>(null)
   const logoutButtonRef = useRef<HTMLButtonElement>(null)
@@ -56,13 +62,49 @@ export function MyPage() {
     )
   }
 
+  const glows = (
+    <S.Glows aria-hidden>
+      <S.Blob />
+      <S.Glow $size="35.9rem" $top="14.8rem" $left="-4.5rem" $color="#FFBBD3" $blur="100px" />
+      <S.Glow $size="23rem" $top="21.3rem" $left="18.1rem" $color="#E5C3FF" $blur="100px" />
+      <S.Glow $size="12.4rem" $top="22.8rem" $left="9.4rem" $color="#CFE8FF" $blur="75px" />
+    </S.Glows>
+  )
+
+  const settingButton = (
+    <S.SettingButton
+      type="button"
+      aria-label="설정"
+      onClick={() => {
+        setIsEditing(false)
+        closeConfirm()
+        setSubView('settings')
+      }}
+    >
+      <img src={settingIcon} alt="" width={22} height={22} />
+    </S.SettingButton>
+  )
+
+  if (subView) {
+    const exitSubView = () => setSubView(null)
+
+    return (
+      <S.Page>
+        {glows}
+        <S.Greeting>오늘도 새로운 음악을 만나보세요!</S.Greeting>
+        {settingButton}
+        {subView === 'blocked' ? (
+          <BlockedUsers onExit={exitSubView} />
+        ) : (
+          <SettingsPanel settings={settings} onSave={setSettings} onExit={exitSubView} />
+        )}
+      </S.Page>
+    )
+  }
+
   return (
     <S.Page>
-      <S.Glows aria-hidden>
-        <S.Glow $size="35.9rem" $top="14.8rem" $left="-4.5rem" $color="#FFBBD3" $blur="100px" />
-        <S.Glow $size="23rem" $top="21.3rem" $left="18.1rem" $color="#E5C3FF" $blur="100px" />
-        <S.Glow $size="12.4rem" $top="22.8rem" $left="9.4rem" $color="#CFE8FF" $blur="75px" />
-      </S.Glows>
+      {glows}
 
       <S.ProfileArea>
         <ProfileComplete
@@ -88,7 +130,7 @@ export function MyPage() {
                   onConfirm={goToProfile}
                   onClose={() => setIsSavedOpen(false)}
                   anchorRef={saveButtonRef}
-                  surface="dim"
+                  surface="sheet"
                   placement="top"
                   tone="default"
                 />
@@ -135,11 +177,20 @@ export function MyPage() {
               </>
             )}
           </S.Actions>
+          {!isEditing && (
+            <S.BlockedHeader>
+              <S.ProfileTitle>차단한 사용자</S.ProfileTitle>
+              <S.HeaderAction type="button" onClick={() => setSubView('blocked')}>
+                더보기
+              </S.HeaderAction>
+            </S.BlockedHeader>
+          )}
         </ProfileComplete>
       </S.ProfileArea>
 
       <S.TopArea>
         <S.Greeting>오늘도 새로운 음악을 만나보세요!</S.Greeting>
+        {settingButton}
         <S.Divider />
         <S.ProfileHeader>
           <S.ProfileTitle>내 프로필</S.ProfileTitle>

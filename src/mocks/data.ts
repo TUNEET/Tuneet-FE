@@ -46,6 +46,12 @@ export const MOCK_EXPLORE_FEEDS: Feed[] = [
   { ...MOCK_FEEDS[1], id: 6, createdAt: minutesAgo(120) },
 ]
 
+export const MOCK_BLOCKED_USERS = Array.from({ length: 5 }, (_, index) => ({
+  id: index + 1,
+  nickname: '산책하는 튜니',
+  blockedDate: '2026. 11. 21',
+}))
+
 export const MOCK_WRITE_SONG: Song = {
   title: 'Pretty Girl',
   artist: 'RESCENE',

@@ -5,7 +5,6 @@ export const TERMS = [
     required: true,
     detail: {
       title: 'TUNEET 서비스 이용약관 (필수)',
-      top: '37.6rem',
       height: '35.6rem',
       sectionGap: '2rem',
       sections: [
@@ -34,7 +33,6 @@ export const TERMS = [
     required: true,
     detail: {
       title: 'TUNEET 개인정보 처리방침 (필수)',
-      top: '35.8rem',
       height: '37.4rem',
       sectionGap: '1rem',
       sections: [
@@ -63,7 +61,6 @@ export const TERMS = [
     required: false,
     detail: {
       title: 'TUNEET 위치정보 수집 및 이용 동의 (선택)',
-      top: '35.8rem',
       height: '37.4rem',
       sectionGap: '1rem',
       sections: [
