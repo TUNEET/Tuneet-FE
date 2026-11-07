@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useState } from 'react'
+import plusCircleBlueIcon from '@/assets/icons/plus-circle-blue.svg'
 import plusCircleRoseIcon from '@/assets/icons/plus-circle-rose.svg'
 import plusCircleIcon from '@/assets/icons/plus-circle.svg'
 import characterMusicSearch from '@/assets/images/character-music-search.png'
@@ -11,6 +12,12 @@ import type { SongSearchSheetVariant } from './SongSearchSheet.styles'
 
 const SEARCH_DEBOUNCE_MS = 200
 const PAGE_SIZE = 5
+
+const ADD_ICONS = {
+  playlist: plusCircleIcon,
+  profile: plusCircleRoseIcon,
+  explore: plusCircleBlueIcon,
+}
 
 export function PageArrow() {
   return (
@@ -73,9 +80,8 @@ export function SongSearchSheet({
   const hasResults = keyword !== '' && results !== null && results.length > 0
   const isNoResult = keyword !== '' && results !== null && results.length === 0
   const totalPages = Math.ceil((results?.length ?? 0) / PAGE_SIZE)
-  const isProfile = variant === 'profile'
-  const characterImage = isProfile ? characterProfileSearch : characterMusicSearch
-  const addIcon = isProfile ? plusCircleRoseIcon : plusCircleIcon
+  const isPlaylist = variant === 'playlist'
+  const characterImage = variant === 'profile' ? characterProfileSearch : characterMusicSearch
 
   return (
     <S.Overlay $variant={variant}>
@@ -85,7 +91,7 @@ export function SongSearchSheet({
         </S.CloseButton>
         <S.Sheet $variant={variant}>
           <S.Title id={titleId} $variant={variant} $isHidden={hiddenTitle !== undefined}>
-            {hiddenTitle ?? (isProfile ? '프로필' : '플레이리스트')}
+            {hiddenTitle ?? (isPlaylist ? '플레이리스트' : '프로필')}
           </S.Title>
           <S.SearchInput
             $variant={variant}
@@ -114,16 +120,16 @@ export function SongSearchSheet({
                     aria-label={`${song.title} 추가`}
                     onClick={() => handleAdd(song)}
                   >
-                    <img src={addIcon} alt="" width={16} height={16} />
+                    <img src={ADD_ICONS[variant]} alt="" width={16} height={16} />
                   </S.AddButton>
                   <ConfirmPopover
                     open={addedSongId === song.id}
                     message="노래가 추가되었습니다."
-                    confirmLabel={isProfile ? '닫기' : '플레이리스트로 이동'}
-                    onConfirm={isProfile ? closeAddedPopover : onClose}
+                    confirmLabel={isPlaylist ? '플레이리스트로 이동' : '닫기'}
+                    onConfirm={isPlaylist ? onClose : closeAddedPopover}
                     onClose={closeAddedPopover}
                     surface="sheet"
-                    tone={isProfile ? 'muted' : 'default'}
+                    tone={variant === 'profile' ? 'muted' : 'default'}
                   />
                 </S.ResultItem>
               ))}
@@ -134,6 +140,7 @@ export function SongSearchSheet({
               <S.PageButton
                 type="button"
                 $direction="prev"
+                $variant={variant}
                 aria-label="이전 페이지"
                 disabled={page === 1}
                 onClick={() => setPage((prev) => prev - 1)}
@@ -146,6 +153,7 @@ export function SongSearchSheet({
               <S.PageButton
                 type="button"
                 $direction="next"
+                $variant={variant}
                 aria-label="다음 페이지"
                 disabled={page === totalPages}
                 onClick={() => setPage((prev) => prev + 1)}
