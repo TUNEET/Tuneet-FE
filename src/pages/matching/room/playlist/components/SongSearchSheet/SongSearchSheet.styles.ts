@@ -1,9 +1,33 @@
 import styled, { css, keyframes } from 'styled-components'
 import { Item, List, PlayButton, Song } from '../../../components/Playlist/Playlist.styles'
 
-export type SongSearchSheetVariant = 'playlist' | 'profile'
+export type SongSearchSheetVariant = 'playlist' | 'profile' | 'explore'
 
 type VariantProps = { $variant: SongSearchSheetVariant }
+
+const VARIANT_COLORS = {
+  playlist: {
+    sheet: 'surfaceLavender',
+    title: 'lavender',
+    field: 'lavenderLight',
+    text: 'textPrimary',
+    placeholder: 'textMuted',
+  },
+  profile: {
+    sheet: 'surfacePink',
+    title: 'primary',
+    field: 'border',
+    text: 'textHeading',
+    placeholder: 'textPlaceholder',
+  },
+  explore: {
+    sheet: 'surfaceBlue',
+    title: 'blue',
+    field: 'inputBlue',
+    text: 'textPrimary',
+    placeholder: 'textBody',
+  },
+} as const
 
 const fadeIn = keyframes`
   from {
@@ -25,7 +49,7 @@ const slideUp = keyframes`
 
 export const Overlay = styled.div<VariantProps>`
   position: fixed;
-  inset: 0 0 ${({ $variant }) => ($variant === 'profile' ? '0' : 'var(--bottom-nav-height)')};
+  inset: 0 0 ${({ $variant }) => ($variant === 'playlist' ? 'var(--bottom-nav-height)' : '0')};
   z-index: 100;
   display: flex;
   flex-direction: column;
@@ -65,7 +89,7 @@ export const Sheet = styled.div<VariantProps>`
   padding: 0.9rem 3rem 0;
   overflow: hidden;
   border-radius: 2.4rem 2.4rem 0 0;
-  background-color: ${({ theme }) => theme.colors.surfaceLavender};
+  background-color: ${({ theme, $variant }) => theme.colors[VARIANT_COLORS[$variant].sheet]};
 
   &::before {
     content: '';
@@ -78,11 +102,10 @@ export const Sheet = styled.div<VariantProps>`
     pointer-events: none;
   }
 
-  ${({ $variant, theme }) =>
-    $variant === 'profile' &&
+  ${({ $variant }) =>
+    $variant !== 'playlist' &&
     css`
       height: 50rem;
-      background-color: ${theme.colors.surfacePink};
 
       &::before {
         display: none;
@@ -97,8 +120,7 @@ export const Title = styled.h2<VariantProps & { $isHidden: boolean }>`
   height: 3rem;
   font-size: ${({ theme }) => theme.fontSize.xxs};
   font-weight: 400;
-  color: ${({ theme, $variant }) =>
-    $variant === 'profile' ? theme.colors.primary : theme.colors.lavender};
+  color: ${({ theme, $variant }) => theme.colors[VARIANT_COLORS[$variant].title]};
 `
 
 export const SearchInput = styled.input<VariantProps>`
@@ -109,14 +131,14 @@ export const SearchInput = styled.input<VariantProps>`
   padding: 0 1.5rem;
   border: none;
   border-radius: 2.4rem;
-  background-color: ${({ theme }) => theme.colors.lavenderLight};
+  background-color: ${({ theme, $variant }) => theme.colors[VARIANT_COLORS[$variant].field]};
   font-size: ${({ theme }) => theme.fontSize.xxs};
   font-weight: 500;
   text-align: center;
-  color: ${({ theme }) => theme.colors.textPrimary};
+  color: ${({ theme, $variant }) => theme.colors[VARIANT_COLORS[$variant].text]};
 
   &::placeholder {
-    color: ${({ theme }) => theme.colors.textMuted};
+    color: ${({ theme, $variant }) => theme.colors[VARIANT_COLORS[$variant].placeholder]};
     opacity: 1;
   }
 
@@ -124,17 +146,14 @@ export const SearchInput = styled.input<VariantProps>`
     outline: none;
   }
 
-  ${({ $variant, theme }) =>
-    $variant === 'profile' &&
+  ${({ $variant }) =>
+    $variant !== 'playlist' &&
     css`
-      background-color: ${theme.colors.border};
       font-weight: 600;
       letter-spacing: 0.02rem;
-      color: ${theme.colors.textHeading};
 
       &::placeholder {
         font-weight: 500;
-        color: ${theme.colors.textPlaceholder};
       }
     `}
 `
@@ -146,15 +165,14 @@ export const ResultList = styled(List)`
 
 export const ResultItem = styled(Item)<VariantProps>`
   position: relative;
-  background-color: ${({ theme, $variant }) =>
-    $variant === 'profile' ? theme.colors.border : theme.colors.lavenderLight};
+  background-color: ${({ theme, $variant }) => theme.colors[VARIANT_COLORS[$variant].field]};
 
   ${({ $variant, theme }) =>
-    $variant === 'profile' &&
+    $variant !== 'playlist' &&
     css`
       p {
         letter-spacing: 0.02rem;
-        color: ${theme.colors.textHeading};
+        color: ${theme.colors[VARIANT_COLORS[$variant].text]};
       }
     `}
 `
@@ -166,21 +184,25 @@ export const AddButton = PlayButton
 export const Pagination = styled.div<VariantProps>`
   position: absolute;
   right: 3rem;
-  bottom: ${({ $variant }) => ($variant === 'profile' ? '12.4rem' : '5rem')};
+  bottom: ${({ $variant }) => ($variant === 'playlist' ? '5rem' : '12.4rem')};
   left: 3rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
 `
 
-export const PageButton = styled.button<{ $direction: 'prev' | 'next' }>`
+export const PageButton = styled.button<{
+  $direction: 'prev' | 'next'
+  $variant?: SongSearchSheetVariant
+}>`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
-  background-color: ${({ theme }) => theme.colors.primary};
+  background-color: ${({ theme, $variant }) =>
+    $variant === 'explore' ? theme.colors.blue : theme.colors.primary};
   color: ${({ theme }) => theme.colors.surfaceWhite};
 
   svg {
@@ -188,8 +210,10 @@ export const PageButton = styled.button<{ $direction: 'prev' | 'next' }>`
   }
 
   &:disabled {
-    background-color: ${({ theme }) => theme.colors.border};
-    color: ${({ theme }) => theme.colors.textPlaceholder};
+    background-color: ${({ theme, $variant }) =>
+      $variant === 'explore' ? theme.colors.inputBlue : theme.colors.border};
+    color: ${({ theme, $variant }) =>
+      $variant === 'explore' ? theme.colors.textSecondary : theme.colors.textPlaceholder};
     cursor: default;
   }
 `
@@ -197,9 +221,8 @@ export const PageButton = styled.button<{ $direction: 'prev' | 'next' }>`
 export const PageLabel = styled.span<VariantProps>`
   font-size: ${({ theme }) => theme.fontSize.xxs};
   font-weight: 500;
-  letter-spacing: ${({ $variant }) => ($variant === 'profile' ? '0.02rem' : 'normal')};
-  color: ${({ theme, $variant }) =>
-    $variant === 'profile' ? theme.colors.textHeading : theme.colors.textPrimary};
+  letter-spacing: ${({ $variant }) => ($variant === 'playlist' ? 'normal' : '0.02rem')};
+  color: ${({ theme, $variant }) => theme.colors[VARIANT_COLORS[$variant].text]};
 `
 
 export const Empty = styled.div<VariantProps>`
@@ -222,8 +245,7 @@ export const Empty = styled.div<VariantProps>`
     font-weight: 600;
     line-height: 2rem;
     text-align: center;
-    letter-spacing: ${({ $variant }) => ($variant === 'profile' ? '0.032rem' : 'normal')};
-    color: ${({ theme, $variant }) =>
-      $variant === 'profile' ? theme.colors.textHeading : theme.colors.textPrimary};
+    letter-spacing: ${({ $variant }) => ($variant === 'playlist' ? 'normal' : '0.032rem')};
+    color: ${({ theme, $variant }) => theme.colors[VARIANT_COLORS[$variant].text]};
   }
 `
