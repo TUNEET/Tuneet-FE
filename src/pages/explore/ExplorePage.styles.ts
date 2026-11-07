@@ -6,3 +6,7 @@ export { BottomFade, CardList, Glow, Glows, Page, Section } from '@/pages/home/H
 export const ExploreSheet = styled(Sheet)`
   margin-top: 3rem;
 `
+
+export const NotificationHeader = styled.div`
+  position: relative;
+`
