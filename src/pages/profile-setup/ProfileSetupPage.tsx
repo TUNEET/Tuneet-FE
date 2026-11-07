@@ -3,6 +3,7 @@ import type { ChangeEvent } from 'react'
 import { Navigate, useNavigate } from 'react-router'
 import heartImage from '@/assets/icons/back-H.svg'
 import editIcon from '@/assets/icons/edit-outline.svg'
+import musicEditIcon from '@/assets/icons/eva_edit-outline.svg'
 import boltLargeIcon from '@/assets/icons/fa6-solid_bolt-lightning-1.svg'
 import boltSmallIcon from '@/assets/icons/fa6-solid_bolt-lightning.svg'
 import musicLargeIcon from '@/assets/icons/flowbite_music-alt-solid-1.svg'
@@ -16,6 +17,7 @@ import waveformSmallIcon from '@/assets/icons/withicons_audio-waveform-duo.svg'
 import characterImage from '@/assets/images/character-profile.png'
 import logo from '@/assets/images/logo.svg'
 import { ROUTES } from '@/constants/routes'
+import { SongSearchSheet } from '@/pages/matching/room/playlist/components/SongSearchSheet/SongSearchSheet'
 import { clearProfileSetupPending, isProfileSetupPending } from '@/utils/auth'
 import { PlatformConnect } from './components/PlatformConnect/PlatformConnect'
 import { ProfileComplete } from './components/ProfileComplete/ProfileComplete'
@@ -45,6 +47,7 @@ export function ProfileSetupPage() {
   >('profile')
   const [nickname, setNickname] = useState('')
   const [music, setMusic] = useState<typeof MOCK_PROFILE_MUSIC | null>(null)
+  const [isMusicSearchOpen, setIsMusicSearchOpen] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
   const [songs, setSongs] = useState<(typeof MOCK_PROFILE_MUSIC)[]>([])
@@ -207,14 +210,23 @@ export function ProfileSetupPage() {
           <>
             <S.AvatarGlow $color="#ffc2e5" aria-hidden />
             {music ? (
-              <S.SelectedMusicButton type="button">
-                <img src={music.albumImage} alt="" width={17} height={17} />
-                <span>
-                  {music.title} - {music.artist}
-                </span>
-              </S.SelectedMusicButton>
+              <>
+                <S.SelectedMusicButton type="button">
+                  <img src={music.albumImage} alt="" width={17} height={17} />
+                  <span>
+                    {music.title} - {music.artist}
+                  </span>
+                </S.SelectedMusicButton>
+                <S.MusicEditButton
+                  type="button"
+                  aria-label="프로필 음악 수정"
+                  onClick={() => setIsMusicSearchOpen(true)}
+                >
+                  <img src={musicEditIcon} alt="" width={20} height={20} />
+                </S.MusicEditButton>
+              </>
             ) : (
-              <S.MusicButton type="button" onClick={() => setMusic(MOCK_PROFILE_MUSIC)}>
+              <S.MusicButton type="button" onClick={() => setIsMusicSearchOpen(true)}>
                 프로필 음악 추가하기
               </S.MusicButton>
             )}
@@ -290,6 +302,16 @@ export function ProfileSetupPage() {
       <S.LaterButton type="button" onClick={finishSetup}>
         나중에 설정하기
       </S.LaterButton>
+
+      {isMusicSearchOpen && (
+        <SongSearchSheet
+          variant="profile"
+          onAdd={({ title, artist, albumImageUrl }) =>
+            setMusic({ title, artist, albumImage: albumImageUrl })
+          }
+          onClose={() => setIsMusicSearchOpen(false)}
+        />
+      )}
     </S.Page>
   )
 }
