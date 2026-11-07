@@ -235,3 +235,74 @@ export const ErrorCloseButton = styled.button`
   letter-spacing: 0.028rem;
   color: ${({ theme }) => theme.colors.textPlaceholder};
 `
+
+export const TermModalOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+`
+
+export const TermModal = styled.div<{ $top: string; $height: string }>`
+  ${glass}
+  position: absolute;
+  top: ${({ $top }) => $top};
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  width: 29.3rem;
+  height: ${({ $height }) => $height};
+  padding: 1.5rem 1rem;
+  border: none;
+  border-radius: 2.4rem;
+  background: rgba(250, 250, 250, 0.7);
+  -webkit-backdrop-filter: blur(0.4rem);
+  backdrop-filter: blur(0.4rem);
+  transform: translateX(-50%);
+`
+
+export const TermModalTitle = styled.h2`
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-weight: 600;
+  line-height: 2rem;
+  letter-spacing: 0.028rem;
+  color: ${({ theme }) => theme.colors.textHeading};
+`
+
+export const TermSections = styled.div<{ $gap: string }>`
+  display: flex;
+  flex-direction: column;
+  gap: ${({ $gap }) => $gap};
+  padding: 0 1rem;
+`
+
+export const TermSection = styled.section`
+  font-size: 1rem;
+  line-height: 1.6rem;
+  letter-spacing: 0.02rem;
+  color: ${({ theme }) => theme.colors.textHeading};
+`
+
+export const TermSectionHeading = styled.h3`
+  font-size: inherit;
+  font-weight: 500;
+`
+
+export const TermSectionBody = styled.p`
+  font-weight: 400;
+  white-space: pre-line;
+`
+
+export const TermModalCloseButton = styled(ErrorCloseButton)`
+  margin-top: auto;
+`
+
+export const TermCharacter = styled.img<{ $modalTop: string }>`
+  position: absolute;
+  top: calc(${({ $modalTop }) => $modalTop} - 5.8rem);
+  left: calc(50% - 11.65rem);
+  width: 4.3rem;
+  height: 6rem;
+  pointer-events: none;
+`
