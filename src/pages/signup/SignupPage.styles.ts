@@ -3,14 +3,15 @@ import { glass } from '@/styles/glass'
 
 export const Page = styled.div`
   position: relative;
-  min-height: max(85.2rem, var(--frame-height));
+  min-height: max(80.4rem, calc(var(--frame-height) + 4.9rem));
+  margin-top: -4.9rem;
   overflow: hidden;
   background-color: ${({ theme }) => theme.colors.background};
 `
 
 export const Blob = styled.div`
   position: absolute;
-  top: calc(100% - 3.8rem);
+  top: calc(100% - 8.7rem);
   left: -10.2rem;
   width: 61.7rem;
   height: 61.3rem;
