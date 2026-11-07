@@ -119,6 +119,15 @@ export const SelectedMusicButton = styled(MusicButton)`
   }
 `
 
+export const MusicEditButton = styled.button`
+  position: absolute;
+  top: 55.2rem;
+  left: 18.7rem;
+  display: flex;
+  width: 2rem;
+  height: 2rem;
+`
+
 export const Nickname = styled.p`
   position: absolute;
   top: 46.4rem;

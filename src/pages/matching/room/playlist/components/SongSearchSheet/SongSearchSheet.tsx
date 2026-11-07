@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useId, useState } from 'react'
+import plusCircleRoseIcon from '@/assets/icons/plus-circle-rose.svg'
 import plusCircleIcon from '@/assets/icons/plus-circle.svg'
 import characterMusicSearch from '@/assets/images/character-music-search.png'
+import characterProfileSearch from '@/assets/images/tunee7.svg'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { mockSearchPlaylistSongs } from '@/mocks/room'
 import type { PlaylistSong } from '@/types/room'
 import * as S from './SongSearchSheet.styles'
+import type { SongSearchSheetVariant } from './SongSearchSheet.styles'
 
 const SEARCH_DEBOUNCE_MS = 200
 const PAGE_SIZE = 5
@@ -20,9 +23,10 @@ function PageArrow() {
 type SongSearchSheetProps = {
   onAdd: (song: PlaylistSong) => void
   onClose: () => void
+  variant?: SongSearchSheetVariant
 }
 
-export function SongSearchSheet({ onAdd, onClose }: SongSearchSheetProps) {
+export function SongSearchSheet({ onAdd, onClose, variant = 'playlist' }: SongSearchSheetProps) {
   const titleId = useId()
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<PlaylistSong[] | null>(null)
@@ -63,16 +67,22 @@ export function SongSearchSheet({ onAdd, onClose }: SongSearchSheetProps) {
   const hasResults = keyword !== '' && results !== null && results.length > 0
   const isNoResult = keyword !== '' && results !== null && results.length === 0
   const totalPages = Math.ceil((results?.length ?? 0) / PAGE_SIZE)
+  const isProfile = variant === 'profile'
+  const characterImage = isProfile ? characterProfileSearch : characterMusicSearch
+  const addIcon = isProfile ? plusCircleRoseIcon : plusCircleIcon
 
   return (
-    <S.Overlay>
+    <S.Overlay $variant={variant}>
       <S.Content role="dialog" aria-modal="true" aria-labelledby={titleId}>
         <S.CloseButton type="button" onClick={onClose}>
           닫기
         </S.CloseButton>
-        <S.Sheet>
-          <S.Title id={titleId}>플레이리스트</S.Title>
+        <S.Sheet $variant={variant}>
+          <S.Title id={titleId} $variant={variant}>
+            {isProfile ? '프로필' : '플레이리스트'}
+          </S.Title>
           <S.SearchInput
+            $variant={variant}
             type="text"
             enterKeyHint="search"
             value={query}
@@ -86,7 +96,7 @@ export function SongSearchSheet({ onAdd, onClose }: SongSearchSheetProps) {
           {hasResults && (
             <S.ResultList>
               {results.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((song) => (
-                <S.ResultItem key={song.id}>
+                <S.ResultItem key={song.id} $variant={variant}>
                   <S.ResultSong>
                     <img src={song.albumImageUrl} alt="" />
                     <span>
@@ -98,23 +108,23 @@ export function SongSearchSheet({ onAdd, onClose }: SongSearchSheetProps) {
                     aria-label={`${song.title} 추가`}
                     onClick={() => handleAdd(song)}
                   >
-                    <img src={plusCircleIcon} alt="" width={16} height={16} />
+                    <img src={addIcon} alt="" width={16} height={16} />
                   </S.AddButton>
                   <ConfirmPopover
                     open={addedSongId === song.id}
                     message="노래가 추가되었습니다."
-                    confirmLabel="플레이리스트로 이동"
-                    onConfirm={onClose}
+                    confirmLabel={isProfile ? '닫기' : '플레이리스트로 이동'}
+                    onConfirm={isProfile ? closeAddedPopover : onClose}
                     onClose={closeAddedPopover}
                     surface="sheet"
-                    tone="default"
+                    tone={isProfile ? 'muted' : 'default'}
                   />
                 </S.ResultItem>
               ))}
             </S.ResultList>
           )}
           {hasResults && (
-            <S.Pagination>
+            <S.Pagination $variant={variant}>
               <S.PageButton
                 type="button"
                 $direction="prev"
@@ -124,7 +134,7 @@ export function SongSearchSheet({ onAdd, onClose }: SongSearchSheetProps) {
               >
                 <PageArrow />
               </S.PageButton>
-              <S.PageLabel>
+              <S.PageLabel $variant={variant}>
                 {page}/{totalPages}
               </S.PageLabel>
               <S.PageButton
@@ -139,8 +149,8 @@ export function SongSearchSheet({ onAdd, onClose }: SongSearchSheetProps) {
             </S.Pagination>
           )}
           {!keyword && (
-            <S.Empty>
-              <img src={characterMusicSearch} alt="" />
+            <S.Empty $variant={variant}>
+              <img src={characterImage} alt="" />
               <p>
                 노래를 검색해서
                 <br />
@@ -149,8 +159,8 @@ export function SongSearchSheet({ onAdd, onClose }: SongSearchSheetProps) {
             </S.Empty>
           )}
           {isNoResult && (
-            <S.Empty>
-              <img src={characterMusicSearch} alt="" />
+            <S.Empty $variant={variant}>
+              <img src={characterImage} alt="" />
               <p>검색 결과가 없어요</p>
             </S.Empty>
           )}

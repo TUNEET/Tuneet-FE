@@ -2,7 +2,7 @@ import styled, { keyframes } from 'styled-components'
 
 export type ConfirmPopoverSurface = 'light' | 'dim' | 'letter' | 'sheet'
 export type ConfirmPopoverPlacement = 'top' | 'bottom'
-export type ConfirmPopoverTone = 'danger' | 'default'
+export type ConfirmPopoverTone = 'danger' | 'default' | 'muted'
 
 const SURFACES = {
   light: {
@@ -92,7 +92,12 @@ export const ConfirmButton = styled.button<{
   font-size: ${({ theme }) => theme.fontSize.sm};
   font-weight: 500;
   line-height: 2rem;
-  color: ${({ theme, $tone }) => ($tone === 'danger' ? theme.colors.danger : theme.colors.blue)};
+  color: ${({ theme, $tone }) =>
+    ({
+      danger: theme.colors.danger,
+      default: theme.colors.blue,
+      muted: theme.colors.textPlaceholder,
+    })[$tone]};
   transition: background-color 0.15s;
 
   &:active {
