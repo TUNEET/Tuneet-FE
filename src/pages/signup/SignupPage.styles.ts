@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { glass } from '@/styles/glass'
 
 export const Page = styled.div`
   position: relative;
@@ -89,6 +90,35 @@ export const Input = styled.input`
     font-weight: 400;
     color: ${({ theme }) => theme.colors.textPlaceholder};
   }
+
+  &:-webkit-autofill {
+    box-shadow: inset 0 0 0 5rem ${({ theme }) => theme.colors.border};
+    -webkit-text-fill-color: ${({ theme }) => theme.colors.textHeading};
+  }
+`
+
+export const InputBox = styled.div`
+  position: relative;
+`
+
+export const PasswordInput = styled(Input)`
+  padding-right: 5rem;
+
+  &::-ms-reveal {
+    display: none;
+  }
+`
+
+export const EyeButton = styled.button`
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  color: ${({ theme }) => theme.colors.textPlaceholder};
 `
 
 export const Terms = styled.div`
@@ -165,4 +195,43 @@ export const LoginButton = styled.button`
   text-decoration: underline;
   color: ${({ theme }) => theme.colors.textPlaceholder};
   transform: translateX(-50%);
+`
+
+export const ErrorPopup = styled.div`
+  ${glass}
+  position: absolute;
+  top: 63.2rem;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 24.5rem;
+  height: 10rem;
+  padding: 1.5rem 1rem;
+  border-radius: 2.4rem;
+  background: rgba(250, 250, 250, 0.55);
+  -webkit-backdrop-filter: blur(0.4rem);
+  backdrop-filter: blur(0.4rem);
+  transform: translateX(-50%);
+`
+
+export const ErrorMessage = styled.p`
+  padding-left: 1rem;
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-weight: 500;
+  line-height: 2rem;
+  letter-spacing: 0.028rem;
+  color: ${({ theme }) => theme.colors.textHeading};
+`
+
+export const ErrorCloseButton = styled.button`
+  width: 100%;
+  padding: 1rem;
+  border-radius: 100px;
+  background-color: rgba(233.92, 233.92, 233.92, 0.7);
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-weight: 500;
+  line-height: 2rem;
+  letter-spacing: 0.028rem;
+  color: ${({ theme }) => theme.colors.textPlaceholder};
 `
