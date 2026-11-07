@@ -2,9 +2,11 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router'
 import logo from '@/assets/images/logo.svg'
+import termCharacter from '@/assets/images/tunee6.svg'
 import { ROUTES } from '@/constants/routes'
 import { markProfileSetupPending } from '@/utils/auth'
 import * as S from './SignupPage.styles'
+import { TERMS } from './terms'
 
 const FIELDS = [
   {
@@ -28,12 +30,6 @@ const FIELDS = [
     placeholder: '비밀번호를 다시 입력하세요.',
     autoComplete: 'new-password',
   },
-]
-
-const TERMS = [
-  { id: 'termsOfService', label: '서비스 이용약관 동의 (필수)', required: true },
-  { id: 'privacyPolicy', label: '개인정보 처리방침 동의 (필수)', required: true },
-  { id: 'locationConsent', label: '위치정보 수집 및 이용 동의 (선택)', required: false },
 ]
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -62,6 +58,8 @@ export function SignupPage() {
   const navigate = useNavigate()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [visiblePasswords, setVisiblePasswords] = useState<Record<string, boolean>>({})
+  const [openTermId, setOpenTermId] = useState<string | null>(null)
+  const openTermDetail = TERMS.find(({ id }) => id === openTermId)?.detail
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -144,7 +142,9 @@ export function SignupPage() {
                 <S.Checkbox type="checkbox" name={id} />
                 {label}
               </S.TermLabel>
-              <S.TermDetail type="button">자세히보기</S.TermDetail>
+              <S.TermDetail type="button" onClick={() => setOpenTermId(id)}>
+                자세히보기
+              </S.TermDetail>
             </S.Term>
           ))}
         </S.Terms>
@@ -163,6 +163,36 @@ export function SignupPage() {
             닫기
           </S.ErrorCloseButton>
         </S.ErrorPopup>
+      )}
+
+      {openTermDetail && (
+        <S.TermModalOverlay>
+          <S.TermModal
+            $top={openTermDetail.top}
+            $height={openTermDetail.height}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="signup-term-title"
+          >
+            <S.TermModalTitle id="signup-term-title">{openTermDetail.title}</S.TermModalTitle>
+            <S.TermSections $gap={openTermDetail.sectionGap}>
+              {openTermDetail.sections.map(({ heading, body }) => (
+                <S.TermSection key={heading}>
+                  <S.TermSectionHeading>{heading}</S.TermSectionHeading>
+                  <S.TermSectionBody>{body}</S.TermSectionBody>
+                </S.TermSection>
+              ))}
+            </S.TermSections>
+            <S.TermModalCloseButton type="button" onClick={() => setOpenTermId(null)} autoFocus>
+              닫기
+            </S.TermModalCloseButton>
+          </S.TermModal>
+          <S.TermCharacter
+            $modalTop={openTermDetail.top}
+            src={termCharacter}
+            alt=""
+          />
+        </S.TermModalOverlay>
       )}
     </S.Page>
   )
