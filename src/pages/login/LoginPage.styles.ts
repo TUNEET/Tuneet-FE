@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { Page as BasePage, shiftTop } from '@/pages/signup/SignupPage.styles'
 
 export {
   Blob,
@@ -8,12 +9,18 @@ export {
   Input,
   Label,
   Logo,
-  Page,
 } from '@/pages/signup/SignupPage.styles'
+
+/** 화면 높이 차이 중 입력칸 위 여백이 흡수하는 비율 (나머지는 하단 여백) */
+const LOGIN_SHIFT = 0.6
+
+export const Page = styled(BasePage)`
+  --max-shrink: 23rem;
+`
 
 export const Fields = styled.div`
   position: absolute;
-  top: 43.9rem;
+  top: ${shiftTop('43.9rem', LOGIN_SHIFT)};
   right: 3rem;
   left: 3rem;
   display: flex;
@@ -23,7 +30,7 @@ export const Fields = styled.div`
 
 export const SubmitButton = styled.button`
   position: absolute;
-  top: 62.5rem;
+  top: ${shiftTop('62.5rem', LOGIN_SHIFT)};
   right: 3rem;
   left: 3rem;
   height: 5rem;
@@ -37,7 +44,7 @@ export const SubmitButton = styled.button`
 
 export const SignupButton = styled.button`
   position: absolute;
-  top: 68.5rem;
+  top: ${shiftTop('68.5rem', LOGIN_SHIFT)};
   left: 50%;
   font-size: ${({ theme }) => theme.fontSize.xs};
   font-weight: 400;
@@ -49,7 +56,7 @@ export const SignupButton = styled.button`
 
 export const SocialLogins = styled.div`
   position: absolute;
-  top: 72.5rem;
+  top: ${shiftTop('72.5rem', LOGIN_SHIFT)};
   right: 0;
   left: 0;
   display: flex;
