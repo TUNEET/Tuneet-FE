@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router'
 import eyeClosedIcon from '@/assets/icons/deye.svg'
 import eyeIcon from '@/assets/icons/eye.svg'
 import logo from '@/assets/images/logo.svg'
-import termCharacter from '@/assets/images/tunee6.svg'
 import { ROUTES } from '@/constants/routes'
 import { markProfileSetupPending } from '@/utils/auth'
+import { TermDetailModal } from './components/TermDetailModal/TermDetailModal'
 import * as S from './SignupPage.styles'
 import { TERMS } from './terms'
 
@@ -152,33 +152,7 @@ export function SignupPage() {
       )}
 
       {openTermDetail && (
-        <S.TermModalOverlay>
-          <S.TermModal
-            $top={openTermDetail.top}
-            $height={openTermDetail.height}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="signup-term-title"
-          >
-            <S.TermModalTitle id="signup-term-title">{openTermDetail.title}</S.TermModalTitle>
-            <S.TermSections $gap={openTermDetail.sectionGap}>
-              {openTermDetail.sections.map(({ heading, body }) => (
-                <S.TermSection key={heading}>
-                  <S.TermSectionHeading>{heading}</S.TermSectionHeading>
-                  <S.TermSectionBody>{body}</S.TermSectionBody>
-                </S.TermSection>
-              ))}
-            </S.TermSections>
-            <S.TermModalCloseButton type="button" onClick={() => setOpenTermId(null)} autoFocus>
-              닫기
-            </S.TermModalCloseButton>
-          </S.TermModal>
-          <S.TermCharacter
-            $modalTop={openTermDetail.top}
-            src={termCharacter}
-            alt=""
-          />
-        </S.TermModalOverlay>
+        <TermDetailModal detail={openTermDetail} onClose={() => setOpenTermId(null)} />
       )}
     </S.Page>
   )
