@@ -5,7 +5,22 @@
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any" />
     <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      id="viewport"
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <script>
+      // iOS는 16px 미만 입력칸에 포커스하면 자동 확대되고 원래 배율로 돌아오지 않는다.
+      // maximum-scale=1로 자동 확대만 막는다. (iOS는 이 값이 있어도 핀치 줌은 허용)
+      // Android에서는 핀치 줌까지 막히므로 iOS에서만 적용한다.
+      if (
+        /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+      ) {
+        document.getElementById('viewport').content += ', maximum-scale=1'
+      }
+    </script>
     <meta name="theme-color" content="#F2EBF2" />
     <meta name="description" content="음악으로 연결되는 TUNEET" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
