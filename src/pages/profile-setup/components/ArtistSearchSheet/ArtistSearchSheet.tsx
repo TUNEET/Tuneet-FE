@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import plusCircleRoseIcon from '@/assets/icons/plus-circle-rose.svg'
-import characterImage from '@/assets/images/tunee7.svg'
+import characterImage from '@/assets/images/character-search.webp'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { PageArrow } from '@/pages/matching/room/playlist/components/SongSearchSheet/SongSearchSheet'
 import { mockSearchArtists } from '../../mocks'
