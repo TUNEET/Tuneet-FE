@@ -1,7 +1,7 @@
 import { useId } from 'react'
 import termCharacter from '@/assets/images/character-term.webp'
-import * as S from '../../SignupPage.styles'
-import type { TERMS } from '../../terms'
+import type { TERMS } from '@/constants/terms'
+import * as S from './TermDetailModal.styles'
 
 type TermDetailModalProps = {
   detail: (typeof TERMS)[number]['detail']
@@ -13,7 +13,12 @@ export function TermDetailModal({ detail, onClose }: TermDetailModalProps) {
 
   return (
     <S.TermModalOverlay>
-      <S.TermModal $height={detail.height} role="dialog" aria-modal="true" aria-labelledby={titleId}>
+      <S.TermModal
+        $height={detail.height}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+      >
         <S.TermModalTitle id={titleId}>{detail.title}</S.TermModalTitle>
         <S.TermSections $gap={detail.sectionGap}>
           {detail.sections.map(({ heading, body }) => (

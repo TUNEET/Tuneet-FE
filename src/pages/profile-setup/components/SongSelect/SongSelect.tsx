@@ -2,7 +2,7 @@ import { useState } from 'react'
 import heartFilledIcon from '@/assets/icons/heart-filled.svg'
 import heartOutlineIcon from '@/assets/icons/heart-outline.svg'
 import musicNoteIcon from '@/assets/icons/music-note.svg'
-import { SongSearchSheet } from '@/pages/matching/room/playlist/components/SongSearchSheet/SongSearchSheet'
+import { SongSearchSheet } from '@/components/common/SongSearchSheet/SongSearchSheet'
 import { Panel, PanelHeader, PanelIcon, PanelLabel } from '../TasteSelect/TasteSelect.styles'
 import * as S from './SongSelect.styles'
 

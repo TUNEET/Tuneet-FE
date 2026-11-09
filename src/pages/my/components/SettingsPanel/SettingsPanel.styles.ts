@@ -1,8 +1,8 @@
 import styled from 'styled-components'
-import { Sheet } from '@/pages/home/HomePage.styles'
+import { Sheet } from '@/styles/tabPage'
 import { FilledButton, HeaderAction, ProfileTitle } from '../../MyPage.styles'
 
-export { Checkbox, Term, TermDetail, TermLabel } from '@/pages/signup/SignupPage.styles'
+export { Checkbox, Term, TermDetail, TermLabel } from '@/styles/term'
 
 export const SettingsSheet = styled(Sheet)`
   gap: 0;
@@ -55,8 +55,7 @@ export const Toggle = styled.button<{ $isOn: boolean }>`
   height: 2rem;
   padding: ${({ $isOn }) => ($isOn ? '0 0.3rem 0 0.6rem' : '0 0.5rem 0 0.3rem')};
   border-radius: 1000px;
-  background-color: ${({ theme, $isOn }) =>
-    $isOn ? theme.colors.primary : theme.colors.border};
+  background-color: ${({ theme, $isOn }) => ($isOn ? theme.colors.primary : theme.colors.border)};
   font-size: ${({ theme }) => theme.fontSize.xxs};
   font-weight: 500;
   line-height: 1.6rem;

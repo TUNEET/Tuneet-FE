@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 export { ExploreSheet } from '@/pages/explore/ExplorePage.styles'
-export { Glow, Glows, Page, Section } from '@/pages/home/HomePage.styles'
+export { Glow, Glows, Page, Section } from '@/styles/tabPage'
 
 export const Card = styled.div`
   display: flex;
