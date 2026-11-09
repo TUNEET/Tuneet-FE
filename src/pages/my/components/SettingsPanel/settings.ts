@@ -1,4 +1,4 @@
-import { TERMS } from '@/pages/signup/terms'
+import { TERMS } from '@/constants/terms'
 
 export const DEFAULT_SETTINGS = {
   locationVisible: true,

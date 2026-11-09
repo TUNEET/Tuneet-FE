@@ -1,5 +1,5 @@
 import styled, { css, keyframes } from 'styled-components'
-import { Item, List, PlayButton, Song } from '../../../components/Playlist/Playlist.styles'
+import { PlayButton, SongItem as Item, SongLabel as Song, SongList as List } from '@/styles/song'
 
 export type SongSearchSheetVariant = 'playlist' | 'profile' | 'explore'
 

@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from 'react'
 import plusCircleRoseIcon from '@/assets/icons/plus-circle-rose.svg'
 import characterImage from '@/assets/images/character-search.webp'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
-import { PageArrow } from '@/pages/matching/room/playlist/components/SongSearchSheet/SongSearchSheet'
-import { mockSearchArtists } from '../../mocks'
-import type { ProfileArtist } from '../../mocks'
+import { PageArrow } from '@/components/common/SongSearchSheet/SongSearchSheet'
+import { mockSearchArtists } from '@/mocks/profile'
+import type { ProfileArtist } from '@/mocks/profile'
 import * as S from './ArtistSearchSheet.styles'
 
 const SEARCH_DEBOUNCE_MS = 200

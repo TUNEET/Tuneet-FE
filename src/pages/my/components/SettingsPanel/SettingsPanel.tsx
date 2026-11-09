@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
-import { TermDetailModal } from '@/pages/signup/components/TermDetailModal/TermDetailModal'
-import { TERMS } from '@/pages/signup/terms'
+import { TermDetailModal } from '@/components/common/TermDetailModal/TermDetailModal'
+import { TERMS } from '@/constants/terms'
 import type { Settings } from './settings'
 import * as S from './SettingsPanel.styles'
 

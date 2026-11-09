@@ -5,7 +5,8 @@ import melonIcon from '@/assets/icons/melon.svg'
 import characterSleeping from '@/assets/images/character-sleeping.webp'
 import characterFailure from '@/assets/images/character-failure.webp'
 import characterImage from '@/assets/images/character-profile.png'
-import { MOCK_FAILING_PLATFORM_ID } from '@/pages/profile-setup/mocks'
+import { MOCK_FAILING_PLATFORM_ID } from '@/mocks/profile'
+import { ChevronIcon } from '@/components/common/ChevronIcon/ChevronIcon'
 import * as S from './PlatformConnect.styles'
 
 const PLATFORMS = [
@@ -104,9 +105,7 @@ export function PlatformConnect({ nickname, previewUrl, music, onNext }: Platfor
               <S.PopupDescription>나의 음악 취향을 TUNEET에서 만나 보세요.</S.PopupDescription>
             </S.PopupTexts>
             <S.SuccessButton type="button" aria-label="다음" onClick={onNext} autoFocus>
-              <svg width="8" height="14" viewBox="0 0 8 14" fill="none" aria-hidden>
-                <path d="m1 1 6 6-6 6" stroke="currentColor" strokeWidth="1.8" />
-              </svg>
+              <ChevronIcon direction="right" />
             </S.SuccessButton>
           </S.SuccessPopup>
         </S.Overlay>

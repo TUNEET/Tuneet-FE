@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 import { SETUP_SHIFT } from '@/pages/profile-setup/ProfileSetupPage.styles'
-import { shiftTop } from '@/pages/signup/SignupPage.styles'
+import { shiftTop } from '@/styles/authPage'
 
 export const glassSurface = css`
   background-color: rgba(227, 210, 221, 0.2);

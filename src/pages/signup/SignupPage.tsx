@@ -6,9 +6,9 @@ import eyeIcon from '@/assets/icons/eye.svg'
 import logo from '@/assets/images/logo.svg'
 import { ROUTES } from '@/constants/routes'
 import { markProfileSetupPending } from '@/utils/auth'
-import { TermDetailModal } from './components/TermDetailModal/TermDetailModal'
+import { TermDetailModal } from '@/components/common/TermDetailModal/TermDetailModal'
 import * as S from './SignupPage.styles'
-import { TERMS } from './terms'
+import { TERMS } from '@/constants/terms'
 
 const FIELDS = [
   {
@@ -104,9 +104,7 @@ export function SignupPage() {
                       type="button"
                       aria-label={`${label} ${isVisible ? '숨기기' : '표시'}`}
                       aria-pressed={isVisible}
-                      onClick={() =>
-                        setVisiblePasswords((prev) => ({ ...prev, [id]: !isVisible }))
-                      }
+                      onClick={() => setVisiblePasswords((prev) => ({ ...prev, [id]: !isVisible }))}
                     >
                       {isVisible ? (
                         <img src={eyeIcon} alt="" width={16} height={12} />
