@@ -1,15 +1,7 @@
 import styled from 'styled-components'
-import { Page as BasePage, shiftTop } from '@/pages/signup/SignupPage.styles'
+import { Page as BasePage, shiftTop } from '@/styles/authPage'
 
-export {
-  Blob,
-  Description,
-  Field,
-  Heading,
-  Input,
-  Label,
-  Logo,
-} from '@/pages/signup/SignupPage.styles'
+export { Blob, Description, Field, Heading, Input, Label, Logo } from '@/styles/authPage'
 
 /** 화면 높이 차이 중 입력칸 위 여백이 흡수하는 비율 (나머지는 하단 여백) */
 const LOGIN_SHIFT = 0.6

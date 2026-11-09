@@ -12,8 +12,9 @@ import noteLargeIcon from '@/assets/icons/nrk_music-note-solid-expressive.svg'
 import waveformLargeIcon from '@/assets/icons/withicons_audio-waveform-duo-1.svg'
 import waveformSmallIcon from '@/assets/icons/withicons_audio-waveform-duo.svg'
 import characterImage from '@/assets/images/character-profile.png'
-import { MOCK_PROFILE_ARTISTS } from '@/pages/profile-setup/mocks'
-import { Song, SongNote } from '../SongSelect/SongSelect.styles'
+import { MOCK_PROFILE_ARTISTS } from '@/mocks/profile'
+import { SongChip as Song, SongNote } from '@/styles/song'
+import { ChevronIcon } from '@/components/common/ChevronIcon/ChevronIcon'
 import * as S from './ProfileComplete.styles'
 
 const RAYS = [
@@ -123,9 +124,7 @@ export function ProfileComplete({
       {onStart && (
         <S.StartButton type="button" onClick={onStart}>
           TUNEET 시작하기
-          <svg width="8" height="14" viewBox="0 0 8 14" fill="none" aria-hidden>
-            <path d="m1 1 6 6-6 6" stroke="currentColor" strokeWidth="1.8" />
-          </svg>
+          <ChevronIcon direction="right" />
         </S.StartButton>
       )}
       {children}

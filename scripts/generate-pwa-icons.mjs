@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url'
 import sharp from 'sharp'
 
 const publicDir = fileURLToPath(new URL('../public/', import.meta.url))
-const source = await readFile(`${publicDir}favicon.svg`, 'utf8')
+const source = await readFile(new URL('./app-icon.svg', import.meta.url), 'utf8')
 
 const MASKABLE_SCALE = 0.82
 
@@ -11,7 +11,7 @@ const square = source.replaceAll(/rx="[\d.]+"/g, 'rx="0"')
 
 const backgroundRect = /<rect width="80" height="80" rx="0" fill="(url\(#[^)]+\))"\/>/
 const [, gradientFill] = square.match(backgroundRect) ?? []
-if (!gradientFill) throw new Error('favicon.svg 배경 rect를 찾지 못했습니다.')
+if (!gradientFill) throw new Error('app-icon.svg 배경 rect를 찾지 못했습니다.')
 
 const offsetX = 40 * (1 - MASKABLE_SCALE)
 const offsetY = 80 * (1 - MASKABLE_SCALE)
