@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router'
 import { MobileLayout } from '@/components/layout/MobileLayout'
+import { RouteErrorFallback } from '@/components/layout/RouteErrorFallback'
 import { TabLayout } from '@/components/layout/TabLayout'
 import { ROUTES } from '@/constants/routes'
 import { ExplorePage } from '@/pages/explore/ExplorePage'
@@ -30,40 +31,54 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <MobileLayout />,
+    // 레이아웃 자체에서 난 오류
+    errorElement: <RouteErrorFallback />,
     children: [
       {
-        element: <RequireAuth />,
+        // 페이지에서 난 오류는 모바일 프레임 안에서 보여준다
+        errorElement: <RouteErrorFallback />,
         children: [
-          { path: ROUTES.profileSetup, element: <ProfileSetupPage /> },
           {
-            element: <TabLayout />,
+            element: <RequireAuth />,
             children: [
-              { path: ROUTES.home, element: <HomePage /> },
-              { path: ROUTES.explore, element: <ExplorePage /> },
-              { path: ROUTES.exploreWrite, element: <ExploreWritePage /> },
-              { path: ROUTES.exploreNotifications, element: <NotificationsPage /> },
-              { path: ROUTES.matching, element: <MatchingPage /> },
-              { path: ROUTES.recommendedUsers, element: <RecommendedUsersPage /> },
-              { path: ROUTES.userProfile, element: <UserProfilePage /> },
-              { path: ROUTES.letterWrite, element: <LetterWritePage /> },
-              { path: ROUTES.anonymousLetterWrite, element: <LetterWritePage /> },
-              { path: ROUTES.letterbox, element: <LetterboxPage /> },
-              { path: ROUTES.letter, element: <LetterDetailPage /> },
-              { path: ROUTES.createRoom, element: <CreateRoomPage /> },
-              { path: ROUTES.joinRoom, element: <JoinRoomPage /> },
-              { path: ROUTES.room, element: <RoomHomePage /> },
-              { path: ROUTES.roomMembers, element: <RoomMembersPage /> },
-              { path: ROUTES.roomFeeds, element: <RoomFeedsPage /> },
-              { path: ROUTES.roomPlaylist, element: <RoomPlaylistPage /> },
-              { path: ROUTES.my, element: <MyPage /> },
+              { path: ROUTES.profileSetup, element: <ProfileSetupPage /> },
+              {
+                element: <TabLayout />,
+                children: [
+                  {
+                    // 탭 페이지에서 난 오류는 헤더·하단 탭을 유지한 채 보여준다
+                    errorElement: <RouteErrorFallback />,
+                    children: [
+                      { path: ROUTES.home, element: <HomePage /> },
+                      { path: ROUTES.explore, element: <ExplorePage /> },
+                      { path: ROUTES.exploreWrite, element: <ExploreWritePage /> },
+                      { path: ROUTES.exploreNotifications, element: <NotificationsPage /> },
+                      { path: ROUTES.matching, element: <MatchingPage /> },
+                      { path: ROUTES.recommendedUsers, element: <RecommendedUsersPage /> },
+                      { path: ROUTES.userProfile, element: <UserProfilePage /> },
+                      { path: ROUTES.letterWrite, element: <LetterWritePage /> },
+                      { path: ROUTES.anonymousLetterWrite, element: <LetterWritePage /> },
+                      { path: ROUTES.letterbox, element: <LetterboxPage /> },
+                      { path: ROUTES.letter, element: <LetterDetailPage /> },
+                      { path: ROUTES.createRoom, element: <CreateRoomPage /> },
+                      { path: ROUTES.joinRoom, element: <JoinRoomPage /> },
+                      { path: ROUTES.room, element: <RoomHomePage /> },
+                      { path: ROUTES.roomMembers, element: <RoomMembersPage /> },
+                      { path: ROUTES.roomFeeds, element: <RoomFeedsPage /> },
+                      { path: ROUTES.roomPlaylist, element: <RoomPlaylistPage /> },
+                      { path: ROUTES.my, element: <MyPage /> },
+                    ],
+                  },
+                ],
+              },
             ],
           },
+          { path: ROUTES.onboarding, element: <OnboardingPage /> },
+          { path: ROUTES.signup, element: <SignupPage /> },
+          { path: ROUTES.login, element: <LoginPage /> },
+          { path: '*', element: <NotFoundPage /> },
         ],
       },
-      { path: ROUTES.onboarding, element: <OnboardingPage /> },
-      { path: ROUTES.signup, element: <SignupPage /> },
-      { path: ROUTES.login, element: <LoginPage /> },
-      { path: '*', element: <NotFoundPage /> },
     ],
   },
 ])
