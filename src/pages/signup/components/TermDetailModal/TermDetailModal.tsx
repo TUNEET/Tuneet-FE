@@ -1,5 +1,5 @@
 import { useId } from 'react'
-import termCharacter from '@/assets/images/tunee6.svg'
+import termCharacter from '@/assets/images/character-term.webp'
 import * as S from '../../SignupPage.styles'
 import type { TERMS } from '../../terms'
 
