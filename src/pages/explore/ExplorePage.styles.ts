@@ -1,7 +1,7 @@
 import styled from 'styled-components'
-import { Sheet } from '@/pages/home/HomePage.styles'
+import { Sheet } from '@/styles/tabPage'
 
-export { BottomFade, CardList, Glow, Glows, Page, Section } from '@/pages/home/HomePage.styles'
+export { BottomFade, CardList, Glow, Glows, Page, Section } from '@/styles/tabPage'
 
 export const ExploreSheet = styled(Sheet)`
   margin-top: 3rem;

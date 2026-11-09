@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { GENRE_ROWS } from '@/constants/genres'
-import type { ProfileArtist } from '../../mocks'
+import type { ProfileArtist } from '@/mocks/profile'
 import { ArtistSearchSheet } from '../ArtistSearchSheet/ArtistSearchSheet'
 import * as S from './TasteSelect.styles'
 
@@ -62,7 +62,10 @@ export function TasteSelect({
           )}
         </S.Panel>
 
-        <S.Panel $openHeight={selectedArtists.length > 0 ? 'auto' : '9.7rem'} $isOpen={isArtistOpen}>
+        <S.Panel
+          $openHeight={selectedArtists.length > 0 ? 'auto' : '9.7rem'}
+          $isOpen={isArtistOpen}
+        >
           <S.PanelHeader
             type="button"
             aria-expanded={isArtistOpen}

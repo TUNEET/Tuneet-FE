@@ -1,8 +1,8 @@
 import styled from 'styled-components'
-import { CardList, Sheet } from '@/pages/home/HomePage.styles'
+import { CardList, Sheet } from '@/styles/tabPage'
 import { HeaderAction, ProfileTitle } from '../../MyPage.styles'
 
-export { Section } from '@/pages/home/HomePage.styles'
+export { Section } from '@/styles/tabPage'
 
 export const BlockedSheet = Sheet
 

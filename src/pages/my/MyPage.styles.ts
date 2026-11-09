@@ -1,7 +1,7 @@
 import styled from 'styled-components'
-import { Blob as BaseBlob } from '@/pages/signup/SignupPage.styles'
+import { Blob as BaseBlob } from '@/styles/authPage'
 
-export { Glow, Glows, Greeting, Page } from '@/pages/home/HomePage.styles'
+export { Glow, Glows, Greeting, Page } from '@/styles/tabPage'
 
 export const Blob = styled(BaseBlob)`
   top: calc(100% + 3.6rem);

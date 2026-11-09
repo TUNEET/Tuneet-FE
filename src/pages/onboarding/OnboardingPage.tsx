@@ -2,8 +2,8 @@ import { useNavigate } from 'react-router'
 import logo from '@/assets/images/logo.svg'
 import { ROUTES } from '@/constants/routes'
 import * as S from './OnboardingPage.styles'
-import CHARACTER_IMAGE from '../../assets/icons/Photoroom 1.svg'
-import HEART from '../../assets/icons/heart.svg'
+import CHARACTER_IMAGE from '@/assets/images/character-onboarding.webp'
+import HEART from '@/assets/images/onboarding-heart.webp'
 
 export function OnboardingPage() {
   const navigate = useNavigate()

@@ -10,7 +10,7 @@ import { MOCK_ROOM_DETAIL } from '@/mocks/room'
 import type { PlaylistSong } from '@/types/room'
 import { Playlist } from '../components/Playlist/Playlist'
 import { RoomHeader } from '../components/RoomHeader/RoomHeader'
-import { SongSearchSheet } from './components/SongSearchSheet/SongSearchSheet'
+import { SongSearchSheet } from '@/components/common/SongSearchSheet/SongSearchSheet'
 import * as S from './RoomPlaylistPage.styles'
 
 export function RoomPlaylistPage() {
