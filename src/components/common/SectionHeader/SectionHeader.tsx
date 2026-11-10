@@ -4,14 +4,20 @@ type SectionHeaderProps = {
   title: string
   actionLabel?: string
   onActionClick?: () => void
+  actionDisabled?: boolean
 }
 
-export function SectionHeader({ title, actionLabel, onActionClick }: SectionHeaderProps) {
+export function SectionHeader({
+  title,
+  actionLabel,
+  onActionClick,
+  actionDisabled = false,
+}: SectionHeaderProps) {
   return (
     <S.Wrapper>
       <S.Title>{title}</S.Title>
       {actionLabel && (
-        <S.Action type="button" onClick={onActionClick}>
+        <S.Action type="button" onClick={onActionClick} disabled={actionDisabled}>
           {actionLabel}
         </S.Action>
       )}

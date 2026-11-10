@@ -2,11 +2,13 @@ import { useCallback, useRef, useState } from 'react'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { MusicCard } from '@/components/common/MusicCard/MusicCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
+import { useToast } from '@/hooks/useToast'
 import { MOCK_NOTIFICATIONS } from '@/mocks/data'
 import * as S from '@/pages/explore/ExplorePage.styles'
 import { formatTimeAgo } from '@/utils/format'
 
 export function NotificationsPage() {
+  const showToast = useToast()
   const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS)
   const [isClearOpen, setIsClearOpen] = useState(false)
   const headerRef = useRef<HTMLDivElement>(null)
@@ -16,6 +18,7 @@ export function NotificationsPage() {
   const handleClear = () => {
     closeClear()
     setNotifications([])
+    showToast('알림을 모두 삭제했어요')
   }
 
   return (
@@ -33,32 +36,37 @@ export function NotificationsPage() {
               title="알림"
               actionLabel="전체삭제"
               onActionClick={() => setIsClearOpen((prev) => !prev)}
+              actionDisabled={isEmpty}
             />
             <ConfirmPopover
-              open={isClearOpen}
-              message={isEmpty ? '삭제할 알림이 없어요.' : '모든 알림을 삭제하시겠어요?'}
-              confirmLabel={isEmpty ? '닫기' : '전체삭제'}
-              onConfirm={isEmpty ? closeClear : handleClear}
+              open={isClearOpen && !isEmpty}
+              message="모든 알림을 삭제하시겠어요?"
+              confirmLabel="전체삭제"
+              onConfirm={handleClear}
               onClose={closeClear}
               anchorRef={headerRef}
               surface="sheet"
-              tone={isEmpty ? 'muted' : 'danger'}
+              tone="danger"
             />
           </S.NotificationHeader>
-          <S.CardList>
-            {notifications.map(({ id, nickname, message, song, createdAt }) => (
-              <MusicCard
-                key={id}
-                tone="blue"
-                nickname={nickname}
-                meta={formatTimeAgo(createdAt)}
-                image={song.albumImageUrl}
-                title={message}
-                description={`${song.title} - ${song.artist}`}
-                playable
-              />
-            ))}
-          </S.CardList>
+          {isEmpty ? (
+            <S.Empty>받은 알림이 없어요</S.Empty>
+          ) : (
+            <S.CardList>
+              {notifications.map(({ id, nickname, message, song, createdAt }) => (
+                <MusicCard
+                  key={id}
+                  tone="blue"
+                  nickname={nickname}
+                  meta={formatTimeAgo(createdAt)}
+                  image={song.albumImageUrl}
+                  title={message}
+                  description={`${song.title} - ${song.artist}`}
+                  playable
+                />
+              ))}
+            </S.CardList>
+          )}
         </S.Section>
       </S.ExploreSheet>
     </S.Page>
