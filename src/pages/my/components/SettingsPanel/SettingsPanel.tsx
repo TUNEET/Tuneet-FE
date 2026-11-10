@@ -7,7 +7,12 @@ import * as S from './SettingsPanel.styles'
 
 type ToggleKey = 'locationVisible' | 'letterEnabled' | 'platformLinked'
 
-const TOGGLES: { key: ToggleKey; label: string; description: string }[] = [
+const TOGGLES: {
+  key: ToggleKey
+  label: string
+  description: string
+  offDescription?: string
+}[] = [
   {
     key: 'locationVisible',
     label: '위치정보 노출',
@@ -22,6 +27,7 @@ const TOGGLES: { key: ToggleKey; label: string; description: string }[] = [
     key: 'platformLinked',
     label: '음원 플랫폼 연동',
     description: '현재 연동되어 있습니다.',
+    offDescription: '현재 연동 해제 상태입니다.',
   },
 ]
 
@@ -61,7 +67,7 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
       </S.Header>
 
       <S.Options>
-        {TOGGLES.map(({ key, label, description }) => {
+        {TOGGLES.map(({ key, label, description, offDescription }) => {
           const isOn = draft[key]
 
           return (
@@ -80,24 +86,31 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
                   <S.ToggleKnob />
                 </S.Toggle>
               </S.OptionHeader>
-              <S.OptionDescription>{description}</S.OptionDescription>
+              <S.OptionDescription>
+                {!isOn && offDescription ? offDescription : description}
+              </S.OptionDescription>
             </S.Option>
           )
         })}
 
         <S.Terms>
-          {TERMS.map(({ id, label }) => (
+          {TERMS.map(({ id, label, required }) => (
             <S.Term key={id}>
               <S.TermLabel>
                 <S.Checkbox
                   type="checkbox"
                   checked={draft.terms[id]}
-                  onChange={(event) =>
+                  aria-readonly={required}
+                  onChange={(event) => {
+                    const { checked } = event.target
+                    // 필수 약관은 동의 해제 불가
+                    if (required && !checked) return
+
                     setDraft((current) => ({
                       ...current,
-                      terms: { ...current.terms, [id]: event.target.checked },
+                      terms: { ...current.terms, [id]: checked },
                     }))
-                  }
+                  }}
                 />
                 {label}
               </S.TermLabel>
