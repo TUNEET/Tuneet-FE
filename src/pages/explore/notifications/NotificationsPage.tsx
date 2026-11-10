@@ -36,16 +36,17 @@ export function NotificationsPage() {
               title="알림"
               actionLabel="전체삭제"
               onActionClick={() => setIsClearOpen((prev) => !prev)}
+              actionDisabled={isEmpty}
             />
             <ConfirmPopover
-              open={isClearOpen}
-              message={isEmpty ? '삭제할 알림이 없어요.' : '모든 알림을 삭제하시겠어요?'}
-              confirmLabel={isEmpty ? '닫기' : '전체삭제'}
-              onConfirm={isEmpty ? closeClear : handleClear}
+              open={isClearOpen && !isEmpty}
+              message="모든 알림을 삭제하시겠어요?"
+              confirmLabel="전체삭제"
+              onConfirm={handleClear}
               onClose={closeClear}
               anchorRef={headerRef}
               surface="sheet"
-              tone={isEmpty ? 'muted' : 'danger'}
+              tone="danger"
             />
           </S.NotificationHeader>
           {isEmpty ? (
