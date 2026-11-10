@@ -17,6 +17,7 @@ export function LetterboxPage() {
   const [isClearOpen, setIsClearOpen] = useState(false)
   const headerRef = useRef<HTMLDivElement>(null)
   const closeClear = useCallback(() => setIsClearOpen(false), [])
+  const isEmpty = letters.length === 0
 
   const handleClear = () => {
     closeClear()
@@ -30,11 +31,12 @@ export function LetterboxPage() {
         <S.Header ref={headerRef}>
           <SectionHeader
             title="편지함"
-            actionLabel={letters.length > 0 ? '전체삭제' : undefined}
+            actionLabel="전체삭제"
             onActionClick={() => setIsClearOpen((prev) => !prev)}
+            actionDisabled={isEmpty}
           />
           <ConfirmPopover
-            open={isClearOpen}
+            open={isClearOpen && !isEmpty}
             message="모든 편지를 삭제하시겠어요?"
             confirmLabel="모든 편지 삭제"
             onConfirm={handleClear}
@@ -42,7 +44,7 @@ export function LetterboxPage() {
             anchorRef={headerRef}
           />
         </S.Header>
-        {letters.length > 0 ? (
+        {!isEmpty ? (
           <S.List>
             {letters.map(({ id, senderNickname, content, song, sentAt }) => (
               <li key={id}>
