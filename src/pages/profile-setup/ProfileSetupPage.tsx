@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router'
+import { getApiError } from '@/apis/error'
+import { uploadImage } from '@/apis/image'
+import { addProfile, checkNicknameAvailability } from '@/apis/user'
 import { ChevronIcon } from '@/components/common/ChevronIcon/ChevronIcon'
 import { ProfileComplete } from '@/components/common/ProfileComplete/ProfileComplete'
 import { ROUTES } from '@/constants/routes'
@@ -17,8 +20,11 @@ type SetupStep = 'profile' | 'music' | 'platform' | 'taste' | 'song' | 'complete
 
 const NICKNAME_ERROR_MESSAGES = {
   empty: '닉네임을 입력해 주세요.',
-  duplicated: '중복된 닉네임입니다. 다른 닉네임을 입력해 주세요.', // 닉네임 중복 확인 API 연동 시 사용
+  duplicated: '중복된 닉네임입니다. 다른 닉네임을 입력해 주세요.',
 } as const
+
+/** 서버에 마지막으로 저장한 닉네임·사진 (같은 값으로 다시 넘어갈 때 저장 생략) */
+type SavedProfile = { nickname: string; imageFile: File | null }
 
 export function ProfileSetupPage() {
   const navigate = useNavigate()
@@ -27,6 +33,9 @@ export function ProfileSetupPage() {
   const [nicknameError, setNicknameError] = useState<string | null>(null)
   const [music, setMusic] = useState<ProfileMusic | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [savedProfile, setSavedProfile] = useState<SavedProfile | null>(null)
+  const [isSavingProfile, setIsSavingProfile] = useState(false)
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
   const [selectedArtists, setSelectedArtists] = useState<ProfileArtist[]>([])
   const [songs, setSongs] = useState<ProfileMusic[]>([])
@@ -70,15 +79,48 @@ export function ProfileSetupPage() {
     setNicknameError(null)
   }
 
-  const submitNickname = () => {
-    if (!nickname.trim()) {
+  const selectImage = (file: File) => {
+    setImageFile(file)
+    setPreviewUrl(URL.createObjectURL(file))
+  }
+
+  const submitNickname = async () => {
+    if (isSavingProfile) return
+
+    const trimmedNickname = nickname.trim()
+    if (!trimmedNickname) {
       setNicknameError(NICKNAME_ERROR_MESSAGES.empty)
       return
     }
 
-    // TODO: 닉네임 중복 확인 API 연동 후 중복이면 NICKNAME_ERROR_MESSAGES.duplicated 표시
-    setNickname(nickname.trim())
-    setStep('music')
+    const isNicknameChanged = savedProfile?.nickname !== trimmedNickname
+    const isImageChanged = savedProfile?.imageFile !== imageFile
+
+    if (!isNicknameChanged && !isImageChanged) {
+      setStep('music')
+      return
+    }
+
+    setIsSavingProfile(true)
+    try {
+      // 이미 저장한 내 닉네임은 중복으로 나오므로 바뀌었을 때만 확인
+      if (isNicknameChanged && !(await checkNicknameAvailability(trimmedNickname))) {
+        setNicknameError(NICKNAME_ERROR_MESSAGES.duplicated)
+        return
+      }
+
+      const profilePicture = imageFile ? await uploadImage(imageFile, 'PROFILE') : undefined
+      await addProfile({ nickname: trimmedNickname, profilePicture })
+
+      setSavedProfile({ nickname: trimmedNickname, imageFile })
+      setNickname(trimmedNickname)
+      setStep('music')
+    } catch (error) {
+      const { message, fields } = getApiError(error)
+      setNicknameError(fields.nickname ?? message)
+    } finally {
+      setIsSavingProfile(false)
+    }
   }
 
   const removeSong = (song: ProfileMusic) => {
@@ -200,7 +242,7 @@ export function ProfileSetupPage() {
             onNicknameChange={changeNickname}
             nicknameError={nicknameError}
             previewUrl={previewUrl}
-            onImageSelect={(file) => setPreviewUrl(URL.createObjectURL(file))}
+            onImageSelect={selectImage}
             music={music}
             onMusicChange={setMusic}
             onPrev={() => setStep('profile')}
