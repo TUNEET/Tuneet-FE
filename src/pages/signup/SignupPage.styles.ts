@@ -2,7 +2,17 @@ import styled from 'styled-components'
 import { Page as BasePage, Input, shiftTop } from '@/styles/authPage'
 import { glass } from '@/styles/glass'
 
-export { Blob, Description, Field, Heading, Input, Label, Logo } from '@/styles/authPage'
+export {
+  Blob,
+  Description,
+  Field,
+  FieldError,
+  Heading,
+  Input,
+  Label,
+  LabelRow,
+  Logo,
+} from '@/styles/authPage'
 export { Checkbox, Term, TermDetail, TermLabel } from '@/styles/term'
 
 const SIGNUP_SHIFT = 0.2
@@ -21,26 +31,8 @@ export const Fields = styled.div`
   gap: 2rem;
 `
 
-export const LabelRow = styled.div`
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-`
-
-export const FieldError = styled.p`
-  font-size: ${({ theme }) => theme.fontSize.xxs};
-  font-weight: 400;
-  letter-spacing: 0.02rem;
-  color: ${({ theme }) => theme.colors.danger};
-`
-
 export const InputBox = styled.div`
   position: relative;
-
-  & > input[aria-invalid='true'] {
-    outline: 1px solid ${({ theme }) => theme.colors.danger};
-    outline-offset: -1px;
-  }
 `
 
 export const PasswordInput = styled(Input)`

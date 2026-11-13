@@ -69,6 +69,19 @@ export const Field = styled.div`
   gap: 0.6rem;
 `
 
+export const LabelRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+`
+
+export const FieldError = styled.p`
+  font-size: ${({ theme }) => theme.fontSize.xxs};
+  font-weight: 400;
+  letter-spacing: 0.02rem;
+  color: ${({ theme }) => theme.colors.danger};
+`
+
 export const Label = styled.label`
   font-size: ${({ theme }) => theme.fontSize.sm};
   font-weight: 600;
@@ -92,6 +105,11 @@ export const Input = styled.input`
   &::placeholder {
     font-weight: 400;
     color: ${({ theme }) => theme.colors.textPlaceholder};
+  }
+
+  &[aria-invalid='true'] {
+    outline: 1px solid ${({ theme }) => theme.colors.danger};
+    outline-offset: -1px;
   }
 
   &:-webkit-autofill {
