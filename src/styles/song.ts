@@ -63,7 +63,7 @@ export const SongChip = styled.li`
   letter-spacing: 0.02rem;
   color: ${({ theme }) => theme.colors.primary};
 
-  img:first-child {
+  & > img:first-child {
     flex-shrink: 0;
     border-radius: 9999px;
   }
