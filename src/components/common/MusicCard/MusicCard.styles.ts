@@ -51,6 +51,12 @@ export const Author = styled.div`
   gap: 0.6rem;
 `
 
+export const Meta = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+`
+
 export const Caption = styled.span<{ $tone: MusicCardTone }>`
   font-size: ${({ theme }) => theme.fontSize.xxs};
   line-height: 1.4rem;
