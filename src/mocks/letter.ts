@@ -17,6 +17,7 @@ export const MOCK_RECEIVED_LETTERS: ReceivedLetter[] = [
       albumImageUrl: 'https://placehold.co/40x40',
     },
     sentAt: minutesAgo(3),
+    isReplied: true,
   },
   {
     id: 2,
@@ -25,6 +26,7 @@ export const MOCK_RECEIVED_LETTERS: ReceivedLetter[] = [
     content: '오늘도 충분히 예쁘고 멋진 하루 보내길 바라 💕',
     song: { title: 'Pretty Girl', artist: 'RESCENE', albumImageUrl: 'https://placehold.co/40x40' },
     sentAt: minutesAgo(3),
+    isReplied: false,
   },
 ]
 

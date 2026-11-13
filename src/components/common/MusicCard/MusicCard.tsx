@@ -19,6 +19,8 @@ export type MusicCardProps = {
   title: string
   description: string
   playable?: boolean
+  /** 시간 옆에 붙는 캡슐 라벨 (예: 답장) */
+  badge?: string
   action?: ReactNode
   expanded?: boolean
   onClick?: () => void
@@ -32,6 +34,7 @@ export function MusicCard({
   title,
   description,
   playable = false,
+  badge,
   action,
   expanded = false,
   onClick,
@@ -56,7 +59,10 @@ export function MusicCard({
           <img src={USER_ICONS[tone]} alt="" width={14} height={14} />
           <S.Caption $tone={tone}>{nickname}</S.Caption>
         </S.Author>
-        <S.Caption $tone={tone}>{meta}</S.Caption>
+        <S.Meta>
+          <S.Caption $tone={tone}>{meta}</S.Caption>
+          {badge && <S.Badge>{badge}</S.Badge>}
+        </S.Meta>
       </S.Top>
       <S.Body>
         <S.Main $expanded={expanded}>

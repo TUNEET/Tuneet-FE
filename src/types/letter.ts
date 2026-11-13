@@ -19,6 +19,8 @@ export type ReceivedLetter = {
   content: string
   song: Song
   sentAt: string
+  /** 내가 이 편지에 답장을 보냈는지 */
+  isReplied: boolean
 }
 
 export type SentLetter = {
