@@ -53,6 +53,10 @@ export function ProfileSetupPage() {
     )
   }
 
+  const removeArtist = (name: string) => {
+    setSelectedArtists((artists) => artists.filter((artist) => artist.name !== name))
+  }
+
   const addSong = (song: ProfileMusic) => {
     setSongs((prevSongs) =>
       prevSongs.some(({ title, artist }) => title === song.title && artist === song.artist)
@@ -75,6 +79,12 @@ export function ProfileSetupPage() {
     // TODO: 닉네임 중복 확인 API 연동 후 중복이면 NICKNAME_ERROR_MESSAGES.duplicated 표시
     setNickname(nickname.trim())
     setStep('music')
+  }
+
+  const removeSong = (song: ProfileMusic) => {
+    setSongs((prevSongs) =>
+      prevSongs.filter(({ title, artist }) => title !== song.title || artist !== song.artist),
+    )
   }
 
   const finishSetup = () => {
@@ -108,7 +118,7 @@ export function ProfileSetupPage() {
           description="나를 표현하는 노래를 1개 이상 선택해 주세요."
           onBack={() => setStep('taste')}
         >
-          <SongSelect songs={songs} onAddSong={addSong} />
+          <SongSelect songs={songs} onAddSong={addSong} onRemoveSong={removeSong} />
           <S.TasteNextButton
             type="button"
             aria-label="다음"
@@ -138,6 +148,7 @@ export function ProfileSetupPage() {
             onToggleGenre={toggleGenre}
             selectedArtists={selectedArtists}
             onAddArtist={addArtist}
+            onRemoveArtist={removeArtist}
           />
           <S.TasteNextButton type="button" aria-label="다음" onClick={() => setStep('song')}>
             <ChevronIcon direction="right" />

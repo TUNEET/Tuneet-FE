@@ -50,7 +50,7 @@ export const SelectedArtist = styled.li`
   letter-spacing: 0.02rem;
   color: ${({ theme }) => theme.colors.textPlaceholder};
 
-  img {
+  & > img {
     flex-shrink: 0;
     border-radius: 9999px;
   }
@@ -58,4 +58,11 @@ export const SelectedArtist = styled.li`
   span {
     white-space: nowrap;
   }
+`
+
+export const RemoveArtistButton = styled.button`
+  display: flex;
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
 `

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import heartFilledIcon from '@/assets/icons/heart-filled.svg'
 import heartOutlineIcon from '@/assets/icons/heart-outline.svg'
-import musicNoteIcon from '@/assets/icons/music-note.svg'
+import trashIcon from '@/assets/icons/trash_icon.svg'
 import { SongSearchSheet } from '@/components/common/SongSearchSheet/SongSearchSheet'
 import { Panel, PanelHeader, PanelIcon, PanelLabel } from '../TasteSelect/TasteSelect.styles'
 import * as S from './SongSelect.styles'
@@ -11,9 +11,10 @@ type Song = { title: string; artist: string; albumImage: string }
 type SongSelectProps = {
   songs: Song[]
   onAddSong: (song: Song) => void
+  onRemoveSong: (song: Song) => void
 }
 
-export function SongSelect({ songs, onAddSong }: SongSelectProps) {
+export function SongSelect({ songs, onAddSong, onRemoveSong }: SongSelectProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false)
 
   return (
@@ -43,13 +44,19 @@ export function SongSelect({ songs, onAddSong }: SongSelectProps) {
           />
           {songs.length > 0 && (
             <S.Songs>
-              {songs.map(({ title, artist, albumImage }) => (
-                <S.Song key={`${title}-${artist}`}>
-                  <img src={albumImage} alt="" width={12} height={12} />
+              {songs.map((song) => (
+                <S.Song key={`${song.title}-${song.artist}`}>
+                  <img src={song.albumImage} alt="" width={12} height={12} />
                   <span>
-                    {title} - {artist}
+                    {song.title} - {song.artist}
                   </span>
-                  <S.SongNote src={musicNoteIcon} alt="" />
+                  <S.RemoveSongButton
+                    type="button"
+                    aria-label={`${song.title} 삭제`}
+                    onClick={() => onRemoveSong(song)}
+                  >
+                    <img src={trashIcon} alt="" width={10} height={10} />
+                  </S.RemoveSongButton>
                 </S.Song>
               ))}
             </S.Songs>
