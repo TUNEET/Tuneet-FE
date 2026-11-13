@@ -51,7 +51,7 @@ type ProfileCompleteProps = {
   previewUrl: string | null
   songs: { title: string; artist: string; albumImage: string }[]
   genres: string[]
-  artists?: { name: string; image: string }[]
+  artists?: { name: string; image?: string | null }[]
   frame?: 'image' | 'plain'
   isEditing?: boolean
   onNicknameChange?: (nickname: string) => void
@@ -109,7 +109,7 @@ export function ProfileComplete({
           <S.TagRow>
             {artists.map(({ name, image }) => (
               <S.ArtistTag key={name}>
-                <img src={image} alt="" width={12} height={12} />
+                {image ? <img src={image} alt="" width={12} height={12} /> : <S.ArtistFallback />}
                 {name}
               </S.ArtistTag>
             ))}

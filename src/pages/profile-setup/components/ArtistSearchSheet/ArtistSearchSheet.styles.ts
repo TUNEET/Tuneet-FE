@@ -5,6 +5,7 @@ export {
   AddButton,
   CloseButton,
   Content,
+  CoverFallback,
   Empty,
   Overlay,
   PageButton,

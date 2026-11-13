@@ -1,9 +1,21 @@
 import { useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router'
+import { getApiError } from '@/apis/error'
+import { uploadImage } from '@/apis/image'
+import {
+  addProfile,
+  checkNicknameAvailability,
+  replaceArtists,
+  replaceGenres,
+  replaceMusics,
+} from '@/apis/user'
 import { ChevronIcon } from '@/components/common/ChevronIcon/ChevronIcon'
 import { ProfileComplete } from '@/components/common/ProfileComplete/ProfileComplete'
+import { GENRE_NAMES } from '@/constants/genres'
 import { ROUTES } from '@/constants/routes'
-import type { MOCK_PROFILE_MUSIC, ProfileArtist } from '@/mocks/profile'
+import { useToast } from '@/hooks/useToast'
+import { getMusicKey } from '@/types/music'
+import type { ProfileArtist, ProfileMusic } from '@/types/music'
 import { clearProfileSetupPending, isProfileSetupPending } from '@/utils/auth'
 import { PlatformConnect } from './components/PlatformConnect/PlatformConnect'
 import { ProfileStage } from './components/ProfileStage/ProfileStage'
@@ -12,23 +24,35 @@ import { SongSelect } from './components/SongSelect/SongSelect'
 import { TasteSelect } from './components/TasteSelect/TasteSelect'
 import * as S from './ProfileSetupPage.styles'
 
-type ProfileMusic = typeof MOCK_PROFILE_MUSIC
 type SetupStep = 'profile' | 'music' | 'platform' | 'taste' | 'song' | 'complete'
 
 const NICKNAME_ERROR_MESSAGES = {
   empty: '닉네임을 입력해 주세요.',
-  duplicated: '중복된 닉네임입니다. 다른 닉네임을 입력해 주세요.', // 닉네임 중복 확인 API 연동 시 사용
+  duplicated: '중복된 닉네임입니다. 다른 닉네임을 입력해 주세요.',
 } as const
+
+/** 서버에 마지막으로 저장한 닉네임·사진 (같은 값으로 다시 넘어갈 때 저장 생략) */
+type SavedProfile = { nickname: string; imageFile: File | null }
+
+const MIN_GENRES = 1
+const MIN_ARTISTS = 3
+const MIN_SONGS = 1
 
 export function ProfileSetupPage() {
   const navigate = useNavigate()
+  const showToast = useToast()
   const [step, setStep] = useState<SetupStep>('profile')
   const [nickname, setNickname] = useState('')
   const [nicknameError, setNicknameError] = useState<string | null>(null)
   const [music, setMusic] = useState<ProfileMusic | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [savedProfile, setSavedProfile] = useState<SavedProfile | null>(null)
+  const [isSavingProfile, setIsSavingProfile] = useState(false)
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
   const [selectedArtists, setSelectedArtists] = useState<ProfileArtist[]>([])
+  const [isSavingTaste, setIsSavingTaste] = useState(false)
+  const [isSavingSongs, setIsSavingSongs] = useState(false)
   const [songs, setSongs] = useState<ProfileMusic[]>([])
 
   useEffect(() => {
@@ -47,10 +71,30 @@ export function ProfileSetupPage() {
     )
   }
 
-  const addArtist = ({ name, image }: ProfileArtist) => {
+  const addArtist = (newArtist: ProfileArtist) => {
+    const key = newArtist.id ?? newArtist.name
     setSelectedArtists((artists) =>
-      artists.some((artist) => artist.name === name) ? artists : [...artists, { name, image }],
+      artists.some((artist) => (artist.id ?? artist.name) === key)
+        ? artists
+        : [...artists, newArtist],
     )
+  }
+
+  const submitTaste = async () => {
+    if (isSavingTaste) return
+
+    setIsSavingTaste(true)
+    try {
+      await Promise.all([
+        replaceGenres(selectedGenres.map((genre) => GENRE_NAMES[genre] ?? genre)),
+        replaceArtists(selectedArtists.flatMap(({ id }) => (id ? [id] : []))),
+      ])
+      setStep('song')
+    } catch (error) {
+      showToast(getApiError(error).message)
+    } finally {
+      setIsSavingTaste(false)
+    }
   }
 
   const removeArtist = (name: string) => {
@@ -59,10 +103,24 @@ export function ProfileSetupPage() {
 
   const addSong = (song: ProfileMusic) => {
     setSongs((prevSongs) =>
-      prevSongs.some(({ title, artist }) => title === song.title && artist === song.artist)
+      prevSongs.some((prevSong) => getMusicKey(prevSong) === getMusicKey(song))
         ? prevSongs
         : [...prevSongs, song],
     )
+  }
+
+  const submitSongs = async () => {
+    if (isSavingSongs) return
+
+    setIsSavingSongs(true)
+    try {
+      await replaceMusics(songs.flatMap(({ musicId }) => (musicId ? [musicId] : [])))
+      setStep('complete')
+    } catch (error) {
+      showToast(getApiError(error).message)
+    } finally {
+      setIsSavingSongs(false)
+    }
   }
 
   const changeNickname = (value: string) => {
@@ -70,20 +128,53 @@ export function ProfileSetupPage() {
     setNicknameError(null)
   }
 
-  const submitNickname = () => {
-    if (!nickname.trim()) {
+  const selectImage = (file: File) => {
+    setImageFile(file)
+    setPreviewUrl(URL.createObjectURL(file))
+  }
+
+  const submitNickname = async () => {
+    if (isSavingProfile) return
+
+    const trimmedNickname = nickname.trim()
+    if (!trimmedNickname) {
       setNicknameError(NICKNAME_ERROR_MESSAGES.empty)
       return
     }
 
-    // TODO: 닉네임 중복 확인 API 연동 후 중복이면 NICKNAME_ERROR_MESSAGES.duplicated 표시
-    setNickname(nickname.trim())
-    setStep('music')
+    const isNicknameChanged = savedProfile?.nickname !== trimmedNickname
+    const isImageChanged = savedProfile?.imageFile !== imageFile
+
+    if (!isNicknameChanged && !isImageChanged) {
+      setStep('music')
+      return
+    }
+
+    setIsSavingProfile(true)
+    try {
+      // 이미 저장한 내 닉네임은 중복으로 나오므로 바뀌었을 때만 확인
+      if (isNicknameChanged && !(await checkNicknameAvailability(trimmedNickname))) {
+        setNicknameError(NICKNAME_ERROR_MESSAGES.duplicated)
+        return
+      }
+
+      const profilePicture = imageFile ? await uploadImage(imageFile, 'PROFILE') : undefined
+      await addProfile({ nickname: trimmedNickname, profilePicture })
+
+      setSavedProfile({ nickname: trimmedNickname, imageFile })
+      setNickname(trimmedNickname)
+      setStep('music')
+    } catch (error) {
+      const { message, fields } = getApiError(error)
+      setNicknameError(fields.nickname ?? message)
+    } finally {
+      setIsSavingProfile(false)
+    }
   }
 
   const removeSong = (song: ProfileMusic) => {
     setSongs((prevSongs) =>
-      prevSongs.filter(({ title, artist }) => title !== song.title || artist !== song.artist),
+      prevSongs.filter((prevSong) => getMusicKey(prevSong) !== getMusicKey(song)),
     )
   }
 
@@ -122,8 +213,8 @@ export function ProfileSetupPage() {
           <S.TasteNextButton
             type="button"
             aria-label="다음"
-            disabled={songs.length === 0}
-            onClick={() => setStep('complete')}
+            disabled={songs.length < MIN_SONGS || isSavingSongs}
+            onClick={submitSongs}
           >
             <ChevronIcon direction="right" />
           </S.TasteNextButton>
@@ -150,7 +241,16 @@ export function ProfileSetupPage() {
             onAddArtist={addArtist}
             onRemoveArtist={removeArtist}
           />
-          <S.TasteNextButton type="button" aria-label="다음" onClick={() => setStep('song')}>
+          <S.TasteNextButton
+            type="button"
+            aria-label="다음"
+            disabled={
+              selectedGenres.length < MIN_GENRES ||
+              selectedArtists.length < MIN_ARTISTS ||
+              isSavingTaste
+            }
+            onClick={submitTaste}
+          >
             <ChevronIcon direction="right" />
           </S.TasteNextButton>
         </SetupStepLayout>
@@ -200,7 +300,7 @@ export function ProfileSetupPage() {
             onNicknameChange={changeNickname}
             nicknameError={nicknameError}
             previewUrl={previewUrl}
-            onImageSelect={(file) => setPreviewUrl(URL.createObjectURL(file))}
+            onImageSelect={selectImage}
             music={music}
             onMusicChange={setMusic}
             onPrev={() => setStep('profile')}

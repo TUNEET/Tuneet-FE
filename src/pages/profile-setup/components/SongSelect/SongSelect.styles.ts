@@ -16,3 +16,5 @@ export const Songs = styled.ul`
   gap: 1rem;
   width: 25rem;
 `
+
+export { CoverFallback } from '@/components/common/SongSearchSheet/SongSearchSheet.styles'

@@ -1,16 +1,20 @@
 import { useCallback, useEffect, useState } from 'react'
+import { searchArtists } from '@/apis/music'
 import plusCircleRoseIcon from '@/assets/icons/plus-circle-rose.svg'
 import characterImage from '@/assets/images/character-search.webp'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { PageArrow } from '@/components/common/SongSearchSheet/SongSearchSheet'
-import { mockSearchArtists } from '@/mocks/profile'
-import type { ProfileArtist } from '@/mocks/profile'
+import type { ArtistSearchItem, ProfileArtist } from '@/types/music'
 import * as S from './ArtistSearchSheet.styles'
 
 const SEARCH_DEBOUNCE_MS = 200
 const PAGE_SIZE = 5
 
-type Artist = Awaited<ReturnType<typeof mockSearchArtists>>[number]
+type SearchResult = {
+  keyword: string
+  items: ArtistSearchItem[]
+  totalPages: number
+}
 
 type ArtistSearchSheetProps = {
   onAdd: (artist: ProfileArtist) => void
@@ -19,9 +23,10 @@ type ArtistSearchSheetProps = {
 
 export function ArtistSearchSheet({ onAdd, onClose }: ArtistSearchSheetProps) {
   const [query, setQuery] = useState('')
-  const [results, setResults] = useState<Artist[] | null>(null)
+  const [result, setResult] = useState<SearchResult | null>(null)
+  const [isError, setIsError] = useState(false)
   const [page, setPage] = useState(1)
-  const [addedArtistId, setAddedArtistId] = useState<number | null>(null)
+  const [addedArtistId, setAddedArtistId] = useState<string | null>(null)
   const closeAddedPopover = useCallback(() => setAddedArtistId(null), [])
   const keyword = query.trim()
 
@@ -37,21 +42,30 @@ export function ArtistSearchSheet({ onAdd, onClose }: ArtistSearchSheetProps) {
     if (!keyword) return
 
     let isStale = false
-    const timer = setTimeout(() => {
-      mockSearchArtists(keyword).then((artists) => {
-        if (!isStale) setResults(artists)
-      })
+    const timer = setTimeout(async () => {
+      try {
+        const { items, totalPages } = await searchArtists(keyword, page, PAGE_SIZE)
+        if (isStale) return
+        setResult({ keyword, items, totalPages })
+        setIsError(false)
+      } catch {
+        if (isStale) return
+        setResult({ keyword, items: [], totalPages: 0 })
+        setIsError(true)
+      }
     }, SEARCH_DEBOUNCE_MS)
 
     return () => {
       isStale = true
       clearTimeout(timer)
     }
-  }, [keyword])
+  }, [keyword, page])
 
-  const hasResults = keyword !== '' && results !== null && results.length > 0
-  const isNoResult = keyword !== '' && results !== null && results.length === 0
-  const totalPages = Math.ceil((results?.length ?? 0) / PAGE_SIZE)
+  // 새 검색어 결과가 오기 전에는 이전 결과를 보여주지 않는다 (페이지 이동 중에는 유지)
+  const results = keyword !== '' && result?.keyword === keyword ? result.items : null
+  const hasResults = results !== null && results.length > 0
+  const isNoResult = results !== null && results.length === 0
+  const totalPages = Math.max(result?.totalPages ?? 1, 1)
 
   return (
     <S.Overlay $variant="profile">
@@ -74,17 +88,20 @@ export function ArtistSearchSheet({ onAdd, onClose }: ArtistSearchSheetProps) {
           />
           {hasResults && (
             <S.ResultList>
-              {results.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((artist) => (
+              {results.map((artist) => (
                 <S.ResultItem key={artist.id} $variant="profile">
                   <S.ResultSong>
-                    <img src={artist.image} alt="" />
-                    <span>{artist.name}</span>
+                    <S.CoverFallback />
+                    <span>
+                      {artist.name}
+                      {artist.disambiguation && ` (${artist.disambiguation})`}
+                    </span>
                   </S.ResultSong>
                   <S.AddButton
                     type="button"
                     aria-label={`${artist.name} 추가`}
                     onClick={() => {
-                      onAdd(artist)
+                      onAdd({ id: artist.id, name: artist.name })
                       setAddedArtistId(artist.id)
                     }}
                   >
@@ -121,7 +138,7 @@ export function ArtistSearchSheet({ onAdd, onClose }: ArtistSearchSheetProps) {
                 type="button"
                 $direction="next"
                 aria-label="다음 페이지"
-                disabled={page === totalPages}
+                disabled={page >= totalPages}
                 onClick={() => setPage((prev) => prev + 1)}
               >
                 <PageArrow />
@@ -141,7 +158,7 @@ export function ArtistSearchSheet({ onAdd, onClose }: ArtistSearchSheetProps) {
           {isNoResult && (
             <S.Empty $variant="profile">
               <img src={characterImage} alt="" />
-              <p>검색 결과가 없어요</p>
+              <p>{isError ? '검색하지 못했어요. 다시 시도해 주세요.' : '검색 결과가 없어요'}</p>
             </S.Empty>
           )}
         </S.Sheet>

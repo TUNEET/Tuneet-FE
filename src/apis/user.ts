@@ -1,6 +1,7 @@
 import type { ApiResponse } from '@/types/api'
 import type {
   AvailabilityResponse,
+  MyProfileResponse,
   ProfileAddRequest,
   ProfileAddResponse,
   SignUpRequest,
@@ -31,5 +32,25 @@ export async function checkNicknameAvailability(nickname: string) {
 
 export async function addProfile(body: ProfileAddRequest) {
   const { data } = await instance.patch<ApiResponse<ProfileAddResponse>>('/api/v1/users/me', body)
+  return data.data
+}
+
+/** 선호 장르 교체 (1개 이상, 서버 장르 값: K_POP 등) */
+export async function replaceGenres(genres: string[]) {
+  await instance.put<ApiResponse<unknown>>('/api/v1/users/me/genres', { genres })
+}
+
+/** 선호 아티스트 교체 (아티스트 검색 결과 id, 3~20팀) */
+export async function replaceArtists(artistIds: string[]) {
+  await instance.put<ApiResponse<unknown>>('/api/v1/users/me/artists', { artistIds })
+}
+
+/** 좋아하는 노래 교체 (노래 검색 결과 id, 1~20곡) */
+export async function replaceMusics(musicIds: string[]) {
+  await instance.put<ApiResponse<unknown>>('/api/v1/users/me/musics', { musicIds })
+}
+
+export async function getMyProfile() {
+  const { data } = await instance.get<ApiResponse<MyProfileResponse>>('/api/v1/users')
   return data.data
 }
