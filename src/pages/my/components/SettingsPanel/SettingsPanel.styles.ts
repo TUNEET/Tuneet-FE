@@ -26,6 +26,7 @@ export const Options = styled.div`
 `
 
 export const Option = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;

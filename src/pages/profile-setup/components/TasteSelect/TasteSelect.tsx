@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import trashIcon from '@/assets/icons/trash_icon.svg'
 import { GENRE_ROWS } from '@/constants/genres'
 import type { ProfileArtist } from '@/mocks/profile'
 import { ArtistSearchSheet } from '../ArtistSearchSheet/ArtistSearchSheet'
@@ -9,6 +10,7 @@ type TasteSelectProps = {
   onToggleGenre: (genre: string) => void
   selectedArtists: ProfileArtist[]
   onAddArtist: (artist: ProfileArtist) => void
+  onRemoveArtist: (name: string) => void
 }
 
 export function TasteSelect({
@@ -16,6 +18,7 @@ export function TasteSelect({
   onToggleGenre,
   selectedArtists,
   onAddArtist,
+  onRemoveArtist,
 }: TasteSelectProps) {
   const [isGenreOpen, setIsGenreOpen] = useState(false)
   const [isArtistOpen, setIsArtistOpen] = useState(false)
@@ -96,6 +99,13 @@ export function TasteSelect({
                 <S.SelectedArtist key={name}>
                   <img src={image} alt="" width={12} height={12} />
                   <span>{name}</span>
+                  <S.RemoveArtistButton
+                    type="button"
+                    aria-label={`${name} 삭제`}
+                    onClick={() => onRemoveArtist(name)}
+                  >
+                    <img src={trashIcon} alt="" width={10} height={10} />
+                  </S.RemoveArtistButton>
                 </S.SelectedArtist>
               ))}
             </S.SelectedArtists>

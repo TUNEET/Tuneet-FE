@@ -32,6 +32,12 @@ export const Checkbox = styled.input`
     background-color: ${({ theme }) => theme.colors.primary};
     box-shadow: inset 0 0 0 0.3rem ${({ theme }) => theme.colors.border};
   }
+
+  /* 변경할 수 없는 항목(설정의 필수 약관) */
+  &:checked[aria-readonly='true'] {
+    background-color: ${({ theme }) => theme.colors.textPlaceholder};
+    cursor: default;
+  }
 `
 
 export const TermDetail = styled.button`

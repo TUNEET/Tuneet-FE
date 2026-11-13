@@ -32,34 +32,66 @@ const FIELDS = [
     placeholder: '비밀번호를 다시 입력하세요.',
     autoComplete: 'new-password',
   },
-]
+] as const
+
+type FieldId = (typeof FIELDS)[number]['id']
+type FieldErrors = Partial<Record<FieldId, string>>
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const PASSWORD_MIN_LENGTH = 8
+const PASSWORD_MAX_LENGTH = 16
+
+const SIGNUP_ERROR_MESSAGES = {
+  emailInvalid: '올바른 이메일 주소를 입력해 주세요.',
+  emailDuplicated: '이미 존재하는 이메일입니다.', // 회원가입 API 연동 시 중복 응답에 사용
+  passwordLength: `${PASSWORD_MIN_LENGTH}자~${PASSWORD_MAX_LENGTH}자 이내로 입력해 주세요.`,
+  passwordMismatch: '비밀번호가 일치하지 않습니다.',
+} as const
+
+function validateFields(email: string, password: string, passwordConfirm: string) {
+  const errors: FieldErrors = {}
+
+  if (!EMAIL_PATTERN.test(email)) errors.email = SIGNUP_ERROR_MESSAGES.emailInvalid
+
+  if (password.length < PASSWORD_MIN_LENGTH || password.length > PASSWORD_MAX_LENGTH) {
+    errors.password = SIGNUP_ERROR_MESSAGES.passwordLength
+  }
+
+  if (!passwordConfirm || password !== passwordConfirm) {
+    errors.passwordConfirm = SIGNUP_ERROR_MESSAGES.passwordMismatch
+  }
+
+  return errors
+}
 
 export function SignupPage() {
   const navigate = useNavigate()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [visiblePasswords, setVisiblePasswords] = useState<Record<string, boolean>>({})
   const [openTermId, setOpenTermId] = useState<string | null>(null)
   const openTermDetail = TERMS.find(({ id }) => id === openTermId)?.detail
+
+  const clearFieldError = (id: FieldId) => {
+    setFieldErrors((prev) => {
+      if (!prev[id]) return prev
+      const next = { ...prev }
+      delete next[id]
+      return next
+    })
+  }
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     const formData = new FormData(event.currentTarget)
-    const email = String(formData.get('email'))
+    const email = String(formData.get('email')).trim()
     const password = String(formData.get('password'))
     const passwordConfirm = String(formData.get('passwordConfirm'))
 
-    if (!EMAIL_PATTERN.test(email)) {
-      setErrorMessage('올바른 이메일 주소를 입력해 주세요.')
-      return
-    }
-
-    if (!password || password !== passwordConfirm) {
-      setErrorMessage('올바른 비밀번호를 입력해 주세요.')
-      return
-    }
+    const errors = validateFields(email, password, passwordConfirm)
+    setFieldErrors(errors)
+    if (Object.keys(errors).length > 0) return
 
     if (TERMS.some(({ id, required }) => required && !formData.has(id))) {
       setErrorMessage('필수 약관에 동의해 주세요.')
@@ -87,10 +119,19 @@ export function SignupPage() {
             const isPassword = type === 'password'
             const isVisible = Boolean(visiblePasswords[id])
             const InputComponent = isPassword ? S.PasswordInput : S.Input
+            const fieldError = fieldErrors[id]
+            const errorId = `${id}-error`
 
             return (
               <S.Field key={id}>
-                <S.Label htmlFor={id}>{label}</S.Label>
+                <S.LabelRow>
+                  <S.Label htmlFor={id}>{label}</S.Label>
+                  {fieldError && (
+                    <S.FieldError id={errorId} role="alert">
+                      {fieldError}
+                    </S.FieldError>
+                  )}
+                </S.LabelRow>
                 <S.InputBox>
                   <InputComponent
                     id={id}
@@ -98,6 +139,9 @@ export function SignupPage() {
                     type={isPassword && isVisible ? 'text' : type}
                     placeholder={placeholder}
                     autoComplete={autoComplete}
+                    aria-invalid={Boolean(fieldError)}
+                    aria-describedby={fieldError ? errorId : undefined}
+                    onChange={() => clearFieldError(id)}
                   />
                   {isPassword && (
                     <S.EyeButton

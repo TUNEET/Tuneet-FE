@@ -15,10 +15,16 @@ import * as S from './ProfileSetupPage.styles'
 type ProfileMusic = typeof MOCK_PROFILE_MUSIC
 type SetupStep = 'profile' | 'music' | 'platform' | 'taste' | 'song' | 'complete'
 
+const NICKNAME_ERROR_MESSAGES = {
+  empty: '닉네임을 입력해 주세요.',
+  duplicated: '중복된 닉네임입니다. 다른 닉네임을 입력해 주세요.', // 닉네임 중복 확인 API 연동 시 사용
+} as const
+
 export function ProfileSetupPage() {
   const navigate = useNavigate()
   const [step, setStep] = useState<SetupStep>('profile')
   const [nickname, setNickname] = useState('')
+  const [nicknameError, setNicknameError] = useState<string | null>(null)
   const [music, setMusic] = useState<ProfileMusic | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
@@ -47,11 +53,37 @@ export function ProfileSetupPage() {
     )
   }
 
+  const removeArtist = (name: string) => {
+    setSelectedArtists((artists) => artists.filter((artist) => artist.name !== name))
+  }
+
   const addSong = (song: ProfileMusic) => {
     setSongs((prevSongs) =>
       prevSongs.some(({ title, artist }) => title === song.title && artist === song.artist)
         ? prevSongs
         : [...prevSongs, song],
+    )
+  }
+
+  const changeNickname = (value: string) => {
+    setNickname(value)
+    setNicknameError(null)
+  }
+
+  const submitNickname = () => {
+    if (!nickname.trim()) {
+      setNicknameError(NICKNAME_ERROR_MESSAGES.empty)
+      return
+    }
+
+    // TODO: 닉네임 중복 확인 API 연동 후 중복이면 NICKNAME_ERROR_MESSAGES.duplicated 표시
+    setNickname(nickname.trim())
+    setStep('music')
+  }
+
+  const removeSong = (song: ProfileMusic) => {
+    setSongs((prevSongs) =>
+      prevSongs.filter(({ title, artist }) => title !== song.title || artist !== song.artist),
     )
   }
 
@@ -86,7 +118,7 @@ export function ProfileSetupPage() {
           description="나를 표현하는 노래를 1개 이상 선택해 주세요."
           onBack={() => setStep('taste')}
         >
-          <SongSelect songs={songs} onAddSong={addSong} />
+          <SongSelect songs={songs} onAddSong={addSong} onRemoveSong={removeSong} />
           <S.TasteNextButton
             type="button"
             aria-label="다음"
@@ -116,6 +148,7 @@ export function ProfileSetupPage() {
             onToggleGenre={toggleGenre}
             selectedArtists={selectedArtists}
             onAddArtist={addArtist}
+            onRemoveArtist={removeArtist}
           />
           <S.TasteNextButton type="button" aria-label="다음" onClick={() => setStep('song')}>
             <ChevronIcon direction="right" />
@@ -164,13 +197,14 @@ export function ProfileSetupPage() {
           <ProfileStage
             step={step}
             nickname={nickname}
-            onNicknameChange={setNickname}
+            onNicknameChange={changeNickname}
+            nicknameError={nicknameError}
             previewUrl={previewUrl}
             onImageSelect={(file) => setPreviewUrl(URL.createObjectURL(file))}
             music={music}
             onMusicChange={setMusic}
             onPrev={() => setStep('profile')}
-            onNext={() => setStep(isMusicStep ? 'platform' : 'music')}
+            onNext={isMusicStep ? () => setStep('platform') : submitNickname}
             onLater={finishSetup}
           />
         </SetupStepLayout>

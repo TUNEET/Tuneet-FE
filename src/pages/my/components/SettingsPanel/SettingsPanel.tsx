@@ -12,16 +12,20 @@ const TOGGLES: {
   label: string
   description: string
   offDescription?: string
+  /** OFF로 바꿀 때 띄우는 안내 */
+  offNotice?: string
 }[] = [
   {
     key: 'locationVisible',
     label: '위치정보 노출',
     description: 'OFF로 설정하면 주변 사용자를 추천받을 수 없어요.',
+    offNotice: '내 위치를 표시하지 않아요.',
   },
   {
     key: 'letterEnabled',
     label: '편지 받기',
     description: 'OFF로 설정하면 다른 사용자에게 편지를 받을 수 없어요.',
+    offNotice: '편지를 받을 수 없어요.',
   },
   {
     key: 'platformLinked',
@@ -43,6 +47,13 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
   const [draft, setDraft] = useState(settings)
   const [saveResult, setSaveResult] = useState<SaveResult | null>(null)
   const [openTermId, setOpenTermId] = useState<string | null>(null)
+  const [offNoticeKey, setOffNoticeKey] = useState<ToggleKey | null>(null)
+  const toggleRefs = {
+    locationVisible: useRef<HTMLButtonElement>(null),
+    letterEnabled: useRef<HTMLButtonElement>(null),
+    platformLinked: useRef<HTMLButtonElement>(null),
+  }
+  const closeOffNotice = useCallback(() => setOffNoticeKey(null), [])
   const saveButtonRef = useRef<HTMLButtonElement>(null)
   const closeSaveResult = useCallback(() => setSaveResult(null), [])
   const openTermDetail = TERMS.find(({ id }) => id === openTermId)?.detail
@@ -67,7 +78,7 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
       </S.Header>
 
       <S.Options>
-        {TOGGLES.map(({ key, label, description, offDescription }) => {
+        {TOGGLES.map(({ key, label, description, offDescription, offNotice }) => {
           const isOn = draft[key]
 
           return (
@@ -75,12 +86,16 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
               <S.OptionHeader>
                 <S.Title>{label}</S.Title>
                 <S.Toggle
+                  ref={toggleRefs[key]}
                   type="button"
                   role="switch"
                   aria-checked={isOn}
                   aria-label={label}
                   $isOn={isOn}
-                  onClick={() => setDraft((current) => ({ ...current, [key]: !isOn }))}
+                  onClick={() => {
+                    setDraft((current) => ({ ...current, [key]: !isOn }))
+                    setOffNoticeKey(isOn && offNotice ? key : null)
+                  }}
                 >
                   <span>{isOn ? 'ON' : 'OFF'}</span>
                   <S.ToggleKnob />
@@ -89,6 +104,18 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
               <S.OptionDescription>
                 {!isOn && offDescription ? offDescription : description}
               </S.OptionDescription>
+              {offNotice && (
+                <ConfirmPopover
+                  open={offNoticeKey === key}
+                  message={offNotice}
+                  confirmLabel="닫기"
+                  onConfirm={closeOffNotice}
+                  onClose={closeOffNotice}
+                  anchorRef={toggleRefs[key]}
+                  surface="sheet"
+                  tone="muted"
+                />
+              )}
             </S.Option>
           )
         })}
