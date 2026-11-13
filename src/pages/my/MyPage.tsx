@@ -1,8 +1,12 @@
 import { useRef, useState } from 'react'
+import { useNavigate } from 'react-router'
+import { logout } from '@/apis/auth'
 import settingIcon from '@/assets/icons/setting.svg'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { MOCK_PROFILE, MOCK_WRITE_SONG } from '@/mocks/data'
 import { ProfileComplete } from '@/components/common/ProfileComplete/ProfileComplete'
+import { ROUTES } from '@/constants/routes'
+import { clearTokens } from '@/utils/auth'
 import { BlockedUsers } from './components/BlockedUsers/BlockedUsers'
 import { ProfileEditModal } from './components/ProfileEditModal/ProfileEditModal'
 import { DEFAULT_SETTINGS } from './components/SettingsPanel/settings'
@@ -18,6 +22,7 @@ const SONGS = [
 ]
 
 export function MyPage() {
+  const navigate = useNavigate()
   const [nickname, setNickname] = useState(MOCK_PROFILE.nickname)
   const [draftNickname, setDraftNickname] = useState(nickname)
   const [genres, setGenres] = useState(MOCK_PROFILE.genres)
@@ -32,7 +37,23 @@ export function MyPage() {
   const deleteButtonRef = useRef<HTMLButtonElement>(null)
   const logoutButtonRef = useRef<HTMLButtonElement>(null)
 
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+
   const closeConfirm = () => setConfirmType(null)
+
+  const handleLogout = async () => {
+    if (isLoggingOut) return
+    setIsLoggingOut(true)
+
+    try {
+      await logout()
+    } catch {
+      // 서버 요청이 실패해도 이 기기에서는 로그아웃한다
+    }
+
+    clearTokens()
+    navigate(ROUTES.onboarding, { replace: true })
+  }
 
   const toggleConfirm = (type: 'delete' | 'logout') => {
     setConfirmType((current) => (current === type ? null : type))
@@ -167,7 +188,7 @@ export function MyPage() {
                   open={confirmType === 'logout'}
                   message="로그아웃하시겠어요?"
                   confirmLabel="로그아웃"
-                  onConfirm={closeConfirm}
+                  onConfirm={handleLogout}
                   onClose={closeConfirm}
                   anchorRef={logoutButtonRef}
                   surface="dim"
