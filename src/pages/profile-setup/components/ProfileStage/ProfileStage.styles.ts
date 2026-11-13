@@ -42,6 +42,23 @@ export const NicknameInput = styled.input`
   &::placeholder {
     color: ${({ theme }) => theme.colors.textPlaceholder};
   }
+
+  &[aria-invalid='true'] {
+    outline: 1px solid ${({ theme }) => theme.colors.danger};
+    outline-offset: -1px;
+  }
+`
+
+export const NicknameError = styled.p`
+  position: absolute;
+  top: 55.6rem;
+  right: 0;
+  left: 0;
+  font-size: ${({ theme }) => theme.fontSize.xxs};
+  font-weight: 400;
+  letter-spacing: 0.02rem;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.danger};
 `
 
 export const MusicButton = styled.button`
