@@ -7,7 +7,7 @@ import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { getRoomPath } from '@/constants/routes'
 import { useToast } from '@/hooks/useToast'
 import { MOCK_ROOM_DETAIL } from '@/mocks/room'
-import type { PlaylistSong } from '@/types/room'
+import type { SearchedSong } from '@/types/music'
 import { Playlist } from '../components/Playlist/Playlist'
 import { RoomHeader } from '../components/RoomHeader/RoomHeader'
 import { SongSearchSheet } from '@/components/common/SongSearchSheet/SongSearchSheet'
@@ -33,8 +33,9 @@ export function RoomPlaylistPage() {
     showToast('플레이리스트를 비웠어요')
   }
 
-  const handleAddSong = (song: PlaylistSong) => {
-    setSongs((prev) => [...prev, { ...song, id: Date.now() }])
+  // TODO: 방 플레이리스트 곡 추가 API 연동 시 song.musicId 전송
+  const handleAddSong = ({ title, artist, albumImageUrl }: SearchedSong) => {
+    setSongs((prev) => [...prev, { title, artist, albumImageUrl, id: Date.now() }])
   }
 
   return (
