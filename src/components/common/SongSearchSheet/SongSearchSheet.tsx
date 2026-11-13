@@ -4,9 +4,9 @@ import plusCircleRoseIcon from '@/assets/icons/plus-circle-rose.svg'
 import plusCircleIcon from '@/assets/icons/plus-circle.svg'
 import characterMusicSearch from '@/assets/images/character-music-search.png'
 import characterProfileSearch from '@/assets/images/character-search.webp'
+import { searchMusics } from '@/apis/music'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
-import { mockSearchPlaylistSongs } from '@/mocks/room'
-import type { PlaylistSong } from '@/types/room'
+import type { MusicSearchItem, SearchedSong } from '@/types/music'
 import * as S from './SongSearchSheet.styles'
 import type { SongSearchSheetVariant } from './SongSearchSheet.styles'
 
@@ -27,8 +27,22 @@ export function PageArrow() {
   )
 }
 
+type SearchResult = {
+  keyword: string
+  page: number
+  items: MusicSearchItem[]
+  totalPages: number
+}
+
+const toSearchedSong = ({ id, title, artist, coverUrl }: MusicSearchItem): SearchedSong => ({
+  musicId: id,
+  title,
+  artist,
+  albumImageUrl: coverUrl ?? '',
+})
+
 type SongSearchSheetProps = {
-  onAdd: (song: PlaylistSong) => void
+  onAdd: (song: SearchedSong) => void
   onClose: () => void
   variant?: SongSearchSheetVariant
   hiddenTitle?: string
@@ -42,9 +56,10 @@ export function SongSearchSheet({
 }: SongSearchSheetProps) {
   const titleId = useId()
   const [query, setQuery] = useState('')
-  const [results, setResults] = useState<PlaylistSong[] | null>(null)
+  const [result, setResult] = useState<SearchResult | null>(null)
+  const [isError, setIsError] = useState(false)
   const [page, setPage] = useState(1)
-  const [addedSongId, setAddedSongId] = useState<number | null>(null)
+  const [addedSongId, setAddedSongId] = useState<string | null>(null)
   const closeAddedPopover = useCallback(() => setAddedSongId(null), [])
   const keyword = query.trim()
 
@@ -60,26 +75,35 @@ export function SongSearchSheet({
     if (!keyword) return
 
     let isStale = false
-    const timer = setTimeout(() => {
-      mockSearchPlaylistSongs(keyword).then((songs) => {
-        if (!isStale) setResults(songs)
-      })
+    const timer = setTimeout(async () => {
+      try {
+        const { items, totalPages } = await searchMusics(keyword, page, PAGE_SIZE)
+        if (isStale) return
+        setResult({ keyword, page, items, totalPages })
+        setIsError(false)
+      } catch {
+        if (isStale) return
+        setResult({ keyword, page, items: [], totalPages: 0 })
+        setIsError(true)
+      }
     }, SEARCH_DEBOUNCE_MS)
 
     return () => {
       isStale = true
       clearTimeout(timer)
     }
-  }, [keyword])
+  }, [keyword, page])
 
-  const handleAdd = (song: PlaylistSong) => {
-    onAdd(song)
-    setAddedSongId(song.id)
+  const handleAdd = (item: MusicSearchItem) => {
+    onAdd(toSearchedSong(item))
+    setAddedSongId(item.id)
   }
 
-  const hasResults = keyword !== '' && results !== null && results.length > 0
-  const isNoResult = keyword !== '' && results !== null && results.length === 0
-  const totalPages = Math.ceil((results?.length ?? 0) / PAGE_SIZE)
+  // 새 검색어 결과가 오기 전에는 이전 결과를 보여주지 않는다 (페이지 이동 중에는 유지)
+  const results = keyword !== '' && result?.keyword === keyword ? result.items : null
+  const hasResults = results !== null && results.length > 0
+  const isNoResult = results !== null && results.length === 0
+  const totalPages = Math.max(result?.totalPages ?? 1, 1)
   const isPlaylist = variant === 'playlist'
   const characterImage = variant === 'profile' ? characterProfileSearch : characterMusicSearch
 
@@ -107,10 +131,10 @@ export function SongSearchSheet({
           />
           {hasResults && (
             <S.ResultList>
-              {results.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((song) => (
+              {results.map((song) => (
                 <S.ResultItem key={song.id} $variant={variant}>
                   <S.ResultSong>
-                    <img src={song.albumImageUrl} alt="" />
+                    {song.coverUrl ? <img src={song.coverUrl} alt="" /> : <S.CoverFallback />}
                     <span>
                       {song.title} - {song.artist}
                     </span>
@@ -155,7 +179,7 @@ export function SongSearchSheet({
                 $direction="next"
                 $variant={variant}
                 aria-label="다음 페이지"
-                disabled={page === totalPages}
+                disabled={page >= totalPages}
                 onClick={() => setPage((prev) => prev + 1)}
               >
                 <PageArrow />
@@ -175,7 +199,7 @@ export function SongSearchSheet({
           {isNoResult && (
             <S.Empty $variant={variant}>
               <img src={characterImage} alt="" />
-              <p>검색 결과가 없어요</p>
+              <p>{isError ? '검색하지 못했어요. 다시 시도해 주세요.' : '검색 결과가 없어요'}</p>
             </S.Empty>
           )}
         </S.Sheet>

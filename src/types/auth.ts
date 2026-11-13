@@ -38,3 +38,17 @@ export type ProfileAddResponse = {
   profilePicture: string | null
   modifiedAt: string
 }
+
+export type MyProfileResponse = {
+  userId: number
+  nickname: string | null
+  profilePicture: string | null
+  profileMusic: {
+    musicId: number
+    title: string
+    artist: string
+    musicPicture: string | null
+  } | null
+  genres: { genreId: number; genreName: string; displayName: string }[]
+  favoriteArtists: { artistId: number; name: string; artistImage: string | null }[]
+}
