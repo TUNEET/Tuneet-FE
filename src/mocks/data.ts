@@ -82,6 +82,23 @@ export const MOCK_NOTIFICATIONS: Notification[] = [
   },
 ]
 
+export const MOCK_SENT_NOTIFICATIONS: Notification[] = [
+  {
+    id: 101,
+    nickname: '산책하는 튜니',
+    message: '이 노래 들으면서 걸어보세요!',
+    song: { title: 'Pretty Girl', artist: 'RESCENE', albumImageUrl: 'https://placehold.co/80x80' },
+    createdAt: minutesAgo(5),
+  },
+  {
+    id: 102,
+    nickname: '커피 마시는 튜니',
+    message: '잔잔해서 작업할 때 듣기 좋아요.',
+    song: { title: 'not the same', artist: 'ROSÉ', albumImageUrl: 'https://placehold.co/80x80' },
+    createdAt: minutesAgo(90),
+  },
+]
+
 export const MOCK_TASTE_MATCHES: TasteMatch[] = [
   {
     id: 1,

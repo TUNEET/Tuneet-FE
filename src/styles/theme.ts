@@ -37,6 +37,8 @@ export const theme = {
     letterText: '#54464C', // 편지 입력 글자
     letterCardBack: '#E8E0E8', // 받은 편지 노래 카드 배경
     letterCardBorder: '#B782A4', // 받은 편지 노래 카드 테두리
+    letterBadge: '#ECBEDA', // 편지함 답장 배지 배경
+    letterBadgeText: '#946884', // 편지함 답장 배지 글자
 
     /* 상태 */
     danger: '#FF0044', // 삭제, 차단 등 위험 동작
