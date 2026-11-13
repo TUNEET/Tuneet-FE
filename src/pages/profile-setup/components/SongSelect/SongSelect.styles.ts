@@ -2,7 +2,8 @@ import styled from 'styled-components'
 import { ArtistSearch } from '../TasteSelect/TasteSelect.styles'
 
 export { Panels } from '../TasteSelect/TasteSelect.styles'
-export { SongChip as Song, SongNote } from '@/styles/song'
+export { SongChip as Song } from '@/styles/song'
+export { RemoveArtistButton as RemoveSongButton } from '../TasteSelect/TasteSelect.styles'
 
 export const SongSearch = styled(ArtistSearch)``
 

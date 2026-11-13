@@ -39,6 +39,7 @@ type ProfileStageProps = {
   step: 'profile' | 'music'
   nickname: string
   onNicknameChange: (nickname: string) => void
+  nicknameError?: string | null
   previewUrl: string | null
   onImageSelect: (file: File) => void
   music: ProfileMusic | null
@@ -53,6 +54,7 @@ export function ProfileStage({
   step,
   nickname,
   onNicknameChange,
+  nicknameError,
   previewUrl,
   onImageSelect,
   music,
@@ -116,8 +118,15 @@ export function ProfileStage({
               aria-label="닉네임"
               autoComplete="nickname"
               value={nickname}
+              aria-invalid={Boolean(nicknameError)}
+              aria-describedby={nicknameError ? 'nickname-error' : undefined}
               onChange={(event) => onNicknameChange(event.target.value)}
             />
+            {nicknameError && (
+              <S.NicknameError id="nickname-error" role="alert">
+                {nicknameError}
+              </S.NicknameError>
+            )}
             <S.AvatarButton
               type="button"
               aria-label="프로필 사진 선택"
