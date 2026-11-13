@@ -1,16 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
-import playIcon from '@/assets/icons/play-circle-gray.svg'
-import characterLetter from '@/assets/images/character-letter-detail.png'
+import { Badge } from '@/components/common/Badge/Badge'
 import { Button } from '@/components/common/Button/Button'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { getLetterWritePath, ROUTES } from '@/constants/routes'
 import { useToast } from '@/hooks/useToast'
+import { MOCK_USER_PROFILE } from '@/mocks/data'
 import { mockDeleteLetter, mockGetReceivedLetter } from '@/mocks/letter'
 import type { ReceivedLetter } from '@/types/letter'
 import { formatDateTime } from '@/utils/format'
+import { LetterCards } from './components/LetterCards/LetterCards'
 import * as S from './LetterDetailPage.styles'
 
 export function LetterDetailPage() {
@@ -47,15 +48,18 @@ export function LetterDetailPage() {
     )
   }
 
-  const { senderId, senderNickname, content, song, sentAt } = letter
+  const { senderId, senderNickname, content, song, sentAt, reply } = letter
 
   return (
     <SheetPage>
-      <SectionHeader
-        title={`${senderNickname} | ${formatDateTime(sentAt)}`}
-        actionLabel="나가기"
-        onActionClick={goToLetterbox}
-      />
+      <S.Header>
+        {reply && <Badge>답장</Badge>}
+        <SectionHeader
+          title={`${senderNickname} | ${formatDateTime(sentAt)}`}
+          actionLabel="나가기"
+          onActionClick={goToLetterbox}
+        />
+      </S.Header>
 
       <div>
         <S.Intro>
@@ -63,22 +67,9 @@ export function LetterDetailPage() {
           <S.IntroMain>소중한 마음을 확인해 보세요.</S.IntroMain>
         </S.Intro>
 
-        <S.Cards>
-          <S.MessageCard>
-            <S.Content>{content}</S.Content>
-            <S.From>From. {senderNickname}</S.From>
-          </S.MessageCard>
-          <S.SongCard>
-            <S.Character src={characterLetter} alt="" />
-            <S.PlayIcon src={playIcon} alt="" />
-            <S.Song>
-              <img src={song.albumImageUrl} alt="" />
-              <span>
-                {song.title} - {song.artist}
-              </span>
-            </S.Song>
-          </S.SongCard>
-        </S.Cards>
+        <S.Received>
+          <LetterCards content={content} from={senderNickname} song={song} />
+        </S.Received>
 
         <S.Actions>
           <Button
@@ -102,6 +93,17 @@ export function LetterDetailPage() {
             anchorRef={deleteButtonRef}
           />
         </S.Actions>
+
+        {reply && (
+          <S.Reply>
+            <S.ReplyLabel>내가 보낸 편지</S.ReplyLabel>
+            <LetterCards
+              content={reply.content}
+              from={MOCK_USER_PROFILE.nickname}
+              song={reply.song}
+            />
+          </S.Reply>
+        )}
       </div>
     </SheetPage>
   )

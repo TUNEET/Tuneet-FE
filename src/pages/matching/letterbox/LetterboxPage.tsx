@@ -43,11 +43,11 @@ export function LetterboxPage() {
 
   const isReceived = tab === 'received'
   const cards = isReceived
-    ? receivedLetters.map(({ id, senderNickname, isReplied, ...rest }) => ({
+    ? receivedLetters.map(({ id, senderNickname, reply, ...rest }) => ({
         ...rest,
         id,
         nickname: `발신자 | ${senderNickname}`,
-        badge: isReplied ? '답장' : undefined,
+        badge: reply ? '답장' : undefined,
         onClick: () => navigate(getLetterPath(id)),
       }))
     : sentLetters.map(({ recipientNickname, ...rest }) => ({
