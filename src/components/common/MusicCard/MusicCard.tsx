@@ -2,6 +2,7 @@ import type { KeyboardEvent, ReactNode } from 'react'
 import userBlueIcon from '@/assets/icons/user-blue.svg'
 import userPurpleIcon from '@/assets/icons/user-purple.svg'
 import userRoseIcon from '@/assets/icons/user-rose.svg'
+import { Badge } from '@/components/common/Badge/Badge'
 import * as S from './MusicCard.styles'
 import type { MusicCardTone } from './MusicCard.styles'
 
@@ -61,7 +62,7 @@ export function MusicCard({
         </S.Author>
         <S.Meta>
           <S.Caption $tone={tone}>{meta}</S.Caption>
-          {badge && <S.Badge>{badge}</S.Badge>}
+          {badge && <Badge>{badge}</Badge>}
         </S.Meta>
       </S.Top>
       <S.Body>
