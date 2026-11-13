@@ -16,10 +16,8 @@ import waveformSmallIcon from '@/assets/icons/withicons_audio-waveform-duo.svg'
 import characterImage from '@/assets/images/character-profile.png'
 import { ChevronIcon } from '@/components/common/ChevronIcon/ChevronIcon'
 import { SongSearchSheet } from '@/components/common/SongSearchSheet/SongSearchSheet'
-import type { MOCK_PROFILE_MUSIC } from '@/mocks/profile'
+import type { ProfileMusic } from '@/types/music'
 import * as S from './ProfileStage.styles'
-
-type ProfileMusic = typeof MOCK_PROFILE_MUSIC
 
 const DECORATIONS = [
   { src: musicSmallIcon, width: '3.18rem', height: '3.18rem', left: '28.088rem', top: '36.7rem' },
@@ -176,8 +174,8 @@ export function ProfileStage({
       {isMusicSearchOpen && (
         <SongSearchSheet
           variant="profile"
-          onAdd={({ title, artist, albumImageUrl }) =>
-            onMusicChange({ title, artist, albumImage: albumImageUrl })
+          onAdd={({ musicId, title, artist, albumImageUrl }) =>
+            onMusicChange({ musicId, title, artist, albumImage: albumImageUrl })
           }
           onClose={() => setIsMusicSearchOpen(false)}
         />

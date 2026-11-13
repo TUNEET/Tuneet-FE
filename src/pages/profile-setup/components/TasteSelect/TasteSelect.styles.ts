@@ -66,3 +66,5 @@ export const RemoveArtistButton = styled.button`
   width: 1rem;
   height: 1rem;
 `
+
+export { CoverFallback as ArtistFallback } from '@/components/common/SongSearchSheet/SongSearchSheet.styles'

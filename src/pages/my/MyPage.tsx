@@ -1,11 +1,15 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { logout } from '@/apis/auth'
+import { getApiError } from '@/apis/error'
+import { addProfile, checkNicknameAvailability, getMyProfile, replaceGenres } from '@/apis/user'
 import settingIcon from '@/assets/icons/setting.svg'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
-import { MOCK_PROFILE, MOCK_WRITE_SONG } from '@/mocks/data'
 import { ProfileComplete } from '@/components/common/ProfileComplete/ProfileComplete'
+import { GENRE_NAMES } from '@/constants/genres'
 import { ROUTES } from '@/constants/routes'
+import { useToast } from '@/hooks/useToast'
+import type { MyProfileResponse } from '@/types/auth'
 import { clearTokens } from '@/utils/auth'
 import { BlockedUsers } from './components/BlockedUsers/BlockedUsers'
 import { ProfileEditModal } from './components/ProfileEditModal/ProfileEditModal'
@@ -13,20 +17,17 @@ import { DEFAULT_SETTINGS } from './components/SettingsPanel/settings'
 import { SettingsPanel } from './components/SettingsPanel/SettingsPanel'
 import * as S from './MyPage.styles'
 
-const SONGS = [
-  {
-    title: MOCK_WRITE_SONG.title,
-    artist: MOCK_WRITE_SONG.artist,
-    albumImage: MOCK_WRITE_SONG.albumImageUrl,
-  },
-]
+const NICKNAME_DUPLICATED_MESSAGE = '중복된 닉네임입니다. 다른 닉네임을 입력해 주세요.'
 
 export function MyPage() {
   const navigate = useNavigate()
-  const [nickname, setNickname] = useState(MOCK_PROFILE.nickname)
+  const showToast = useToast()
+  const [profile, setProfile] = useState<MyProfileResponse | null>(null)
+  const [nickname, setNickname] = useState('')
   const [draftNickname, setDraftNickname] = useState(nickname)
-  const [genres, setGenres] = useState(MOCK_PROFILE.genres)
+  const [genres, setGenres] = useState<string[]>([])
   const [draftGenres, setDraftGenres] = useState(genres)
+  const [isSavingProfile, setIsSavingProfile] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [isTasteOpen, setIsTasteOpen] = useState(false)
   const [isSavedOpen, setIsSavedOpen] = useState(false)
@@ -38,6 +39,40 @@ export function MyPage() {
   const logoutButtonRef = useRef<HTMLButtonElement>(null)
 
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  useEffect(() => {
+    let isStale = false
+
+    getMyProfile()
+      .then((data) => {
+        if (isStale) return
+        setProfile(data)
+        setNickname(data.nickname ?? '')
+        setGenres(data.genres.map(({ displayName }) => displayName))
+      })
+      .catch((error) => {
+        if (!isStale) showToast(getApiError(error).message)
+      })
+
+    return () => {
+      isStale = true
+    }
+  }, [showToast])
+
+  // 프로필 카드의 노래는 프로필 음악, 아티스트는 선호 아티스트
+  const songs = profile?.profileMusic
+    ? [
+        {
+          title: profile.profileMusic.title,
+          artist: profile.profileMusic.artist,
+          albumImage: profile.profileMusic.musicPicture ?? '',
+        },
+      ]
+    : []
+  const artists = (profile?.favoriteArtists ?? []).map(({ name, artistImage }) => ({
+    name,
+    image: artistImage,
+  }))
 
   const closeConfirm = () => setConfirmType(null)
 
@@ -66,10 +101,48 @@ export function MyPage() {
     setIsEditing(true)
   }
 
-  const saveProfile = () => {
-    setNickname(draftNickname)
-    setGenres(draftGenres)
-    setIsSavedOpen(true)
+  const saveProfile = async () => {
+    if (isSavingProfile) return
+
+    const trimmedNickname = draftNickname.trim()
+    if (!trimmedNickname) {
+      showToast('닉네임을 입력해 주세요.')
+      return
+    }
+    if (draftGenres.length === 0) {
+      showToast('장르는 1개 이상 선택해 주세요.')
+      return
+    }
+
+    const isNicknameChanged = trimmedNickname !== nickname
+    const isGenresChanged =
+      draftGenres.length !== genres.length || draftGenres.some((genre) => !genres.includes(genre))
+
+    setIsSavingProfile(true)
+    try {
+      if (isNicknameChanged) {
+        if (!(await checkNicknameAvailability(trimmedNickname))) {
+          showToast(NICKNAME_DUPLICATED_MESSAGE)
+          return
+        }
+        await addProfile({
+          nickname: trimmedNickname,
+          profilePicture: profile?.profilePicture ?? undefined,
+        })
+      }
+      if (isGenresChanged) {
+        await replaceGenres(draftGenres.map((genre) => GENRE_NAMES[genre] ?? genre))
+      }
+
+      setNickname(trimmedNickname)
+      setDraftNickname(trimmedNickname)
+      setGenres(draftGenres)
+      setIsSavedOpen(true)
+    } catch (error) {
+      showToast(getApiError(error).message)
+    } finally {
+      setIsSavingProfile(false)
+    }
   }
 
   const goToProfile = () => {
@@ -130,9 +203,10 @@ export function MyPage() {
       <S.ProfileArea>
         <ProfileComplete
           nickname={isEditing ? draftNickname : nickname}
-          previewUrl={null}
-          songs={SONGS}
+          previewUrl={profile?.profilePicture ?? null}
+          songs={songs}
           genres={isEditing ? draftGenres : genres}
+          artists={artists}
           frame="plain"
           isEditing={isEditing}
           onNicknameChange={setDraftNickname}
@@ -141,7 +215,12 @@ export function MyPage() {
           <S.Actions>
             {isEditing ? (
               <>
-                <S.FilledButton ref={saveButtonRef} type="button" onClick={saveProfile}>
+                <S.FilledButton
+                  ref={saveButtonRef}
+                  type="button"
+                  disabled={isSavingProfile}
+                  onClick={saveProfile}
+                >
                   저장하기
                 </S.FilledButton>
                 <ConfirmPopover

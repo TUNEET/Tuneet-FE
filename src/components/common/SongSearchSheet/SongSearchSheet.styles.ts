@@ -179,6 +179,15 @@ export const ResultItem = styled(Item)<VariantProps>`
 
 export const ResultSong = Song
 
+/** 앨범 커버가 없는 곡의 자리 표시 */
+export const CoverFallback = styled.i`
+  flex-shrink: 0;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  background-color: ${({ theme }) => theme.colors.border};
+`
+
 export const AddButton = PlayButton
 
 export const Pagination = styled.div<VariantProps>`

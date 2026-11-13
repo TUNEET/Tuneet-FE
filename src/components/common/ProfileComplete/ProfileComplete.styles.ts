@@ -237,3 +237,5 @@ export const Decoration = styled.img<BoxProps>`
   transform: rotate(${({ $rotate }) => $rotate}deg);
   pointer-events: none;
 `
+
+export { CoverFallback as ArtistFallback } from '@/components/common/SongSearchSheet/SongSearchSheet.styles'

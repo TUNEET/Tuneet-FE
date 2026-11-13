@@ -4,9 +4,9 @@ import heartOutlineIcon from '@/assets/icons/heart-outline.svg'
 import trashIcon from '@/assets/icons/trash_icon.svg'
 import { SongSearchSheet } from '@/components/common/SongSearchSheet/SongSearchSheet'
 import { Panel, PanelHeader, PanelIcon, PanelLabel } from '../TasteSelect/TasteSelect.styles'
+import { getMusicKey } from '@/types/music'
+import type { ProfileMusic as Song } from '@/types/music'
 import * as S from './SongSelect.styles'
-
-type Song = { title: string; artist: string; albumImage: string }
 
 type SongSelectProps = {
   songs: Song[]
@@ -45,8 +45,12 @@ export function SongSelect({ songs, onAddSong, onRemoveSong }: SongSelectProps) 
           {songs.length > 0 && (
             <S.Songs>
               {songs.map((song) => (
-                <S.Song key={`${song.title}-${song.artist}`}>
-                  <img src={song.albumImage} alt="" width={12} height={12} />
+                <S.Song key={getMusicKey(song)}>
+                  {song.albumImage ? (
+                    <img src={song.albumImage} alt="" width={12} height={12} />
+                  ) : (
+                    <S.CoverFallback />
+                  )}
                   <span>
                     {song.title} - {song.artist}
                   </span>
@@ -68,8 +72,8 @@ export function SongSelect({ songs, onAddSong, onRemoveSong }: SongSelectProps) 
         <SongSearchSheet
           variant="profile"
           hiddenTitle="좋아하는 노래"
-          onAdd={({ title, artist, albumImageUrl }) =>
-            onAddSong({ title, artist, albumImage: albumImageUrl })
+          onAdd={({ musicId, title, artist, albumImageUrl }) =>
+            onAddSong({ musicId, title, artist, albumImage: albumImageUrl })
           }
           onClose={() => setIsSearchOpen(false)}
         />

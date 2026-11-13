@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import trashIcon from '@/assets/icons/trash_icon.svg'
 import { GENRE_ROWS } from '@/constants/genres'
-import type { ProfileArtist } from '@/mocks/profile'
+import type { ProfileArtist } from '@/types/music'
 import { ArtistSearchSheet } from '../ArtistSearchSheet/ArtistSearchSheet'
 import * as S from './TasteSelect.styles'
 
@@ -95,9 +95,9 @@ export function TasteSelect({
           )}
           {isArtistOpen && selectedArtists.length > 0 && (
             <S.SelectedArtists>
-              {selectedArtists.map(({ name, image }) => (
-                <S.SelectedArtist key={name}>
-                  <img src={image} alt="" width={12} height={12} />
+              {selectedArtists.map(({ id, name, image }) => (
+                <S.SelectedArtist key={id ?? name}>
+                  {image ? <img src={image} alt="" width={12} height={12} /> : <S.ArtistFallback />}
                   <span>{name}</span>
                   <S.RemoveArtistButton
                     type="button"

@@ -47,6 +47,12 @@ export const NicknameInput = styled.input`
     outline: 1px solid ${({ theme }) => theme.colors.danger};
     outline-offset: -1px;
   }
+
+  /* 브라우저 자동완성 시 배경이 파랗게 바뀌지 않도록 원래 색 유지 */
+  &:-webkit-autofill {
+    box-shadow: inset 0 0 0 5rem ${({ theme }) => theme.colors.border};
+    -webkit-text-fill-color: ${({ theme }) => theme.colors.textHeading};
+  }
 `
 
 export const NicknameError = styled.p`
