@@ -43,15 +43,17 @@ export function LetterboxPage() {
 
   const isReceived = tab === 'received'
   const cards = isReceived
-    ? receivedLetters.map(({ id, senderNickname, ...rest }) => ({
+    ? receivedLetters.map(({ id, senderNickname, isReplied, ...rest }) => ({
         ...rest,
         id,
         nickname: `발신자 | ${senderNickname}`,
+        badge: isReplied ? '답장' : undefined,
         onClick: () => navigate(getLetterPath(id)),
       }))
     : sentLetters.map(({ recipientNickname, ...rest }) => ({
         ...rest,
         nickname: `수신자 | ${recipientNickname}`,
+        badge: undefined,
         onClick: undefined,
       }))
   const isEmpty = cards.length === 0
@@ -90,7 +92,7 @@ export function LetterboxPage() {
         <SegmentTabs items={TABS} value={tab} onChange={handleTabChange} ariaLabel="편지함 구분" />
         {!isEmpty ? (
           <S.List>
-            {cards.map(({ id, nickname, content, song, sentAt, onClick }) => (
+            {cards.map(({ id, nickname, content, song, sentAt, badge, onClick }) => (
               <li key={id}>
                 <MusicCard
                   tone="rose"
@@ -100,6 +102,7 @@ export function LetterboxPage() {
                   title={`${song.title} - ${song.artist}`}
                   description={content}
                   playable
+                  badge={badge}
                   onClick={onClick}
                 />
               </li>

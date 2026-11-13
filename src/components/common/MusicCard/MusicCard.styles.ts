@@ -51,6 +51,23 @@ export const Author = styled.div`
   gap: 0.6rem;
 `
 
+export const Meta = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+`
+
+export const Badge = styled.span`
+  padding: 0.05rem 0.6rem;
+  border-radius: 0.8rem;
+  font-size: 0.8rem;
+  line-height: 1.4rem;
+  letter-spacing: 0.016rem;
+  white-space: nowrap;
+  background-color: ${({ theme }) => theme.colors.letterBadge};
+  color: ${({ theme }) => theme.colors.letterBadgeText};
+`
+
 export const Caption = styled.span<{ $tone: MusicCardTone }>`
   font-size: ${({ theme }) => theme.fontSize.xxs};
   line-height: 1.4rem;
