@@ -81,7 +81,12 @@ export function LetterDetailPage() {
           >
             삭제하기
           </Button>
-          <Button tone="rose" onClick={() => navigate(getLetterWritePath(senderId))}>
+          <Button
+            tone="rose"
+            // 받은 편지 한 통에는 답장을 한 번만 보낼 수 있다
+            disabled={reply !== null}
+            onClick={() => navigate(getLetterWritePath(senderId))}
+          >
             답장하기
           </Button>
           <ConfirmPopover
