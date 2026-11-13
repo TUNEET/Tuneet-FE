@@ -23,6 +23,13 @@ export function formatDateTime(date: string) {
   return `${ymd} ${pad(target.getHours())}시 ${pad(target.getMinutes())}분`
 }
 
+/** 2026년 11월 21일 12시 07분 */
+export function formatKoreanDateTime(date: string) {
+  const target = new Date(date)
+  const ymd = `${target.getFullYear()}년 ${target.getMonth() + 1}월 ${target.getDate()}일`
+  return `${ymd} ${pad(target.getHours())}시 ${pad(target.getMinutes())}분`
+}
+
 export function formatDistance(km: number) {
   if (km < 1) return `${Math.round(km * 1000)}m`
   return `${Number(km.toFixed(1))}km`
