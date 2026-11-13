@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router'
+import { getApiError } from '@/apis/error'
+import { checkEmailAvailability, signUp } from '@/apis/user'
 import eyeClosedIcon from '@/assets/icons/deye.svg'
 import eyeIcon from '@/assets/icons/eye.svg'
 import logo from '@/assets/images/logo.svg'
@@ -40,22 +42,50 @@ type FieldErrors = Partial<Record<FieldId, string>>
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const PASSWORD_MIN_LENGTH = 8
 const PASSWORD_MAX_LENGTH = 16
+/* 서버 비밀번호 규칙과 동일: 영문·숫자·특수문자 중 2가지 이상 */
+const PASSWORD_CHAR_GROUPS = [/[A-Za-z]/, /\d/, /[!@#$%^&*()\-_=+[\]{};:'",.<>/?~`|\\]/]
+const PASSWORD_ALLOWED = /^[A-Za-z\d!@#$%^&*()\-_=+[\]{};:'",.<>/?~`|\\]*$/
+const PASSWORD_MIN_GROUPS = 2
+
+/** 서버 검증 실패 응답(data)의 필드명 → 화면 입력칸 */
+const SERVER_FIELD_IDS: Record<string, FieldId> = {
+  email: 'email',
+  password: 'password',
+  passwordConfirm: 'passwordConfirm',
+}
+
+const PASSWORD_MISMATCH_CODE = 'U4004'
 
 const SIGNUP_ERROR_MESSAGES = {
   emailInvalid: '올바른 이메일 주소를 입력해 주세요.',
-  emailDuplicated: '이미 존재하는 이메일입니다.', // 회원가입 API 연동 시 중복 응답에 사용
+  emailDuplicated: '이미 존재하는 이메일입니다.',
   passwordLength: `${PASSWORD_MIN_LENGTH}자~${PASSWORD_MAX_LENGTH}자 이내로 입력해 주세요.`,
+  passwordCombination: '영문·숫자·특수문자 중 2가지 이상 조합해 주세요.',
+  passwordInvalidChar: '영문·숫자·특수문자만 입력할 수 있어요.',
   passwordMismatch: '비밀번호가 일치하지 않습니다.',
+  termsRequired: '필수 약관에 동의해 주세요.',
 } as const
+
+function validatePassword(password: string) {
+  if (password.length < PASSWORD_MIN_LENGTH || password.length > PASSWORD_MAX_LENGTH) {
+    return SIGNUP_ERROR_MESSAGES.passwordLength
+  }
+
+  if (!PASSWORD_ALLOWED.test(password)) return SIGNUP_ERROR_MESSAGES.passwordInvalidChar
+
+  const groupCount = PASSWORD_CHAR_GROUPS.filter((group) => group.test(password)).length
+  if (groupCount < PASSWORD_MIN_GROUPS) return SIGNUP_ERROR_MESSAGES.passwordCombination
+
+  return null
+}
 
 function validateFields(email: string, password: string, passwordConfirm: string) {
   const errors: FieldErrors = {}
 
   if (!EMAIL_PATTERN.test(email)) errors.email = SIGNUP_ERROR_MESSAGES.emailInvalid
 
-  if (password.length < PASSWORD_MIN_LENGTH || password.length > PASSWORD_MAX_LENGTH) {
-    errors.password = SIGNUP_ERROR_MESSAGES.passwordLength
-  }
+  const passwordError = validatePassword(password)
+  if (passwordError) errors.password = passwordError
 
   if (!passwordConfirm || password !== passwordConfirm) {
     errors.passwordConfirm = SIGNUP_ERROR_MESSAGES.passwordMismatch
@@ -70,6 +100,7 @@ export function SignupPage() {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [visiblePasswords, setVisiblePasswords] = useState<Record<string, boolean>>({})
   const [openTermId, setOpenTermId] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const openTermDetail = TERMS.find(({ id }) => id === openTermId)?.detail
 
   const clearFieldError = (id: FieldId) => {
@@ -81,8 +112,9 @@ export function SignupPage() {
     })
   }
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    if (isSubmitting) return
 
     const formData = new FormData(event.currentTarget)
     const email = String(formData.get('email')).trim()
@@ -94,12 +126,56 @@ export function SignupPage() {
     if (Object.keys(errors).length > 0) return
 
     if (TERMS.some(({ id, required }) => required && !formData.has(id))) {
-      setErrorMessage('필수 약관에 동의해 주세요.')
+      setErrorMessage(SIGNUP_ERROR_MESSAGES.termsRequired)
       return
     }
 
-    markProfileSetupPending()
-    navigate(ROUTES.login)
+    setIsSubmitting(true)
+    try {
+      if (!(await checkEmailAvailability(email))) {
+        setFieldErrors({ email: SIGNUP_ERROR_MESSAGES.emailDuplicated })
+        return
+      }
+
+      await signUp({
+        email,
+        password,
+        passwordConfirm,
+        termsAgreed: formData.has('termsOfService'),
+        privacyAgreed: formData.has('privacyPolicy'),
+        locationAgreed: formData.has('locationConsent'),
+      })
+
+      markProfileSetupPending()
+      navigate(ROUTES.login)
+    } catch (error) {
+      handleSignupError(error)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleSignupError = (error: unknown) => {
+    const { code, message, fields } = getApiError(error)
+
+    if (code === PASSWORD_MISMATCH_CODE) {
+      setFieldErrors({ passwordConfirm: SIGNUP_ERROR_MESSAGES.passwordMismatch })
+      return
+    }
+
+    // 서버가 칸별로 알려준 오류는 해당 입력칸에, 나머지(약관 등)는 팝업으로
+    const serverFieldErrors: FieldErrors = {}
+    for (const [key, fieldMessage] of Object.entries(fields)) {
+      const fieldId = SERVER_FIELD_IDS[key]
+      if (fieldId) serverFieldErrors[fieldId] = fieldMessage
+    }
+
+    if (Object.keys(serverFieldErrors).length > 0) {
+      setFieldErrors(serverFieldErrors)
+      return
+    }
+
+    setErrorMessage(message)
   }
 
   return (
@@ -177,7 +253,9 @@ export function SignupPage() {
           ))}
         </S.Terms>
 
-        <S.SubmitButton type="submit">회원가입</S.SubmitButton>
+        <S.SubmitButton type="submit" disabled={isSubmitting}>
+          회원가입
+        </S.SubmitButton>
       </form>
 
       <S.LoginButton type="button" onClick={() => navigate(ROUTES.login)}>
