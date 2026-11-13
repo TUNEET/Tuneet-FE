@@ -38,7 +38,16 @@ export function NotificationsPage() {
   const [isClearOpen, setIsClearOpen] = useState(false)
   const headerRef = useRef<HTMLDivElement>(null)
   const closeClear = useCallback(() => setIsClearOpen(false), [])
-  const notifications = notificationsByTab[tab]
+  const notifications =
+    tab === 'received'
+      ? notificationsByTab.received.map(({ senderNickname, ...rest }) => ({
+          ...rest,
+          nickname: senderNickname,
+        }))
+      : notificationsByTab.sent.map(({ receiverNickname, ...rest }) => ({
+          ...rest,
+          nickname: receiverNickname,
+        }))
   const isEmpty = notifications.length === 0
 
   const handleTabChange = (next: CommentTab) => {
