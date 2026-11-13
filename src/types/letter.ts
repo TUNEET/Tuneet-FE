@@ -20,3 +20,12 @@ export type ReceivedLetter = {
   song: Song
   sentAt: string
 }
+
+export type SentLetter = {
+  id: number
+  recipientId: number
+  recipientNickname: string
+  content: string
+  song: Song
+  sentAt: string
+}

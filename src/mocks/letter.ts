@@ -1,6 +1,6 @@
 import { MOCK_USER_PROFILE } from '@/mocks/data'
 import { MOCK_ROOM_DETAIL } from '@/mocks/room'
-import type { ReceivedLetter, SendLetterRequest } from '@/types/letter'
+import type { ReceivedLetter, SendLetterRequest, SentLetter } from '@/types/letter'
 import type { Song } from '@/types/song'
 
 const minutesAgo = (minutes: number) => new Date(Date.now() - minutes * 60 * 1000).toISOString()
@@ -22,6 +22,25 @@ export const MOCK_RECEIVED_LETTERS: ReceivedLetter[] = [
     id: 2,
     senderId: 1,
     senderNickname: '튜니',
+    content: '오늘도 충분히 예쁘고 멋진 하루 보내길 바라 💕',
+    song: { title: 'Pretty Girl', artist: 'RESCENE', albumImageUrl: 'https://placehold.co/40x40' },
+    sentAt: minutesAgo(3),
+  },
+]
+
+export const MOCK_SENT_LETTERS: SentLetter[] = [
+  {
+    id: 101,
+    recipientId: 1,
+    recipientNickname: '튜니',
+    content: '오늘도 충분히 예쁘고 멋진 하루 보내길 바라 💕',
+    song: { title: 'Pretty Girl', artist: 'RESCENE', albumImageUrl: 'https://placehold.co/40x40' },
+    sentAt: minutesAgo(3),
+  },
+  {
+    id: 102,
+    recipientId: 1,
+    recipientNickname: '튜니',
     content: '오늘도 충분히 예쁘고 멋진 하루 보내길 바라 💕',
     song: { title: 'Pretty Girl', artist: 'RESCENE', albumImageUrl: 'https://placehold.co/40x40' },
     sentAt: minutesAgo(3),

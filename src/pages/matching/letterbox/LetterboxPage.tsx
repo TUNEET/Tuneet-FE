@@ -3,26 +3,69 @@ import { useNavigate } from 'react-router'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { MusicCard } from '@/components/common/MusicCard/MusicCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
+import { SegmentTabs } from '@/components/common/SegmentTabs/SegmentTabs'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { getLetterPath } from '@/constants/routes'
 import { useToast } from '@/hooks/useToast'
-import { MOCK_RECEIVED_LETTERS } from '@/mocks/letter'
+import { MOCK_RECEIVED_LETTERS, MOCK_SENT_LETTERS } from '@/mocks/letter'
 import { formatTimeAgo } from '@/utils/format'
 import * as S from './LetterboxPage.styles'
+
+type LetterTab = 'received' | 'sent'
+
+const TABS = [
+  { value: 'received', label: '수신한 편지' },
+  { value: 'sent', label: '발송한 편지' },
+] as const
+
+const TAB_TEXT: Record<LetterTab, { confirm: string; toast: string; empty: string }> = {
+  received: {
+    confirm: '수신한 편지를 모두 삭제하시겠어요?',
+    toast: '수신한 편지를 모두 삭제했어요',
+    empty: '받은 편지가 없어요',
+  },
+  sent: {
+    confirm: '발송한 편지를 모두 삭제하시겠어요?',
+    toast: '발송한 편지를 모두 삭제했어요',
+    empty: '보낸 편지가 없어요',
+  },
+}
 
 export function LetterboxPage() {
   const navigate = useNavigate()
   const showToast = useToast()
-  const [letters, setLetters] = useState(MOCK_RECEIVED_LETTERS)
+  const [tab, setTab] = useState<LetterTab>('received')
+  const [receivedLetters, setReceivedLetters] = useState(MOCK_RECEIVED_LETTERS)
+  const [sentLetters, setSentLetters] = useState(MOCK_SENT_LETTERS)
   const [isClearOpen, setIsClearOpen] = useState(false)
   const headerRef = useRef<HTMLDivElement>(null)
   const closeClear = useCallback(() => setIsClearOpen(false), [])
-  const isEmpty = letters.length === 0
+
+  const isReceived = tab === 'received'
+  const cards = isReceived
+    ? receivedLetters.map(({ id, senderNickname, ...rest }) => ({
+        ...rest,
+        id,
+        nickname: `발신자 | ${senderNickname}`,
+        onClick: () => navigate(getLetterPath(id)),
+      }))
+    : sentLetters.map(({ recipientNickname, ...rest }) => ({
+        ...rest,
+        nickname: `수신자 | ${recipientNickname}`,
+        onClick: undefined,
+      }))
+  const isEmpty = cards.length === 0
+
+  const handleTabChange = (next: LetterTab) => {
+    closeClear()
+    setTab(next)
+  }
 
   const handleClear = () => {
     closeClear()
-    setLetters([])
-    showToast('편지를 모두 삭제했어요')
+    if (isReceived) setReceivedLetters([])
+    else setSentLetters([])
+    showToast(TAB_TEXT[tab].toast)
   }
 
   return (
@@ -37,32 +80,33 @@ export function LetterboxPage() {
           />
           <ConfirmPopover
             open={isClearOpen && !isEmpty}
-            message="모든 편지를 삭제하시겠어요?"
+            message={TAB_TEXT[tab].confirm}
             confirmLabel="모든 편지 삭제"
             onConfirm={handleClear}
             onClose={closeClear}
             anchorRef={headerRef}
           />
         </S.Header>
+        <SegmentTabs items={TABS} value={tab} onChange={handleTabChange} ariaLabel="편지함 구분" />
         {!isEmpty ? (
           <S.List>
-            {letters.map(({ id, senderNickname, content, song, sentAt }) => (
+            {cards.map(({ id, nickname, content, song, sentAt, onClick }) => (
               <li key={id}>
                 <MusicCard
                   tone="rose"
-                  nickname={senderNickname}
+                  nickname={nickname}
                   meta={formatTimeAgo(sentAt)}
                   image={song.albumImageUrl}
                   title={`${song.title} - ${song.artist}`}
                   description={content}
                   playable
-                  onClick={() => navigate(getLetterPath(id))}
+                  onClick={onClick}
                 />
               </li>
             ))}
           </S.List>
         ) : (
-          <S.Empty>받은 편지가 없어요</S.Empty>
+          <S.Empty>{TAB_TEXT[tab].empty}</S.Empty>
         )}
       </S.Section>
     </SheetPage>
