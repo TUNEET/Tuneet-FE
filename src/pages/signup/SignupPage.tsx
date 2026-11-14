@@ -161,7 +161,6 @@ export function SignupPage() {
       return
     }
 
-    // 서버가 칸별로 알려준 오류는 해당 입력칸에, 나머지(약관 등)는 팝업으로
     const serverFieldErrors: FieldErrors = {}
     for (const [key, fieldMessage] of Object.entries(fields)) {
       const fieldId = SERVER_FIELD_IDS[key]

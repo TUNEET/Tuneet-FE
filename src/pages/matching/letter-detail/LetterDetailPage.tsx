@@ -38,7 +38,6 @@ export function LetterDetailPage() {
       .then(async (data) => {
         if (isStale) return
         setLetter(data)
-        // 답장이면 아래에 내가 먼저 보낸 편지를 'From. 내 닉네임'으로 보여준다
         if (data.isReply) {
           const profile = await getMyProfile()
           if (!isStale) setMyNickname(profile.nickname ?? '')
@@ -117,7 +116,6 @@ export function LetterDetailPage() {
           </Button>
           <Button
             tone="rose"
-            // 받은 편지 한 통에는 답장을 한 번만 보낼 수 있다
             disabled={isReplied === true}
             onClick={() => navigate(getLetterReplyPath(id))}
           >

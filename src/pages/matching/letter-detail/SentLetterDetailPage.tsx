@@ -35,7 +35,6 @@ export function SentLetterDetailPage() {
       })
       .catch(() => {})
 
-    // 새로고침이나 주소로 바로 들어오면 넘겨받은 편지가 없어서 목록에서 다시 찾는다
     if (isValidId && !passedLetter) {
       findSentLetter(id)
         .then((found) => {
