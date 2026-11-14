@@ -1,5 +1,6 @@
 import type { CharacterColorId } from '@/constants/characters'
 import type { ApiResponse } from '@/types/api'
+import type { Feed } from '@/types/feed'
 import type {
   CreatedRoom,
   CreateRoomRequest,
@@ -12,9 +13,12 @@ import type {
   RoomMembers,
   RoomMembersResponse,
   RoomMusicResponse,
+  RoomPlaylistResponse,
+  RoomPostResponse,
   RoomRoleResponse,
   RoomSummaryResponse,
   RoomUserResponse,
+  PlaylistSong,
 } from '@/types/room'
 import type { Song } from '@/types/song'
 import { getInviteUrl } from '@/utils/invite'
@@ -45,6 +49,19 @@ const toRoom = ({
   description: roomDescription ?? '',
   imageUrl: roomPicture,
 })
+
+const toFeed = ({ roomPostId, nickname, music, content, createdAt }: RoomPostResponse): Feed => ({
+  id: roomPostId,
+  nickname,
+  song: toSong(music),
+  content,
+  createdAt,
+})
+
+const toPlaylist = (items: RoomPlaylistResponse[]): PlaylistSong[] =>
+  [...items]
+    .sort((a, b) => a.position - b.position)
+    .map(({ roomPlaylistId, music }) => ({ id: roomPlaylistId, ...toSong(music) }))
 
 const toMember = (
   { userId, nickname, role, profilePicture }: RoomUserResponse,
@@ -99,16 +116,8 @@ export async function getRoomHome(roomId: number): Promise<RoomDetail> {
     hasPassword: room.hasPassword,
     memberCount: room.memberCount,
     members: room.roomUsers.map((user) => toMember(user)),
-    feeds: room.roomPosts.map(({ roomPostId, nickname, music, content, createdAt }) => ({
-      id: roomPostId,
-      nickname,
-      song: toSong(music),
-      content,
-      createdAt,
-    })),
-    playlist: [...room.roomPlaylists]
-      .sort((a, b) => a.position - b.position)
-      .map(({ roomPlaylistId, music }) => ({ id: roomPlaylistId, ...toSong(music) })),
+    feeds: room.roomPosts.map(toFeed),
+    playlist: toPlaylist(room.roomPlaylists),
   }
 }
 
@@ -135,4 +144,63 @@ export async function deleteRoom(roomId: number) {
 // 방장이 나가면 가장 먼저 참여한 멤버에게 방장이 넘어가고, 혼자면 방이 삭제된다
 export async function leaveRoom(roomId: number) {
   await instance.delete<ApiResponse<unknown>>(`/api/v1/rooms/${roomId}/users/me`)
+}
+
+const POST_PAGE_SIZE = 20
+
+// 최신순. cursor는 직전 응답의 마지막 roomPostId
+export async function getRoomPosts(roomId: number, cursor?: number, size = POST_PAGE_SIZE) {
+  const { data } = await instance.get<
+    ApiResponse<{ roomPosts: RoomPostResponse[]; hasNext: boolean }>
+  >(`/api/v1/rooms/${roomId}/posts`, { params: { cursor, size } })
+  return { items: data.data.roomPosts.map(toFeed), hasNext: data.data.hasNext }
+}
+
+export async function createRoomPost(roomId: number, body: { musicId: string; content: string }) {
+  const { data } = await instance.post<ApiResponse<RoomPostResponse>>(
+    `/api/v1/rooms/${roomId}/posts`,
+    body,
+  )
+  return toFeed(data.data)
+}
+
+// 내가 쓴 포스트만 삭제할 수 있다
+export async function deleteRoomPost(roomId: number, postId: number) {
+  await instance.delete<ApiResponse<unknown>>(`/api/v1/rooms/${roomId}/posts/${postId}`)
+}
+
+// 재생 순서대로 전체
+export async function getRoomPlaylist(roomId: number) {
+  const { data } = await instance.get<ApiResponse<{ playlists: RoomPlaylistResponse[] }>>(
+    `/api/v1/rooms/${roomId}/playlists`,
+  )
+  return toPlaylist(data.data.playlists)
+}
+
+// 맨 뒤에 추가. 이미 있는 곡이면 R4007
+export async function addRoomPlaylistSong(roomId: number, musicId: string) {
+  const { data } = await instance.post<ApiResponse<RoomPlaylistResponse>>(
+    `/api/v1/rooms/${roomId}/playlists`,
+    { musicId },
+  )
+  return toPlaylist([data.data])[0]
+}
+
+// 곡을 추가한 사람과 방장만 삭제할 수 있다
+export async function deleteRoomPlaylistSong(roomId: number, playlistId: number) {
+  await instance.delete<ApiResponse<unknown>>(`/api/v1/rooms/${roomId}/playlists/${playlistId}`)
+}
+
+// 방장만 가능
+export async function clearRoomPlaylist(roomId: number) {
+  await instance.delete<ApiResponse<unknown>>(`/api/v1/rooms/${roomId}/playlists`)
+}
+
+// 플레이리스트 항목 id 전체를 원하는 순서대로 보낸다. 목록이 바뀌었으면 R4011
+export async function reorderRoomPlaylist(roomId: number, playlistIds: number[]) {
+  const { data } = await instance.put<ApiResponse<{ playlists: RoomPlaylistResponse[] }>>(
+    `/api/v1/rooms/${roomId}/playlists/order`,
+    { playListIdList: playlistIds },
+  )
+  return toPlaylist(data.data.playlists)
 }
