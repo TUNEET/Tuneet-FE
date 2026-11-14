@@ -75,7 +75,14 @@ export function UserProfilePage() {
     )
   }
 
-  const { isBlocked } = user
+  const { isBlocked, similarity, distanceRange } = user
+  // 유사도·거리는 값이 있을 때만 보여준다 (예: '92% / 3km 이내')
+  const meta = [
+    typeof similarity === 'number' && `${similarity}%`,
+    distanceRange && formatDistanceRange(distanceRange),
+  ]
+    .filter(Boolean)
+    .join(' / ')
   // 차단했거나, 상대가 편지 받기를 꺼 두었거나, 오늘 편지를 다 썼으면 보낼 수 없다
   const canSendLetter = !isBlocked && user.letterReceivable && (letterQuota?.remaining ?? 0) > 0
 
@@ -99,11 +106,7 @@ export function UserProfilePage() {
     <SheetPage>
       <SectionHeader title="프로필" actionLabel="나가기" onActionClick={goBack} />
 
-      <ProfileCard
-        profile={toProfileCard(user)}
-        tone="purple"
-        meta={`${user.similarity}% / ${formatDistanceRange(user.distanceRange)}`}
-      />
+      <ProfileCard profile={toProfileCard(user)} tone="purple" meta={meta || undefined} />
 
       <S.Actions>
         <Button

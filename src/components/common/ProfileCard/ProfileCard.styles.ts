@@ -33,6 +33,7 @@ export const Card = styled.section<{ $tone: ProfileCardTone }>`
 
 export const Content = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 1.6rem;
   min-width: 0;
@@ -98,8 +99,21 @@ export const Tags = styled.div`
 
 export const TagRow = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 1rem;
+
+  /* 아이콘(1.8rem)과 칩 높이가 같아 첫 줄에 맞춰 붙는다 */
+  & > img {
+    flex-shrink: 0;
+  }
+`
+
+/** 칩이 많으면 아이콘 오른쪽에서 다음 줄로 넘어간다 */
+export const TagList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem 1rem;
+  min-width: 0;
 `
 
 export const EditButton = styled.button`

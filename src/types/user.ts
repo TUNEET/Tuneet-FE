@@ -47,9 +47,10 @@ export type OtherUserProfileResponse = {
   profileMusic: UserMusicResponse | null
   genres: UserGenreResponse[]
   favoriteArtists: UserArtistResponse[]
-  /** 취향 유사도 (%) */
-  similarity: number
-  distanceRange: DistanceRange
+  /** 취향 유사도 (%). 계산되지 않았으면 null */
+  similarity: number | null
+  /** 거리 구간. 위치 정보가 없으면 오지 않을 수 있다 */
+  distanceRange?: DistanceRange | null
   /** 편지 받기를 켜 두었는지 */
   letterReceivable: boolean
   /** 내가 이 사용자를 차단했는지 */
