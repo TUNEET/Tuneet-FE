@@ -50,19 +50,23 @@ export function ProfileCard({ profile, tone = 'pink', meta, onEditClick }: Profi
         <S.Tags>
           <S.TagRow>
             <img src={icons.genre} alt="좋아하는 장르" width={18} height={18} />
-            {genres.map((genre) => (
-              <Chip key={genre} tone={tone}>
-                {genre}
-              </Chip>
-            ))}
+            <S.TagList>
+              {genres.map((genre) => (
+                <Chip key={genre} tone={tone}>
+                  {genre}
+                </Chip>
+              ))}
+            </S.TagList>
           </S.TagRow>
           <S.TagRow>
             <img src={icons.artist} alt="좋아하는 아티스트" width={18} height={18} />
-            {artists.map((artist) => (
-              <Chip key={artist} tone={tone} variant="soft">
-                {artist}
-              </Chip>
-            ))}
+            <S.TagList>
+              {artists.map((artist) => (
+                <Chip key={artist} tone={tone} variant="soft">
+                  {artist}
+                </Chip>
+              ))}
+            </S.TagList>
           </S.TagRow>
         </S.Tags>
       </S.Content>
