@@ -7,7 +7,8 @@ import { ProfileCard } from '@/components/common/ProfileCard/ProfileCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { getLetterWritePath } from '@/constants/routes'
-import { MOCK_LETTER_QUOTA, MOCK_USER_PROFILE } from '@/mocks/data'
+import { useLetterQuota } from '@/hooks/useLetterQuota'
+import { MOCK_USER_PROFILE } from '@/mocks/data'
 import { formatDistance } from '@/utils/format'
 import { CommonTasteSection } from './components/CommonTasteSection/CommonTasteSection'
 import * as S from './UserProfilePage.styles'
@@ -15,7 +16,8 @@ import * as S from './UserProfilePage.styles'
 export function UserProfilePage() {
   const navigate = useNavigate()
   const user = MOCK_USER_PROFILE
-  const canSendLetter = MOCK_LETTER_QUOTA.remaining > 0
+  const letterQuota = useLetterQuota()
+  const canSendLetter = (letterQuota?.remaining ?? 0) > 0
 
   const [isBlockOpen, setIsBlockOpen] = useState(false)
   const blockButtonRef = useRef<HTMLButtonElement>(null)

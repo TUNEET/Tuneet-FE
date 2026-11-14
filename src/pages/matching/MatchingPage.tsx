@@ -4,13 +4,15 @@ import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { TasteMatchCard } from '@/components/common/TasteMatchCard/TasteMatchCard'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { getRoomPath, getUserProfilePath, ROUTES } from '@/constants/routes'
-import { MOCK_LETTER_QUOTA, MOCK_ROOMS, MOCK_TASTE_MATCHES } from '@/mocks/data'
+import { useLetterQuota } from '@/hooks/useLetterQuota'
+import { MOCK_ROOMS, MOCK_TASTE_MATCHES } from '@/mocks/data'
 import { LetterSection } from './components/LetterSection/LetterSection'
 import { RoomSection } from './components/RoomSection/RoomSection'
 import * as S from './MatchingPage.styles'
 
 export function MatchingPage() {
   const navigate = useNavigate()
+  const letterQuota = useLetterQuota()
 
   return (
     <SheetPage>
@@ -34,7 +36,7 @@ export function MatchingPage() {
       <Divider />
 
       <LetterSection
-        quota={MOCK_LETTER_QUOTA}
+        quota={letterQuota}
         onWriteClick={() => navigate(ROUTES.anonymousLetterWrite)}
       />
 

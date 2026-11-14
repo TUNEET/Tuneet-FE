@@ -1,6 +1,5 @@
 import characterProfile from '@/assets/images/character-profile.png'
 import type { Feed } from '@/types/feed'
-import type { LetterQuota } from '@/types/letter'
 import type { TasteMatch } from '@/types/match'
 import type { ReceivedNotification, SentNotification } from '@/types/notification'
 import type { Room } from '@/types/room'
@@ -125,8 +124,6 @@ export const MOCK_TASTE_MATCHES: TasteMatch[] = [
     imageUrl: 'https://placehold.co/80x80',
   },
 ]
-
-export const MOCK_LETTER_QUOTA: LetterQuota = { remaining: 3, total: 5 }
 
 export const MOCK_ROOMS: Room[] = [
   {
