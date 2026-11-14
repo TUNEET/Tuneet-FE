@@ -68,3 +68,13 @@ export async function getUserProfile(userId: number) {
   )
   return data.data
 }
+
+/** 사용자 차단 (서로 피드 조회·편지 발송 불가) */
+export async function blockUser(userId: number) {
+  await instance.post<ApiResponse<unknown>>(`/api/v1/users/me/blocks/${userId}`)
+}
+
+/** 사용자 차단 해제 */
+export async function unblockUser(userId: number) {
+  await instance.delete<ApiResponse<unknown>>(`/api/v1/users/me/blocks/${userId}`)
+}
