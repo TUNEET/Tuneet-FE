@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import trashIcon from '@/assets/icons/trash_icon.svg'
+import { ArtistSearchSheet } from '@/components/common/ArtistSearchSheet/ArtistSearchSheet'
 import { GENRE_ROWS } from '@/constants/genres'
 import type { ProfileArtist } from '@/types/music'
-import { ArtistSearchSheet } from '../ArtistSearchSheet/ArtistSearchSheet'
 import * as S from './TasteSelect.styles'
 
 type TasteSelectProps = {
