@@ -38,6 +38,7 @@ const Nav = styled.nav`
   position: fixed;
   bottom: 0;
   left: 0;
+  z-index: 50;
   display: flex;
   width: 100%;
   height: var(--bottom-nav-height);

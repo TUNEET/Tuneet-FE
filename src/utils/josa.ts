@@ -18,7 +18,6 @@ function hasBatchim(word: string) {
   return ALPHABETS_WITH_BATCHIM.includes(lower) || DIGITS_WITH_BATCHIM.includes(lower)
 }
 
-/** 을/를 */
 export function getObjectParticle(word: string) {
   return hasBatchim(word) ? '을' : '를'
 }

@@ -18,4 +18,9 @@ export const Action = styled.button`
   font-weight: 500;
   line-height: 1.6rem;
   color: ${({ theme }) => theme.colors.textSecondary};
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
 `

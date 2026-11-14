@@ -1,27 +1,36 @@
 import { useCallback, useRef, useState } from 'react'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
-import { TermDetailModal } from '@/pages/signup/components/TermDetailModal/TermDetailModal'
-import { TERMS } from '@/pages/signup/terms'
+import { TermDetailModal } from '@/components/common/TermDetailModal/TermDetailModal'
+import { TERMS } from '@/constants/terms'
 import type { Settings } from './settings'
 import * as S from './SettingsPanel.styles'
 
 type ToggleKey = 'locationVisible' | 'letterEnabled' | 'platformLinked'
 
-const TOGGLES: { key: ToggleKey; label: string; description: string }[] = [
+const TOGGLES: {
+  key: ToggleKey
+  label: string
+  description: string
+  offDescription?: string
+  offNotice?: string
+}[] = [
   {
     key: 'locationVisible',
     label: '위치정보 노출',
     description: 'OFF로 설정하면 주변 사용자를 추천받을 수 없어요.',
+    offNotice: '내 위치를 표시하지 않아요.',
   },
   {
     key: 'letterEnabled',
     label: '편지 받기',
     description: 'OFF로 설정하면 다른 사용자에게 편지를 받을 수 없어요.',
+    offNotice: '편지를 받을 수 없어요.',
   },
   {
     key: 'platformLinked',
     label: '음원 플랫폼 연동',
     description: '현재 연동되어 있습니다.',
+    offDescription: '현재 연동 해제 상태입니다.',
   },
 ]
 
@@ -37,6 +46,13 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
   const [draft, setDraft] = useState(settings)
   const [saveResult, setSaveResult] = useState<SaveResult | null>(null)
   const [openTermId, setOpenTermId] = useState<string | null>(null)
+  const [offNoticeKey, setOffNoticeKey] = useState<ToggleKey | null>(null)
+  const toggleRefs = {
+    locationVisible: useRef<HTMLButtonElement>(null),
+    letterEnabled: useRef<HTMLButtonElement>(null),
+    platformLinked: useRef<HTMLButtonElement>(null),
+  }
+  const closeOffNotice = useCallback(() => setOffNoticeKey(null), [])
   const saveButtonRef = useRef<HTMLButtonElement>(null)
   const closeSaveResult = useCallback(() => setSaveResult(null), [])
   const openTermDetail = TERMS.find(({ id }) => id === openTermId)?.detail
@@ -61,7 +77,7 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
       </S.Header>
 
       <S.Options>
-        {TOGGLES.map(({ key, label, description }) => {
+        {TOGGLES.map(({ key, label, description, offDescription, offNotice }) => {
           const isOn = draft[key]
 
           return (
@@ -69,35 +85,58 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
               <S.OptionHeader>
                 <S.Title>{label}</S.Title>
                 <S.Toggle
+                  ref={toggleRefs[key]}
                   type="button"
                   role="switch"
                   aria-checked={isOn}
                   aria-label={label}
                   $isOn={isOn}
-                  onClick={() => setDraft((current) => ({ ...current, [key]: !isOn }))}
+                  onClick={() => {
+                    setDraft((current) => ({ ...current, [key]: !isOn }))
+                    setOffNoticeKey(isOn && offNotice ? key : null)
+                  }}
                 >
                   <span>{isOn ? 'ON' : 'OFF'}</span>
                   <S.ToggleKnob />
                 </S.Toggle>
               </S.OptionHeader>
-              <S.OptionDescription>{description}</S.OptionDescription>
+              <S.OptionDescription>
+                {!isOn && offDescription ? offDescription : description}
+              </S.OptionDescription>
+              {offNotice && (
+                <ConfirmPopover
+                  open={offNoticeKey === key}
+                  message={offNotice}
+                  confirmLabel="닫기"
+                  onConfirm={closeOffNotice}
+                  onClose={closeOffNotice}
+                  anchorRef={toggleRefs[key]}
+                  surface="sheet"
+                  tone="muted"
+                />
+              )}
             </S.Option>
           )
         })}
 
         <S.Terms>
-          {TERMS.map(({ id, label }) => (
+          {TERMS.map(({ id, label, required }) => (
             <S.Term key={id}>
               <S.TermLabel>
                 <S.Checkbox
                   type="checkbox"
                   checked={draft.terms[id]}
-                  onChange={(event) =>
+                  aria-readonly={required}
+                  onChange={(event) => {
+                    const { checked } = event.target
+                    // 필수 약관은 동의 해제 불가
+                    if (required && !checked) return
+
                     setDraft((current) => ({
                       ...current,
-                      terms: { ...current.terms, [id]: event.target.checked },
+                      terms: { ...current.terms, [id]: checked },
                     }))
-                  }
+                  }}
                 />
                 {label}
               </S.TermLabel>

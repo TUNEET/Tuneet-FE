@@ -7,23 +7,47 @@ import { FRAME_BREAKPOINT, FRAME_MAX_WIDTH } from '@/styles/layout'
 import { SplashScreen } from './SplashScreen'
 
 const SPLASH_DURATION_MS = 2000
+const SPLASH_SEEN_KEY = 'splashSeen'
+
+function hasSeenSplash() {
+  try {
+    return sessionStorage.getItem(SPLASH_SEEN_KEY) !== null
+  } catch {
+    return false
+  }
+}
+
+function markSplashSeen() {
+  try {
+    sessionStorage.setItem(SPLASH_SEEN_KEY, 'true')
+  } catch {
+    // 저장소를 쓸 수 없는 환경(사파리 비공개 모드 등)에서는 매번 보여준다
+  }
+}
 
 export function MobileLayout() {
   useAppHeight()
 
-  const [isSplashVisible, setIsSplashVisible] = useState(true)
+  const [isSplashVisible, setIsSplashVisible] = useState(() => !hasSeenSplash())
+
+  const hideSplash = () => {
+    markSplashSeen()
+    setIsSplashVisible(false)
+  }
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsSplashVisible(false), SPLASH_DURATION_MS)
+    if (!isSplashVisible) return
+
+    const timer = setTimeout(hideSplash, SPLASH_DURATION_MS)
 
     return () => clearTimeout(timer)
-  }, [])
+  }, [isSplashVisible])
 
   return (
     <PageFrame>
       <PhoneFrame>
         {isSplashVisible ? (
-          <SplashScreen />
+          <SplashScreen onSkip={hideSplash} />
         ) : (
           <ToastProvider>
             <ScrollArea>

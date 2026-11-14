@@ -3,7 +3,6 @@ import messageIcon from '@/assets/icons/message.svg'
 import { CharacterAvatar } from '@/components/common/CharacterAvatar/CharacterAvatar'
 import { ROOM_ROLE_LABELS } from '@/constants/room'
 import type { RoomMember } from '@/types/room'
-import { formatDistance } from '@/utils/format'
 import * as S from './MemberRow.styles'
 
 type MemberRowProps = {
@@ -13,7 +12,7 @@ type MemberRowProps = {
 }
 
 export function MemberRow({ member, onClick, onLetterClick }: MemberRowProps) {
-  const { nickname, role, characterColorId, song, similarity, distanceKm } = member
+  const { nickname, role, characterColorId, profilePicture, song, similarity } = member
   const isOwner = role === 'owner'
 
   const handleKeyDown = (event: KeyboardEvent) => {
@@ -32,23 +31,23 @@ export function MemberRow({ member, onClick, onLetterClick }: MemberRowProps) {
       onClick={() => onClick(member)}
       onKeyDown={handleKeyDown}
     >
-      <CharacterAvatar colorId={characterColorId} />
+      <CharacterAvatar colorId={characterColorId} imageUrl={profilePicture} />
       <S.Info>
         <S.NameLine>
           <S.Nickname>{nickname}</S.Nickname>
           <S.Role $owner={isOwner}>{ROOM_ROLE_LABELS[role]}</S.Role>
         </S.NameLine>
-        <S.Song>
-          <img src={song.albumImageUrl} alt="" />
-          <span>
-            {song.title} - {song.artist}
-          </span>
-        </S.Song>
+        {song && (
+          <S.Song>
+            <img src={song.albumImageUrl} alt="" />
+            <span>
+              {song.title} - {song.artist}
+            </span>
+          </S.Song>
+        )}
       </S.Info>
       <S.Aside>
-        <S.Meta>
-          {similarity}% / {formatDistance(distanceKm)}
-        </S.Meta>
+        {similarity !== null && <S.Meta>{similarity}%</S.Meta>}
         <S.LetterButton
           type="button"
           aria-label={`${nickname}에게 편지 보내기`}

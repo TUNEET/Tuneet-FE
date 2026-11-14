@@ -1,7 +1,8 @@
 import { useState } from 'react'
+import trashIcon from '@/assets/icons/trash_icon.svg'
+import { ArtistSearchSheet } from '@/components/common/ArtistSearchSheet/ArtistSearchSheet'
 import { GENRE_ROWS } from '@/constants/genres'
-import type { ProfileArtist } from '../../mocks'
-import { ArtistSearchSheet } from '../ArtistSearchSheet/ArtistSearchSheet'
+import type { ProfileArtist } from '@/types/music'
 import * as S from './TasteSelect.styles'
 
 type TasteSelectProps = {
@@ -9,6 +10,7 @@ type TasteSelectProps = {
   onToggleGenre: (genre: string) => void
   selectedArtists: ProfileArtist[]
   onAddArtist: (artist: ProfileArtist) => void
+  onRemoveArtist: (name: string) => void
 }
 
 export function TasteSelect({
@@ -16,6 +18,7 @@ export function TasteSelect({
   onToggleGenre,
   selectedArtists,
   onAddArtist,
+  onRemoveArtist,
 }: TasteSelectProps) {
   const [isGenreOpen, setIsGenreOpen] = useState(false)
   const [isArtistOpen, setIsArtistOpen] = useState(false)
@@ -62,7 +65,10 @@ export function TasteSelect({
           )}
         </S.Panel>
 
-        <S.Panel $openHeight={selectedArtists.length > 0 ? 'auto' : '9.7rem'} $isOpen={isArtistOpen}>
+        <S.Panel
+          $openHeight={selectedArtists.length > 0 ? 'auto' : '9.7rem'}
+          $isOpen={isArtistOpen}
+        >
           <S.PanelHeader
             type="button"
             aria-expanded={isArtistOpen}
@@ -89,10 +95,17 @@ export function TasteSelect({
           )}
           {isArtistOpen && selectedArtists.length > 0 && (
             <S.SelectedArtists>
-              {selectedArtists.map(({ name, image }) => (
-                <S.SelectedArtist key={name}>
-                  <img src={image} alt="" width={12} height={12} />
+              {selectedArtists.map(({ id, name, image }) => (
+                <S.SelectedArtist key={id ?? name}>
+                  {image ? <img src={image} alt="" width={12} height={12} /> : <S.ArtistFallback />}
                   <span>{name}</span>
+                  <S.RemoveArtistButton
+                    type="button"
+                    aria-label={`${name} 삭제`}
+                    onClick={() => onRemoveArtist(name)}
+                  >
+                    <img src={trashIcon} alt="" width={10} height={10} />
+                  </S.RemoveArtistButton>
                 </S.SelectedArtist>
               ))}
             </S.SelectedArtists>

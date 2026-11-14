@@ -61,3 +61,17 @@ export const GenreChip = styled.li`
   font-weight: 500;
   color: ${({ theme }) => theme.colors.primary};
 `
+
+export const ImageFallback = styled.span`
+  flex-shrink: 0;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 50%;
+  background-color: ${({ theme }) => theme.colors.border};
+`
+
+export const Empty = styled.p`
+  font-size: ${({ theme }) => theme.fontSize.xs};
+  font-weight: 500;
+  color: ${({ theme }) => theme.colors.textPlaceholder};
+`

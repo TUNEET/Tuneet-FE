@@ -23,7 +23,7 @@ type ProfileCardProps = {
 }
 
 export function ProfileCard({ profile, tone = 'pink', meta, onEditClick }: ProfileCardProps) {
-  const { nickname, characterImageUrl, song, genres, artists } = profile
+  const { nickname, characterImageUrl, photoUrl, song, genres, artists } = profile
   const icons = ICONS[tone]
 
   return (
@@ -31,32 +31,42 @@ export function ProfileCard({ profile, tone = 'pink', meta, onEditClick }: Profi
       <S.Content>
         <S.Profile>
           <S.Avatar $tone={tone}>
-            <img src={characterImageUrl} alt="" />
+            {photoUrl ? (
+              <S.AvatarPhoto src={photoUrl} alt="" />
+            ) : (
+              <S.AvatarCharacter src={characterImageUrl} alt="" />
+            )}
           </S.Avatar>
           <S.Info>
             <S.Nickname>{nickname}</S.Nickname>
-            <S.Song>
-              <img src={icons.musicNote} alt="" width={8} height={10} />
-              {song.title} - {song.artist}
-            </S.Song>
+            {song && (
+              <S.Song>
+                <img src={icons.musicNote} alt="" width={8} height={10} />
+                {song.title} - {song.artist}
+              </S.Song>
+            )}
           </S.Info>
         </S.Profile>
         <S.Tags>
           <S.TagRow>
             <img src={icons.genre} alt="좋아하는 장르" width={18} height={18} />
-            {genres.map((genre) => (
-              <Chip key={genre} tone={tone}>
-                {genre}
-              </Chip>
-            ))}
+            <S.TagList>
+              {genres.map((genre) => (
+                <Chip key={genre} tone={tone}>
+                  {genre}
+                </Chip>
+              ))}
+            </S.TagList>
           </S.TagRow>
           <S.TagRow>
             <img src={icons.artist} alt="좋아하는 아티스트" width={18} height={18} />
-            {artists.map((artist) => (
-              <Chip key={artist} tone={tone} variant="soft">
-                {artist}
-              </Chip>
-            ))}
+            <S.TagList>
+              {artists.map((artist) => (
+                <Chip key={artist} tone={tone} variant="soft">
+                  {artist}
+                </Chip>
+              ))}
+            </S.TagList>
           </S.TagRow>
         </S.Tags>
       </S.Content>

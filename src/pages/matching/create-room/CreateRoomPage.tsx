@@ -5,16 +5,22 @@ import roomDefaultImage from '@/assets/images/room-default.png'
 import { Button } from '@/components/common/Button/Button'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
+import { getApiError } from '@/apis/error'
+import { uploadImage } from '@/apis/image'
+import { createRoom, deleteRoom } from '@/apis/room'
 import { ROUTES } from '@/constants/routes'
-import { mockCreateRoom } from '@/mocks/room'
-import type { CreatedRoom, CreateRoomRequest } from '@/types/room'
+import { useToast } from '@/hooks/useToast'
+import type { CreatedRoom } from '@/types/room'
 import { PasswordSetting } from './components/PasswordSetting/PasswordSetting'
 import { RoomCreatedModal } from './components/RoomCreatedModal/RoomCreatedModal'
 import { RoomInfoEditor } from './components/RoomInfoEditor/RoomInfoEditor'
 import * as S from './CreateRoomPage.styles'
 
+const PASSWORD_PATTERN = /^\d{4}$/
+
 export function CreateRoomPage() {
   const navigate = useNavigate()
+  const showToast = useToast()
 
   const [image, setImage] = useState<{ file: File; url: string } | null>(null)
   const [name, setName] = useState('')
@@ -22,6 +28,7 @@ export function CreateRoomPage() {
   const [usePassword, setUsePassword] = useState(false)
   const [password, setPassword] = useState('')
   const [createdRoom, setCreatedRoom] = useState<CreatedRoom | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const imageUrlRef = useRef<string | null>(null)
 
@@ -38,20 +45,42 @@ export function CreateRoomPage() {
     setImage({ file, url })
   }
 
+  // 비밀번호는 숫자 4자리
   const isValid =
-    name.trim() !== '' && description.trim() !== '' && (!usePassword || password.trim() !== '')
+    name.trim() !== '' &&
+    description.trim() !== '' &&
+    (!usePassword || PASSWORD_PATTERN.test(password.trim()))
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
-    if (!isValid) return
+    if (!isValid || isSubmitting) return
 
-    const request: CreateRoomRequest = {
-      name: name.trim(),
-      description: description.trim(),
-      image: image?.file ?? null,
-      password: usePassword ? password.trim() : null,
+    setIsSubmitting(true)
+    try {
+      const imageUrl = image ? await uploadImage(image.file, 'ROOM') : null
+      const room = await createRoom({
+        name: name.trim(),
+        description: description.trim(),
+        imageUrl,
+        password: usePassword ? password.trim() : null,
+      })
+      setCreatedRoom(room)
+    } catch (error) {
+      showToast(getApiError(error).message)
+    } finally {
+      setIsSubmitting(false)
     }
-    setCreatedRoom(await mockCreateRoom(request))
+  }
+
+  const handleDelete = async () => {
+    if (!createdRoom) return
+    try {
+      await deleteRoom(createdRoom.id)
+      showToast('방을 삭제했어요')
+      navigate(ROUTES.matching)
+    } catch (error) {
+      showToast(getApiError(error).message)
+    }
   }
 
   return (
@@ -74,7 +103,7 @@ export function CreateRoomPage() {
           onPasswordChange={setPassword}
         />
         <S.Actions>
-          <Button type="submit" disabled={!isValid}>
+          <Button type="submit" disabled={!isValid || isSubmitting}>
             방 만들기
           </Button>
         </S.Actions>
@@ -82,8 +111,7 @@ export function CreateRoomPage() {
       <RoomCreatedModal
         room={createdRoom}
         onClose={() => navigate(ROUTES.matching)}
-        onEdit={() => setCreatedRoom(null)}
-        onDelete={() => navigate(ROUTES.matching)}
+        onDelete={handleDelete}
       />
     </SheetPage>
   )

@@ -1,16 +1,39 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
+import { getApiError } from '@/apis/error'
+import { getMyProfile } from '@/apis/user'
 import characterSleeping from '@/assets/images/character-sleeping.png'
 import { FeedCard } from '@/components/common/FeedCard/FeedCard'
 import { ProfileCard } from '@/components/common/ProfileCard/ProfileCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { TasteMatchCard } from '@/components/common/TasteMatchCard/TasteMatchCard'
 import { getUserProfilePath, ROUTES } from '@/constants/routes'
-import { MOCK_FEEDS, MOCK_PROFILE, MOCK_TASTE_MATCHES } from '@/mocks/data'
-
+import { useToast } from '@/hooks/useToast'
+import { MOCK_FEEDS, MOCK_TASTE_MATCHES } from '@/mocks/data'
+import type { Profile } from '@/types/user'
+import { toProfileCard } from '@/utils/profile'
 import * as S from './HomePage.styles'
 
 export function HomePage() {
   const navigate = useNavigate()
+  const showToast = useToast()
+  const [profile, setProfile] = useState<Profile | null>(null)
+
+  useEffect(() => {
+    let isStale = false
+
+    getMyProfile()
+      .then((data) => {
+        if (!isStale) setProfile(toProfileCard(data))
+      })
+      .catch((error) => {
+        if (!isStale) showToast(getApiError(error).message)
+      })
+
+    return () => {
+      isStale = true
+    }
+  }, [showToast])
 
   return (
     <S.Page>
@@ -22,10 +45,12 @@ export function HomePage() {
 
       <S.Greeting>오늘도 새로운 음악을 만나보세요!</S.Greeting>
 
-      <S.ProfileArea>
-        <ProfileCard profile={MOCK_PROFILE} onEditClick={() => {}} />
-        <S.SleepingCharacter src={characterSleeping} alt="" />
-      </S.ProfileArea>
+      {profile && (
+        <S.ProfileArea>
+          <ProfileCard profile={profile} onEditClick={() => navigate(ROUTES.my)} />
+          <S.SleepingCharacter src={characterSleeping} alt="" />
+        </S.ProfileArea>
+      )}
 
       <S.Sheet>
         <S.Section>

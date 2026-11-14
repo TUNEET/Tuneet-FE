@@ -1,9 +1,12 @@
 import type { Song } from './song'
 
-export type Notification = {
+type BaseNotification = {
   id: number
-  nickname: string
   message: string
   song: Song
   createdAt: string
 }
+
+export type ReceivedNotification = BaseNotification & { senderNickname: string }
+
+export type SentNotification = BaseNotification & { receiverNickname: string }

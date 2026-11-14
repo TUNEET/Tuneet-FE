@@ -1,16 +1,17 @@
 import styled from 'styled-components'
-import {
-  ArtistSearch,
-  PanelIcon as BasePanelIcon,
-} from '@/pages/profile-setup/components/TasteSelect/TasteSelect.styles'
+import { ArtistSearch, PanelIcon as BasePanelIcon } from '@/styles/tastePanel'
 
 export {
+  ArtistFallback,
   GenreChip,
   GenreRow,
   GenreRows,
   PanelHeader,
   PanelLabel,
-} from '@/pages/profile-setup/components/TasteSelect/TasteSelect.styles'
+  RemoveArtistButton,
+  SelectedArtist,
+  SelectedArtists,
+} from '@/styles/tastePanel'
 
 export const Panels = styled.div`
   display: flex;
@@ -21,6 +22,7 @@ export const Panels = styled.div`
 
 export const Panel = styled.div<{ $height: string }>`
   position: relative;
+  flex-shrink: 0;
   height: ${({ $height }) => $height};
   overflow: hidden;
   border-radius: 2.4rem;
@@ -32,6 +34,7 @@ export const PanelIcon = styled(BasePanelIcon)`
 `
 
 export const Search = styled(ArtistSearch)`
+  cursor: pointer;
   background-color: ${({ theme }) => theme.colors.textPlaceholder};
   color: ${({ theme }) => theme.colors.surfaceWhite};
 

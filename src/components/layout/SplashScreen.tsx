@@ -7,7 +7,7 @@ import clefLargeIcon from '@/assets/icons/lucide_clef-treble-1.svg'
 import clefSmallIcon from '@/assets/icons/lucide_clef-treble.svg'
 import noteSmallIcon from '@/assets/icons/nrk_music-note-solid-expressive-1.svg'
 import noteLargeIcon from '@/assets/icons/nrk_music-note-solid-expressive.svg'
-import characterImage from '@/assets/icons/splash-character.svg'
+import characterImage from '@/assets/images/character-splash.webp'
 import logoImage from '@/assets/icons/TUNEET.svg'
 import heartImage from '@/assets/icons/Vector 28.svg'
 import waveformLargeIcon from '@/assets/icons/withicons_audio-waveform-duo-1.svg'
@@ -26,9 +26,13 @@ const DECORATIONS = [
   { src: boltLargeIcon, width: 22, height: 25, left: '32.1rem', top: '38.159rem' },
 ]
 
-export function SplashScreen() {
+type SplashScreenProps = {
+  onSkip: () => void
+}
+
+export function SplashScreen({ onSkip }: SplashScreenProps) {
   return (
-    <Wrapper>
+    <Wrapper onClick={onSkip}>
       <Stage>
         <Heart src={heartImage} alt="" />
         <Logo src={logoImage} alt="TUNEET" />

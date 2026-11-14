@@ -6,54 +6,115 @@ import sendIcon from '@/assets/icons/send.svg'
 import characterLetter from '@/assets/images/character-letter.png'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
+import { getApiError } from '@/apis/error'
+import { getReceivedLetter, replyLetter, sendLetter, sendRandomLetter } from '@/apis/letter'
+import { searchMusics } from '@/apis/music'
+import { getMyProfile, getUserProfile } from '@/apis/user'
 import { ROUTES } from '@/constants/routes'
-import { MOCK_PROFILE } from '@/mocks/data'
-import { mockGetLetterRecipient, mockSearchSongs, mockSendLetter } from '@/mocks/letter'
-import type { Song } from '@/types/song'
+import { useToast } from '@/hooks/useToast'
+import type { SearchedSong } from '@/types/music'
 import { SongField } from './components/SongField/SongField'
 import * as S from './LetterWritePage.styles'
 
 const CONTENT_MAX_LENGTH = 100
-const ANONYMOUS_RECIPIENT = '누군가'
+const RANDOM_RECIPIENT = '누군가'
+
+type WriteMode =
+  { type: 'reply'; letterId: number } | { type: 'direct'; userId: number } | { type: 'random' }
+
+function getWriteMode(params: { letterId?: string; userId?: string }): WriteMode {
+  if (params.letterId) return { type: 'reply', letterId: Number(params.letterId) }
+  if (params.userId) return { type: 'direct', userId: Number(params.userId) }
+  return { type: 'random' }
+}
 
 export function LetterWritePage() {
   const navigate = useNavigate()
-  const { userId } = useParams()
-  const recipientId = userId ? Number(userId) : undefined
+  const showToast = useToast()
+  const { letterId, userId } = useParams()
   const fieldId = useId()
 
   const [recipientName, setRecipientName] = useState('')
+  const [senderName, setSenderName] = useState('')
   const [content, setContent] = useState('')
-  const [song, setSong] = useState<Song | null>(null)
+  const [song, setSong] = useState<SearchedSong | null>(null)
+  const [isSending, setIsSending] = useState(false)
   const [isSent, setIsSent] = useState(false)
   const [isSentPopoverOpen, setIsSentPopoverOpen] = useState(false)
   const sendButtonRef = useRef<HTMLButtonElement>(null)
   const closeSentPopover = useCallback(() => setIsSentPopoverOpen(false), [])
-  const senderName = MOCK_PROFILE.nickname
+  const isRandom = !letterId && !userId
 
   useEffect(() => {
-    if (recipientId === undefined) return
-    mockGetLetterRecipient(recipientId).then((recipient) => setRecipientName(recipient.nickname))
-  }, [recipientId])
+    let isStale = false
+    const mode = getWriteMode({ letterId, userId })
 
-  const canSend = content.trim() !== '' && song !== null && !isSent
+    const loadRecipientName = async () => {
+      if (mode.type === 'reply') return (await getReceivedLetter(mode.letterId)).senderNickname
+      if (mode.type === 'direct') return (await getUserProfile(mode.userId)).nickname
+      return RANDOM_RECIPIENT
+    }
+
+    Promise.all([loadRecipientName(), getMyProfile()])
+      .then(([recipient, profile]) => {
+        if (isStale) return
+        setRecipientName(recipient)
+        setSenderName(profile.nickname ?? '')
+      })
+      .catch((error) => {
+        if (!isStale) showToast(getApiError(error).message)
+      })
+
+    return () => {
+      isStale = true
+    }
+  }, [letterId, userId, showToast])
+
+  const canSend = content.trim() !== '' && song !== null && !isSent && !isSending
 
   const handleSongSearch = async (query: string) => {
-    const [firstResult] = await mockSearchSongs(query)
-    setSong(firstResult ?? null)
+    try {
+      const {
+        items: [first],
+      } = await searchMusics(query, 1, 1)
+      if (!first) {
+        showToast('검색 결과가 없어요')
+        return
+      }
+      setSong({
+        musicId: first.id,
+        title: first.title,
+        artist: first.artist,
+        albumImageUrl: first.coverUrl ?? '',
+      })
+    } catch (error) {
+      showToast(getApiError(error).message)
+    }
   }
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
     if (!canSend || !song) return
 
-    await mockSendLetter({
-      recipientId,
-      content: content.trim(),
-      song,
-    })
-    setIsSent(true)
-    setIsSentPopoverOpen(true)
+    const mode = getWriteMode({ letterId, userId })
+    const body = { musicId: song.musicId, letterContent: content.trim() }
+
+    setIsSending(true)
+    try {
+      if (mode.type === 'reply') await replyLetter(mode.letterId, body)
+      else if (mode.type === 'direct') await sendLetter(mode.userId, body)
+      else {
+        // 랜덤 편지는 보낸 뒤에 받는 사람이 정해진다
+        const result = await sendRandomLetter(body)
+        setRecipientName(result.receiverNickname)
+      }
+      setIsSent(true)
+      setIsSentPopoverOpen(true)
+    } catch (error) {
+      showToast(getApiError(error).message)
+    } finally {
+      setIsSending(false)
+    }
   }
 
   return (
@@ -78,7 +139,7 @@ export function LetterWritePage() {
       <S.Form onSubmit={handleSubmit}>
         <S.Field>
           <S.Label htmlFor={`${fieldId}-content`}>
-            To. {recipientId === undefined ? ANONYMOUS_RECIPIENT : recipientName}
+            To. {recipientName || (isRandom ? RANDOM_RECIPIENT : '')}
           </S.Label>
           <S.MessageInput
             id={`${fieldId}-content`}
