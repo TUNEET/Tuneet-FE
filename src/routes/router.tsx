@@ -19,6 +19,7 @@ import { CreateRoomPage } from '@/pages/matching/create-room/CreateRoomPage'
 import { JoinRoomPage } from '@/pages/matching/join-room/JoinRoomPage'
 import { LetterWritePage } from '@/pages/matching/letter-write/LetterWritePage'
 import { LetterDetailPage } from '@/pages/matching/letter-detail/LetterDetailPage'
+import { SentLetterDetailPage } from '@/pages/matching/letter-detail/SentLetterDetailPage'
 import { LetterboxPage } from '@/pages/matching/letterbox/LetterboxPage'
 import { RecommendedUsersPage } from '@/pages/matching/recommended-users/RecommendedUsersPage'
 import { RoomFeedsPage } from '@/pages/matching/room/feeds/RoomFeedsPage'
@@ -60,6 +61,8 @@ export const router = createBrowserRouter([
                       { path: ROUTES.anonymousLetterWrite, element: <LetterWritePage /> },
                       { path: ROUTES.letterbox, element: <LetterboxPage /> },
                       { path: ROUTES.letter, element: <LetterDetailPage /> },
+                      { path: ROUTES.sentLetter, element: <SentLetterDetailPage /> },
+                      { path: ROUTES.letterReply, element: <LetterWritePage /> },
                       { path: ROUTES.createRoom, element: <CreateRoomPage /> },
                       { path: ROUTES.joinRoom, element: <JoinRoomPage /> },
                       { path: ROUTES.room, element: <RoomHomePage /> },
