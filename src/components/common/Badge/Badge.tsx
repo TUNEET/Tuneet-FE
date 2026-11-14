@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 
-/** 작은 캡슐 라벨 (예: 편지 '답장') */
 export const Badge = styled.span`
   display: inline-flex;
   align-items: center;

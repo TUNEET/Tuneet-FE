@@ -3,7 +3,6 @@ import { Page as BasePage, Description, shiftTop } from '@/styles/authPage'
 
 export { Blob, Heading, Logo } from '@/styles/authPage'
 
-/** 화면 높이 차이 중 각 영역 위 여백이 흡수하는 비율 (나머지는 하단 여백) */
 export const SETUP_SHIFT = {
   stage: 0.17,
   platform: 0.44,

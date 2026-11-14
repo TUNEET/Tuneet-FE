@@ -9,7 +9,6 @@ import type { ProfileArtist, ProfileMusic } from '@/types/music'
 import * as S from './ProfileEditModal.styles'
 
 type ProfileEditModalProps = {
-  /** 좋아하는 노래 = 프로필 음악 (한 곡) */
   selectedSong: ProfileMusic | null
   onSelectSong: (song: ProfileMusic) => void
   selectedGenres: string[]
@@ -48,7 +47,6 @@ export function ProfileEditModal({
 
   return (
     <>
-      {/* 검색 시트가 열려 있으면 ESC로 시트만 닫히게 모달 닫기를 막는다 */}
       <Modal open onClose={isSheetOpen ? noop : onClose} labelledBy="profile-edit-song">
         <S.Panels>
           <S.Panel $height={selectedSong ? 'auto' : '9.7rem'}>

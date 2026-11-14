@@ -36,22 +36,18 @@ export async function addProfile(body: ProfileAddRequest) {
   return data.data
 }
 
-/** 선호 장르 교체 (1개 이상, 서버 장르 값: K_POP 등) */
 export async function replaceGenres(genres: string[]) {
   await instance.put<ApiResponse<unknown>>('/api/v1/users/me/genres', { genres })
 }
 
-/** 선호 아티스트 교체 (아티스트 검색 결과 id, 3~20팀) */
 export async function replaceArtists(artistIds: string[]) {
   await instance.put<ApiResponse<unknown>>('/api/v1/users/me/artists', { artistIds })
 }
 
-/** 좋아하는 노래 교체 (노래 검색 결과 id, 1~20곡) */
 export async function replaceMusics(musicIds: string[]) {
   await instance.put<ApiResponse<unknown>>('/api/v1/users/me/musics', { musicIds })
 }
 
-/** 프로필 음악(나를 닮은 음악) 설정 (노래 검색 결과 id) */
 export async function updateProfileMusic(musicId: string) {
   await instance.put<ApiResponse<unknown>>('/api/v1/users/me/profile-music', { musicId })
 }
@@ -61,10 +57,17 @@ export async function getMyProfile() {
   return data.data
 }
 
-/** 다른 사용자 프로필 조회 */
 export async function getUserProfile(userId: number) {
   const { data } = await instance.get<ApiResponse<OtherUserProfileResponse>>(
     `/api/v1/users/${userId}`,
   )
   return data.data
+}
+
+export async function blockUser(userId: number) {
+  await instance.post<ApiResponse<unknown>>(`/api/v1/users/me/blocks/${userId}`)
+}
+
+export async function unblockUser(userId: number) {
+  await instance.delete<ApiResponse<unknown>>(`/api/v1/users/me/blocks/${userId}`)
 }

@@ -1,7 +1,5 @@
 import styled, { css } from 'styled-components'
 
-/* 장르·아티스트 선택 패널 (프로필 설정, 프로필 수정) */
-
 export const PanelHeader = styled.button`
   display: flex;
   align-items: center;
@@ -90,7 +88,6 @@ export const ArtistSearch = styled.input`
   }
 `
 
-/* 고른 아티스트 칩 목록 (검색창 아래) */
 export const SelectedArtists = styled.ul`
   display: flex;
   flex-wrap: wrap;

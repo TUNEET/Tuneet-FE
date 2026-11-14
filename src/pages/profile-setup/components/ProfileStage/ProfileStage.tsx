@@ -33,7 +33,6 @@ const DECORATIONS = [
 ]
 
 type ProfileStageProps = {
-  /** profile: 닉네임·사진 입력, music: 프로필 음악 선택 */
   step: 'profile' | 'music'
   nickname: string
   onNicknameChange: (nickname: string) => void
@@ -47,7 +46,6 @@ type ProfileStageProps = {
   onLater: () => void
 }
 
-/** 프로필 설정 1·2단계: 하트 배경 위 아바타와 닉네임/프로필 음악 입력 */
 export function ProfileStage({
   step,
   nickname,

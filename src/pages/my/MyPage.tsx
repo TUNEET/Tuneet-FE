@@ -26,7 +26,6 @@ import { SettingsPanel } from './components/SettingsPanel/SettingsPanel'
 import * as S from './MyPage.styles'
 
 const NICKNAME_DUPLICATED_MESSAGE = '중복된 닉네임입니다. 다른 닉네임을 입력해 주세요.'
-/** 선호 아티스트 교체 API 허용 범위 */
 const ARTIST_MIN = 3
 const ARTIST_MAX = 20
 
@@ -42,7 +41,6 @@ export function MyPage() {
   const [draftGenres, setDraftGenres] = useState(genres)
   const [artists, setArtists] = useState<ProfileArtist[]>([])
   const [draftArtists, setDraftArtists] = useState(artists)
-  /** 좋아하는 노래 = 프로필 음악 (한 곡) */
   const [song, setSong] = useState<ProfileMusic | null>(null)
   const [draftSong, setDraftSong] = useState(song)
   const [isSavingProfile, setIsSavingProfile] = useState(false)

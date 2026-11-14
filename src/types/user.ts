@@ -2,33 +2,50 @@ import type { Song } from './song'
 
 export type Profile = {
   nickname: string
-  /** 프로필 사진이 없을 때 보여줄 캐릭터 이미지 */
   characterImageUrl: string
-  /** 사용자가 올린 프로필 사진 (없으면 캐릭터 이미지) */
   photoUrl?: string | null
-  /** 프로필 음악 (설정하지 않았으면 null) */
   song: Pick<Song, 'title' | 'artist'> | null
   genres: string[]
   artists: string[]
 }
 
 export type CommonTaste = {
-  artists: { name: string; imageUrl: string }[]
-  songs: Song[]
+  artists: { name: string; imageUrl: string | null }[]
+  songs: { title: string; artist: string; albumImageUrl: string | null }[]
   genres: string[]
 }
 
-export type UserProfile = Profile & {
-  id: number
-  similarity: number
-  distanceKm: number
-  commonTaste: CommonTaste
+export type DistanceRange = 'WITHIN_1KM' | 'WITHIN_3KM' | 'WITHIN_5KM' | 'OVER_5KM'
+
+type UserMusicResponse = {
+  musicId: string
+  title: string
+  artist: string
+  musicPicture: string | null
 }
 
-/** 다른 사용자 프로필 조회 응답 (편지 쓰기에 필요한 칸만. 매칭 연동 때 나머지 추가) */
+type UserGenreResponse = { genreId: number; genreName: string; displayName: string }
+
+type UserArtistResponse = {
+  artistId: string
+  name: string
+  artistImage: string | null
+}
+
 export type OtherUserProfileResponse = {
   userId: number
   nickname: string
-  /** 편지 받기를 켜 두었는지 */
+  profilePicture: string | null
+  profileMusic: UserMusicResponse | null
+  genres: UserGenreResponse[]
+  favoriteArtists: UserArtistResponse[]
+  similarity: number | null
+  distanceRange?: DistanceRange | null
   letterReceivable: boolean
+  isBlocked: boolean
+  common: {
+    artists: UserArtistResponse[]
+    music: UserMusicResponse | null
+    genres: UserGenreResponse[]
+  }
 }

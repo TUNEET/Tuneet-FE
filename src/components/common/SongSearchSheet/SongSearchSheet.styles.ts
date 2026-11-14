@@ -179,7 +179,6 @@ export const ResultItem = styled(Item)<VariantProps>`
 
 export const ResultSong = Song
 
-/** 앨범 커버가 없는 곡의 자리 표시 */
 export const CoverFallback = styled.i`
   flex-shrink: 0;
   width: 1.2rem;

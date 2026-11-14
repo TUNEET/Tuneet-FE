@@ -12,7 +12,6 @@ import { formatDateTime } from '@/utils/format'
 import { LetterCards } from './components/LetterCards/LetterCards'
 import * as S from './LetterDetailPage.styles'
 
-/** 보낸 편지 상세. 편지함에서 카드를 눌러 들어오면 목록의 편지를 state로 넘겨받는다 */
 export function SentLetterDetailPage() {
   const navigate = useNavigate()
   const showToast = useToast()
@@ -22,7 +21,6 @@ export function SentLetterDetailPage() {
   const isValidId = Number.isInteger(id) && id > 0
   const passedLetter = state?.letter?.letterId === id ? state.letter : undefined
 
-  /** undefined: 불러오는 중, null: 못 찾음 */
   const [fetchedLetter, setFetchedLetter] = useState<SentLetter | null | undefined>(undefined)
   const [myNickname, setMyNickname] = useState('')
   const letter = passedLetter ?? fetchedLetter

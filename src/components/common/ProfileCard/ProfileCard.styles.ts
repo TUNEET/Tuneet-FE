@@ -33,6 +33,7 @@ export const Card = styled.section<{ $tone: ProfileCardTone }>`
 
 export const Content = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 1.6rem;
   min-width: 0;
@@ -98,8 +99,19 @@ export const Tags = styled.div`
 
 export const TagRow = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 1rem;
+
+  & > img {
+    flex-shrink: 0;
+  }
+`
+
+export const TagList = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem 1rem;
+  min-width: 0;
 `
 
 export const EditButton = styled.button`
