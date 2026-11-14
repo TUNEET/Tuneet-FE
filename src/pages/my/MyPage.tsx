@@ -8,6 +8,7 @@ import {
   getMyProfile,
   replaceArtists,
   replaceGenres,
+  updateProfileMusic,
 } from '@/apis/user'
 import settingIcon from '@/assets/icons/setting.svg'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
@@ -16,7 +17,7 @@ import { GENRE_NAMES } from '@/constants/genres'
 import { ROUTES } from '@/constants/routes'
 import { useToast } from '@/hooks/useToast'
 import type { MyProfileResponse } from '@/types/auth'
-import type { ProfileArtist } from '@/types/music'
+import type { ProfileArtist, ProfileMusic } from '@/types/music'
 import { clearTokens } from '@/utils/auth'
 import { BlockedUsers } from './components/BlockedUsers/BlockedUsers'
 import { ProfileEditModal } from './components/ProfileEditModal/ProfileEditModal'
@@ -41,6 +42,9 @@ export function MyPage() {
   const [draftGenres, setDraftGenres] = useState(genres)
   const [artists, setArtists] = useState<ProfileArtist[]>([])
   const [draftArtists, setDraftArtists] = useState(artists)
+  /** 좋아하는 노래 = 프로필 음악 (한 곡) */
+  const [song, setSong] = useState<ProfileMusic | null>(null)
+  const [draftSong, setDraftSong] = useState(song)
   const [isSavingProfile, setIsSavingProfile] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [isTasteOpen, setIsTasteOpen] = useState(false)
@@ -63,6 +67,14 @@ export function MyPage() {
         setProfile(data)
         setNickname(data.nickname ?? '')
         setGenres(data.genres.map(({ displayName }) => displayName))
+        setSong(
+          data.profileMusic && {
+            musicId: data.profileMusic.musicId,
+            title: data.profileMusic.title,
+            artist: data.profileMusic.artist,
+            albumImage: data.profileMusic.musicPicture ?? '',
+          },
+        )
         setArtists(
           data.favoriteArtists.map(({ artistId, name, artistImage }) => ({
             id: artistId,
@@ -80,16 +92,9 @@ export function MyPage() {
     }
   }, [showToast])
 
-  // 프로필 카드의 노래는 프로필 음악, 아티스트는 선호 아티스트
-  const songs = profile?.profileMusic
-    ? [
-        {
-          title: profile.profileMusic.title,
-          artist: profile.profileMusic.artist,
-          albumImage: profile.profileMusic.musicPicture ?? '',
-        },
-      ]
-    : []
+  // 프로필 카드의 노래는 프로필 음악
+  const shownSong = isEditing ? draftSong : song
+  const songs = shownSong ? [shownSong] : []
 
   const closeConfirm = () => setConfirmType(null)
 
@@ -116,6 +121,7 @@ export function MyPage() {
     setDraftNickname(nickname)
     setDraftGenres(genres)
     setDraftArtists(artists)
+    setDraftSong(song)
     setIsEditing(true)
   }
 
@@ -143,6 +149,8 @@ export function MyPage() {
     const isArtistsChanged =
       draftArtists.length !== artists.length ||
       draftArtists.some((artist) => !artistKeys.includes(getArtistKey(artist)))
+    const draftSongId = draftSong?.musicId
+    const isSongChanged = !!draftSongId && draftSongId !== song?.musicId
 
     setIsSavingProfile(true)
     try {
@@ -159,6 +167,9 @@ export function MyPage() {
       if (isGenresChanged) {
         await replaceGenres(draftGenres.map((genre) => GENRE_NAMES[genre] ?? genre))
       }
+      if (isSongChanged) {
+        await updateProfileMusic(draftSongId)
+      }
       if (isArtistsChanged) {
         await replaceArtists(draftArtists.flatMap(({ id }) => (id ? [id] : [])))
       }
@@ -167,6 +178,7 @@ export function MyPage() {
       setDraftNickname(trimmedNickname)
       setGenres(draftGenres)
       setArtists(draftArtists)
+      setSong(draftSong)
       setIsSavedOpen(true)
     } catch (error) {
       showToast(getApiError(error).message)
@@ -349,6 +361,8 @@ export function MyPage() {
 
       {isTasteOpen && (
         <ProfileEditModal
+          selectedSong={draftSong}
+          onSelectSong={setDraftSong}
           selectedGenres={draftGenres}
           onToggleGenre={toggleGenre}
           selectedArtists={draftArtists}
