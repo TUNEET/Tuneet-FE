@@ -32,7 +32,6 @@ const NICKNAME_ERROR_MESSAGES = {
   duplicated: '중복된 닉네임입니다. 다른 닉네임을 입력해 주세요.',
 } as const
 
-/** 서버에 마지막으로 저장한 닉네임·사진 (같은 값으로 다시 넘어갈 때 저장 생략) */
 type SavedProfile = { nickname: string; imageFile: File | null }
 
 const MIN_GENRES = 1

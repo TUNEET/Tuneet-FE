@@ -13,7 +13,6 @@ export {
   Logo,
 } from '@/styles/authPage'
 
-/** 화면 높이 차이 중 입력칸 위 여백이 흡수하는 비율 (나머지는 하단 여백) */
 const LOGIN_SHIFT = 0.6
 
 export const Page = styled(BasePage)`

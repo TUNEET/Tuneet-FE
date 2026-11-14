@@ -12,7 +12,6 @@ const TOGGLES: {
   label: string
   description: string
   offDescription?: string
-  /** OFF로 바꿀 때 띄우는 안내 */
   offNotice?: string
 }[] = [
   {

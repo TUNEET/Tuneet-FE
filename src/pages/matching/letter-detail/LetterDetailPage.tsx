@@ -20,7 +20,6 @@ export function LetterDetailPage() {
   const showToast = useToast()
   const { letterId } = useParams()
 
-  /** undefined: 불러오는 중, null: 못 찾음 */
   const [letter, setLetter] = useState<ReceivedLetter | null | undefined>(undefined)
   const [myNickname, setMyNickname] = useState('')
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)

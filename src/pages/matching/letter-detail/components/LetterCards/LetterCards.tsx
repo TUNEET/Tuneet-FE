@@ -9,7 +9,6 @@ type LetterCardsProps = {
   music: LetterMusic
 }
 
-/** 편지 본문 카드와 노래 카드가 겹쳐 있는 편지 묶음 */
 export function LetterCards({ content, from, music }: LetterCardsProps) {
   return (
     <S.Cards>

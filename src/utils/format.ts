@@ -1,3 +1,5 @@
+import type { DistanceRange } from '@/types/user'
+
 const MINUTE = 60 * 1000
 const HOUR = 60 * MINUTE
 const DAY = 24 * HOUR
@@ -23,7 +25,6 @@ export function formatDateTime(date: string) {
   return `${ymd} ${pad(target.getHours())}시 ${pad(target.getMinutes())}분`
 }
 
-/** 2026년 11월 21일 12시 07분 */
 export function formatKoreanDateTime(date: string) {
   const target = new Date(date)
   const ymd = `${target.getFullYear()}년 ${target.getMonth() + 1}월 ${target.getDate()}일`
@@ -33,4 +34,15 @@ export function formatKoreanDateTime(date: string) {
 export function formatDistance(km: number) {
   if (km < 1) return `${Math.round(km * 1000)}m`
   return `${Number(km.toFixed(1))}km`
+}
+
+const DISTANCE_RANGE_LABELS: Record<DistanceRange, string> = {
+  WITHIN_1KM: '1km 이내',
+  WITHIN_3KM: '3km 이내',
+  WITHIN_5KM: '5km 이내',
+  OVER_5KM: '5km 이상',
+}
+
+export function formatDistanceRange(range: DistanceRange) {
+  return DISTANCE_RANGE_LABELS[range]
 }

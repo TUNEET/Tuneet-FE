@@ -44,13 +44,11 @@ export type MyProfileResponse = {
   nickname: string | null
   profilePicture: string | null
   profileMusic: {
-    /** 노래 검색 결과 id */
     musicId: string
     title: string
     artist: string
     musicPicture: string | null
   } | null
   genres: { genreId: number; genreName: string; displayName: string }[]
-  /** artistId는 아티스트 검색 결과 id (선호 아티스트 교체 API에 그대로 보낸다) */
   favoriteArtists: { artistId: string; name: string; artistImage: string | null }[]
 }

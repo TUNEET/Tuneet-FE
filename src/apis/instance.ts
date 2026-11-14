@@ -15,7 +15,6 @@ instance.interceptors.request.use((config) => {
   return config
 })
 
-/** 동시에 여러 요청이 401을 받아도 재발급은 한 번만 */
 let reissuePromise: Promise<string> | null = null
 
 async function reissueAccessToken() {
@@ -39,8 +38,6 @@ instance.interceptors.response.use(
   async (error) => {
     const config = error.config as RetryConfig | undefined
 
-    // 토큰을 실어 보낸 요청의 401만 만료로 본다.
-    // 로그인 실패(A4001)처럼 토큰 없이 보낸 요청의 401은 그대로 화면에 넘긴다.
     const sentToken = Boolean(config?.headers.Authorization)
 
     if (

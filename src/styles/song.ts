@@ -1,7 +1,5 @@
 import styled from 'styled-components'
 
-/* 노래 목록 행 (플레이리스트, 노래 검색 결과) */
-
 export const SongList = styled.ul`
   display: flex;
   flex-direction: column;
@@ -47,8 +45,6 @@ export const PlayButton = styled.button`
   display: flex;
   flex-shrink: 0;
 `
-
-/* 프로필 노래 칩 (프로필 설정, 프로필 카드) */
 
 export const SongChip = styled.li`
   display: flex;

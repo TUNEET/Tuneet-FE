@@ -4,7 +4,6 @@ import { getLetterQuota } from '@/apis/letter'
 import type { LetterQuota } from '@/types/letter'
 import { useToast } from './useToast'
 
-/** 오늘 남은 편지 수. 불러오는 중이면 null */
 export function useLetterQuota() {
   const showToast = useToast()
   const [quota, setQuota] = useState<LetterQuota | null>(null)

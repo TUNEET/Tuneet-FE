@@ -3,7 +3,6 @@ import { instance } from './instance'
 
 export type ImageDirectory = 'ROOM' | 'PROFILE'
 
-/** 이미지를 업로드하고 접근 가능한 URL을 받는다 */
 export async function uploadImage(file: File, directory: ImageDirectory) {
   const formData = new FormData()
   formData.append('file', file)
