@@ -45,7 +45,6 @@ export function CreateRoomPage() {
     setImage({ file, url })
   }
 
-  // 비밀번호는 숫자 4자리
   const isValid =
     name.trim() !== '' &&
     description.trim() !== '' &&

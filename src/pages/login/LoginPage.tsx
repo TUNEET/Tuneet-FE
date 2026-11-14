@@ -77,7 +77,6 @@ export function LoginPage() {
       <form onSubmit={handleSubmit} noValidate>
         <S.Fields>
           {FIELDS.map(({ id, label, type, placeholder, autoComplete }) => {
-            // 서버가 어느 칸이 틀렸는지 알려주지 않으므로 문구는 비밀번호 칸에, 테두리는 두 칸 모두에 표시
             const showError = errorMessage && id === 'password'
 
             return (

@@ -11,12 +11,10 @@ export function TabLayout() {
   const { pathname, key } = useLocation()
   const navigate = useNavigate()
   const isExplore = pathname.startsWith(ROUTES.explore)
-  // TODO: 실시간 알림(SSE/웹소켓 등) 연동 시 새 코멘트 수신 이벤트로 교체
   const [incomingComment, setIncomingComment] = useState<typeof MOCK_INCOMING_COMMENT | null>(
     MOCK_INCOMING_COMMENT,
   )
 
-  // 열려 있는 페이지의 아이콘을 다시 누르면 이전 화면으로 닫기
   const toggle = (target: string, fallback: string) => {
     if (pathname !== target) {
       navigate(target)

@@ -34,12 +34,9 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // 앱 셸(JS/CSS/HTML/폰트/아이콘)만 프리캐시
         globPatterns: ['**/*.{js,css,html,ico}', '*.{svg,png}'],
-        // assets/ 안의 무거운 이미지는 사용 시점에 캐싱
         runtimeCaching: [
           {
-            // Pretendard dynamic subset 폰트 조각은 필요한 것만 캐싱
             urlPattern: ({ request }) => request.destination === 'font',
             handler: 'CacheFirst',
             options: {
@@ -57,7 +54,6 @@ export default defineConfig({
           },
         ],
         navigateFallback: '/index.html',
-        // API 요청은 SPA fallback 대상에서 제외
         navigateFallbackDenylist: [/^\/api/],
         cleanupOutdatedCaches: true,
       },

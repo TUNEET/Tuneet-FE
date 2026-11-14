@@ -85,7 +85,6 @@ export function ProfileSetupPage() {
   const submitMusic = async () => {
     if (isSavingMusic) return
 
-    // 곡을 고르지 않았거나 이미 저장한 곡이면 저장 없이 넘어간다
     const musicId = music?.musicId
     if (!musicId || musicId === savedMusicId) {
       setStep('platform')
@@ -176,7 +175,6 @@ export function ProfileSetupPage() {
 
     setIsSavingProfile(true)
     try {
-      // 이미 저장한 내 닉네임은 중복으로 나오므로 바뀌었을 때만 확인
       if (isNicknameChanged && !(await checkNicknameAvailability(trimmedNickname))) {
         setNicknameError(NICKNAME_ERROR_MESSAGES.duplicated)
         return
