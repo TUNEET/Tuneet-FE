@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { getApiError } from '@/apis/error'
 import { getMyProfile } from '@/apis/user'
-import characterProfile from '@/assets/images/character-profile.png'
 import characterSleeping from '@/assets/images/character-sleeping.png'
 import { FeedCard } from '@/components/common/FeedCard/FeedCard'
 import { ProfileCard } from '@/components/common/ProfileCard/ProfileCard'
@@ -11,25 +10,9 @@ import { TasteMatchCard } from '@/components/common/TasteMatchCard/TasteMatchCar
 import { getUserProfilePath, ROUTES } from '@/constants/routes'
 import { useToast } from '@/hooks/useToast'
 import { MOCK_FEEDS, MOCK_TASTE_MATCHES } from '@/mocks/data'
-import type { MyProfileResponse } from '@/types/auth'
 import type { Profile } from '@/types/user'
+import { toProfileCard } from '@/utils/profile'
 import * as S from './HomePage.styles'
-
-/** 내 프로필 조회 응답을 프로필 카드 데이터로 바꾼다 */
-const toProfile = ({
-  nickname,
-  profilePicture,
-  profileMusic,
-  genres,
-  favoriteArtists,
-}: MyProfileResponse): Profile => ({
-  nickname: nickname ?? '',
-  characterImageUrl: characterProfile,
-  photoUrl: profilePicture,
-  song: profileMusic && { title: profileMusic.title, artist: profileMusic.artist },
-  genres: genres.map(({ displayName }) => displayName),
-  artists: favoriteArtists.map(({ name }) => name),
-})
 
 export function HomePage() {
   const navigate = useNavigate()
@@ -41,7 +24,7 @@ export function HomePage() {
 
     getMyProfile()
       .then((data) => {
-        if (!isStale) setProfile(toProfile(data))
+        if (!isStale) setProfile(toProfileCard(data))
       })
       .catch((error) => {
         if (!isStale) showToast(getApiError(error).message)
