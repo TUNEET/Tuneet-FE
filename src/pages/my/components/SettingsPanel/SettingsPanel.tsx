@@ -129,7 +129,6 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
                   aria-readonly={required}
                   onChange={(event) => {
                     const { checked } = event.target
-                    // 필수 약관은 동의 해제 불가
                     if (required && !checked) return
 
                     setDraft((current) => ({

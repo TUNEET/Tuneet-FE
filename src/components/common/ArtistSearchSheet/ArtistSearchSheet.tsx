@@ -61,7 +61,6 @@ export function ArtistSearchSheet({ onAdd, onClose }: ArtistSearchSheetProps) {
     }
   }, [keyword, page])
 
-  // 새 검색어 결과가 오기 전에는 이전 결과를 보여주지 않는다 (페이지 이동 중에는 유지)
   const results = keyword !== '' && result?.keyword === keyword ? result.items : null
   const hasResults = results !== null && results.length > 0
   const isNoResult = results !== null && results.length === 0

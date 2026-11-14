@@ -13,7 +13,6 @@ import { LinkJoinSection } from './components/LinkJoinSection/LinkJoinSection'
 import { QrJoinSection } from './components/QrJoinSection/QrJoinSection'
 import { RoomPasswordModal } from './components/RoomPasswordModal/RoomPasswordModal'
 
-// 잠긴 방에 비밀번호 없이 입장하면 오는 에러 코드
 const PASSWORD_REQUIRED_CODE = 'R4002'
 
 export function JoinRoomPage() {
@@ -45,7 +44,6 @@ export function JoinRoomPage() {
       goToRoom(roomId, alreadyJoined)
     } catch (error) {
       const { code, message } = getApiError(error)
-      // 잠긴 방이면 비밀번호를 받아 다시 입장한다
       if (code === PASSWORD_REQUIRED_CODE) setLockedInviteCode(inviteCode)
       else showToast(message)
     } finally {

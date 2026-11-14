@@ -90,7 +90,6 @@ export function MyPage() {
     }
   }, [showToast])
 
-  // 프로필 카드의 노래는 프로필 음악
   const shownSong = isEditing ? draftSong : song
   const songs = shownSong ? [shownSong] : []
 
@@ -102,9 +101,7 @@ export function MyPage() {
 
     try {
       await logout()
-    } catch {
-      // 서버 요청이 실패해도 이 기기에서는 로그아웃한다
-    }
+    } catch {}
 
     clearTokens()
     navigate(ROUTES.onboarding, { replace: true })

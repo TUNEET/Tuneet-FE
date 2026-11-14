@@ -23,7 +23,6 @@ export function RoomFeedsPage() {
 
   const fetchPosts = useCallback(
     (cursor?: number) =>
-      // 주소가 잘못됐으면 요청하지 않는다
       roomId > 0 ? getRoomPosts(roomId, cursor) : Promise.resolve({ items: [], hasNext: false }),
     [roomId],
   )

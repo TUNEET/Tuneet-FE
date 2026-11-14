@@ -20,9 +20,7 @@ function hasSeenSplash() {
 function markSplashSeen() {
   try {
     sessionStorage.setItem(SPLASH_SEEN_KEY, 'true')
-  } catch {
-    // 저장소를 쓸 수 없는 환경(사파리 비공개 모드 등)에서는 매번 보여준다
-  }
+  } catch {}
 }
 
 export function MobileLayout() {
