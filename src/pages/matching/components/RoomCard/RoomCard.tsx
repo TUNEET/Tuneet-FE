@@ -1,4 +1,5 @@
 import arrowRightCircleIcon from '@/assets/icons/arrow-right-circle.svg'
+import roomDefaultImage from '@/assets/images/room-default.png'
 import type { Room } from '@/types/room'
 import * as S from './RoomCard.styles'
 
@@ -13,7 +14,7 @@ export function RoomCard({ room, onEnterClick }: RoomCardProps) {
   return (
     <S.Card>
       <S.Body>
-        <S.Thumbnail src={imageUrl} alt="" />
+        <S.Thumbnail src={imageUrl || roomDefaultImage} alt="" />
         <S.Texts>
           <S.Name>{name}</S.Name>
           <S.Description>{description}</S.Description>
