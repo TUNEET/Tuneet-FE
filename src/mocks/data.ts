@@ -2,7 +2,6 @@ import characterProfile from '@/assets/images/character-profile.png'
 import type { Feed } from '@/types/feed'
 import type { TasteMatch } from '@/types/match'
 import type { ReceivedNotification, SentNotification } from '@/types/notification'
-import type { Room } from '@/types/room'
 import type { Song } from '@/types/song'
 import type { Profile } from '@/types/user'
 
@@ -120,21 +119,6 @@ export const MOCK_TASTE_MATCHES: TasteMatch[] = [
     distanceKm: 3.5,
     matchType: 'song',
     name: '3am',
-    imageUrl: 'https://placehold.co/80x80',
-  },
-]
-
-export const MOCK_ROOMS: Room[] = [
-  {
-    id: 1,
-    name: '튠잇대학교',
-    description: '튠잇대 모두 모여라~~',
-    imageUrl: 'https://placehold.co/80x80',
-  },
-  {
-    id: 2,
-    name: 'ZZZ...',
-    description: '자장가 들으면서 자는 방',
     imageUrl: 'https://placehold.co/80x80',
   },
 ]

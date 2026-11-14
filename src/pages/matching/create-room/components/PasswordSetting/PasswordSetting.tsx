@@ -36,8 +36,10 @@ export function PasswordSetting({
         value={password}
         placeholder="비밀번호 입력"
         aria-label="비밀번호"
+        inputMode="numeric"
+        maxLength={4}
         disabled={!enabled}
-        onChange={(event) => onPasswordChange(event.target.value)}
+        onChange={(event) => onPasswordChange(event.target.value.replace(/\D/g, ''))}
       />
     </S.Row>
   )
