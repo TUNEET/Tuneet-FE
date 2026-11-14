@@ -2,7 +2,14 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { logout } from '@/apis/auth'
 import { getApiError } from '@/apis/error'
-import { addProfile, checkNicknameAvailability, getMyProfile, replaceGenres } from '@/apis/user'
+import {
+  addProfile,
+  checkNicknameAvailability,
+  getMyProfile,
+  replaceArtists,
+  replaceGenres,
+  updateProfileMusic,
+} from '@/apis/user'
 import settingIcon from '@/assets/icons/setting.svg'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { ProfileComplete } from '@/components/common/ProfileComplete/ProfileComplete'
@@ -10,6 +17,7 @@ import { GENRE_NAMES } from '@/constants/genres'
 import { ROUTES } from '@/constants/routes'
 import { useToast } from '@/hooks/useToast'
 import type { MyProfileResponse } from '@/types/auth'
+import type { ProfileArtist, ProfileMusic } from '@/types/music'
 import { clearTokens } from '@/utils/auth'
 import { BlockedUsers } from './components/BlockedUsers/BlockedUsers'
 import { ProfileEditModal } from './components/ProfileEditModal/ProfileEditModal'
@@ -18,6 +26,11 @@ import { SettingsPanel } from './components/SettingsPanel/SettingsPanel'
 import * as S from './MyPage.styles'
 
 const NICKNAME_DUPLICATED_MESSAGE = '중복된 닉네임입니다. 다른 닉네임을 입력해 주세요.'
+/** 선호 아티스트 교체 API 허용 범위 */
+const ARTIST_MIN = 3
+const ARTIST_MAX = 20
+
+const getArtistKey = ({ id, name }: ProfileArtist) => id ?? name
 
 export function MyPage() {
   const navigate = useNavigate()
@@ -27,6 +40,11 @@ export function MyPage() {
   const [draftNickname, setDraftNickname] = useState(nickname)
   const [genres, setGenres] = useState<string[]>([])
   const [draftGenres, setDraftGenres] = useState(genres)
+  const [artists, setArtists] = useState<ProfileArtist[]>([])
+  const [draftArtists, setDraftArtists] = useState(artists)
+  /** 좋아하는 노래 = 프로필 음악 (한 곡) */
+  const [song, setSong] = useState<ProfileMusic | null>(null)
+  const [draftSong, setDraftSong] = useState(song)
   const [isSavingProfile, setIsSavingProfile] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [isTasteOpen, setIsTasteOpen] = useState(false)
@@ -49,6 +67,21 @@ export function MyPage() {
         setProfile(data)
         setNickname(data.nickname ?? '')
         setGenres(data.genres.map(({ displayName }) => displayName))
+        setSong(
+          data.profileMusic && {
+            musicId: data.profileMusic.musicId,
+            title: data.profileMusic.title,
+            artist: data.profileMusic.artist,
+            albumImage: data.profileMusic.musicPicture ?? '',
+          },
+        )
+        setArtists(
+          data.favoriteArtists.map(({ artistId, name, artistImage }) => ({
+            id: artistId,
+            name,
+            image: artistImage,
+          })),
+        )
       })
       .catch((error) => {
         if (!isStale) showToast(getApiError(error).message)
@@ -59,20 +92,9 @@ export function MyPage() {
     }
   }, [showToast])
 
-  // 프로필 카드의 노래는 프로필 음악, 아티스트는 선호 아티스트
-  const songs = profile?.profileMusic
-    ? [
-        {
-          title: profile.profileMusic.title,
-          artist: profile.profileMusic.artist,
-          albumImage: profile.profileMusic.musicPicture ?? '',
-        },
-      ]
-    : []
-  const artists = (profile?.favoriteArtists ?? []).map(({ name, artistImage }) => ({
-    name,
-    image: artistImage,
-  }))
+  // 프로필 카드의 노래는 프로필 음악
+  const shownSong = isEditing ? draftSong : song
+  const songs = shownSong ? [shownSong] : []
 
   const closeConfirm = () => setConfirmType(null)
 
@@ -98,6 +120,8 @@ export function MyPage() {
     closeConfirm()
     setDraftNickname(nickname)
     setDraftGenres(genres)
+    setDraftArtists(artists)
+    setDraftSong(song)
     setIsEditing(true)
   }
 
@@ -113,10 +137,20 @@ export function MyPage() {
       showToast('장르는 1개 이상 선택해 주세요.')
       return
     }
+    if (draftArtists.length < ARTIST_MIN || draftArtists.length > ARTIST_MAX) {
+      showToast(`아티스트는 ${ARTIST_MIN}~${ARTIST_MAX}팀 선택해 주세요.`)
+      return
+    }
 
     const isNicknameChanged = trimmedNickname !== nickname
     const isGenresChanged =
       draftGenres.length !== genres.length || draftGenres.some((genre) => !genres.includes(genre))
+    const artistKeys = artists.map(getArtistKey)
+    const isArtistsChanged =
+      draftArtists.length !== artists.length ||
+      draftArtists.some((artist) => !artistKeys.includes(getArtistKey(artist)))
+    const draftSongId = draftSong?.musicId
+    const isSongChanged = !!draftSongId && draftSongId !== song?.musicId
 
     setIsSavingProfile(true)
     try {
@@ -133,10 +167,18 @@ export function MyPage() {
       if (isGenresChanged) {
         await replaceGenres(draftGenres.map((genre) => GENRE_NAMES[genre] ?? genre))
       }
+      if (isSongChanged) {
+        await updateProfileMusic(draftSongId)
+      }
+      if (isArtistsChanged) {
+        await replaceArtists(draftArtists.flatMap(({ id }) => (id ? [id] : [])))
+      }
 
       setNickname(trimmedNickname)
       setDraftNickname(trimmedNickname)
       setGenres(draftGenres)
+      setArtists(draftArtists)
+      setSong(draftSong)
       setIsSavedOpen(true)
     } catch (error) {
       showToast(getApiError(error).message)
@@ -148,6 +190,20 @@ export function MyPage() {
   const goToProfile = () => {
     setIsSavedOpen(false)
     setIsEditing(false)
+  }
+
+  const addArtist = (artist: ProfileArtist) => {
+    setDraftArtists((current) =>
+      current.some((item) => getArtistKey(item) === getArtistKey(artist))
+        ? current
+        : [...current, artist],
+    )
+  }
+
+  const removeArtist = (artist: ProfileArtist) => {
+    setDraftArtists((current) =>
+      current.filter((item) => getArtistKey(item) !== getArtistKey(artist)),
+    )
   }
 
   const toggleGenre = (genre: string) => {
@@ -206,7 +262,7 @@ export function MyPage() {
           previewUrl={profile?.profilePicture ?? null}
           songs={songs}
           genres={isEditing ? draftGenres : genres}
-          artists={artists}
+          artists={isEditing ? draftArtists : artists}
           frame="plain"
           isEditing={isEditing}
           onNicknameChange={setDraftNickname}
@@ -305,8 +361,13 @@ export function MyPage() {
 
       {isTasteOpen && (
         <ProfileEditModal
+          selectedSong={draftSong}
+          onSelectSong={setDraftSong}
           selectedGenres={draftGenres}
           onToggleGenre={toggleGenre}
+          selectedArtists={draftArtists}
+          onAddArtist={addArtist}
+          onRemoveArtist={removeArtist}
           onClose={() => setIsTasteOpen(false)}
         />
       )}

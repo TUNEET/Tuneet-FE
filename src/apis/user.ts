@@ -51,6 +51,11 @@ export async function replaceMusics(musicIds: string[]) {
   await instance.put<ApiResponse<unknown>>('/api/v1/users/me/musics', { musicIds })
 }
 
+/** 프로필 음악(나를 닮은 음악) 설정 (노래 검색 결과 id) */
+export async function updateProfileMusic(musicId: string) {
+  await instance.put<ApiResponse<unknown>>('/api/v1/users/me/profile-music', { musicId })
+}
+
 export async function getMyProfile() {
   const { data } = await instance.get<ApiResponse<MyProfileResponse>>('/api/v1/users')
   return data.data

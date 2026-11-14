@@ -52,14 +52,20 @@ export const Avatar = styled.div<{ $tone: ProfileCardTone }>`
   overflow: hidden;
   border-radius: 50%;
   background: ${({ $tone }) => AVATAR_GRADIENTS[$tone]};
+`
 
-  img {
-    position: absolute;
-    top: 1.74rem;
-    left: 0.96rem;
-    width: 4.1rem;
-    height: auto;
-  }
+export const AvatarCharacter = styled.img`
+  position: absolute;
+  top: 1.74rem;
+  left: 0.96rem;
+  width: 4.1rem;
+  height: auto;
+`
+
+export const AvatarPhoto = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 `
 
 export const Info = styled.div`
