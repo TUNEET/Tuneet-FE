@@ -15,9 +15,7 @@ type BoxProps = {
 export const Stage = styled.div`
   position: relative;
   width: 39.3rem;
-  /* 화면이 39.3rem보다 좁아도 가운데 정렬되도록 음수 여백 허용 (auto는 0으로 계산됨) */
   margin: 0 calc(50% - 19.65rem);
-  /* 넘친 만큼 좌우 여백을 늘려 콘텐츠는 항상 화면 양끝에서 3rem 떨어지게 */
   padding: 26.6rem calc(3rem + max(0rem, 19.65rem - 50%)) 5rem;
   pointer-events: none;
 `

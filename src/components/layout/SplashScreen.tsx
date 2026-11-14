@@ -27,7 +27,6 @@ const DECORATIONS = [
 ]
 
 type SplashScreenProps = {
-  /** 화면을 탭하면 남은 시간을 기다리지 않고 바로 닫는다 */
   onSkip: () => void
 }
 

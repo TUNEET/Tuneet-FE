@@ -9,7 +9,6 @@ import { SplashScreen } from './SplashScreen'
 const SPLASH_DURATION_MS = 2000
 const SPLASH_SEEN_KEY = 'splashSeen'
 
-/** 스플래시는 브라우저 세션(탭/PWA 실행)당 한 번만 보여준다. 새로고침 시에는 생략 */
 function hasSeenSplash() {
   try {
     return sessionStorage.getItem(SPLASH_SEEN_KEY) !== null

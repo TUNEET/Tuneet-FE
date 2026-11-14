@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 
 export const Cards = styled.div`
-  /* 카드끼리 겹치는 순서(z-index)가 바깥 요소와 섞이지 않게 묶는다 */
   isolation: isolate;
   display: flex;
   flex-direction: column;

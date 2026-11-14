@@ -3,7 +3,6 @@ import passwordMaskFont from '@/assets/fonts/password-mask.woff'
 import { BOTTOM_NAV_HEIGHT, FRAME_BREAKPOINT, FRAME_MAX_HEIGHT, HEADER_HEIGHT } from './layout'
 
 export const GlobalStyle = createGlobalStyle`
-  /* 비밀번호 칸의 가림 문자(•, ●)만 * 모양으로 표시한다. */
   @font-face {
     font-family: 'PasswordMask';
     src: url(${passwordMaskFont}) format('woff');

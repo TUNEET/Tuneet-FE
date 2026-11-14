@@ -20,7 +20,6 @@ export type MusicCardProps = {
   title: string
   description: string
   playable?: boolean
-  /** 시간 옆에 붙는 캡슐 라벨 (예: 답장) */
   badge?: string
   action?: ReactNode
   expanded?: boolean

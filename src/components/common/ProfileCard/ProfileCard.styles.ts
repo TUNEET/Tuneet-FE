@@ -102,13 +102,11 @@ export const TagRow = styled.div`
   align-items: flex-start;
   gap: 1rem;
 
-  /* 아이콘(1.8rem)과 칩 높이가 같아 첫 줄에 맞춰 붙는다 */
   & > img {
     flex-shrink: 0;
   }
 `
 
-/** 칩이 많으면 아이콘 오른쪽에서 다음 줄로 넘어간다 */
 export const TagList = styled.div`
   display: flex;
   flex-wrap: wrap;

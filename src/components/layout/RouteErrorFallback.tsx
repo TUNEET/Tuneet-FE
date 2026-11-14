@@ -4,10 +4,6 @@ import styled from 'styled-components'
 import { ROUTES } from '@/constants/routes'
 import { isChunkLoadError, reloadOnceForChunkError } from '@/utils/chunkReload'
 
-/**
- * 페이지를 그리다 오류가 나면 흰 화면 대신 보여주는 화면.
- * TODO: 디자이너 시안이 나오면 UI 교체 (현재는 임시 화면)
- */
 export function RouteErrorFallback() {
   const error = useRouteError()
   const navigate = useNavigate()
