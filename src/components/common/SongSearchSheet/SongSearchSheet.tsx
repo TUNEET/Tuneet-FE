@@ -42,7 +42,6 @@ const toSearchedSong = ({ id, title, artist, coverUrl }: MusicSearchItem): Searc
 })
 
 type SongSearchSheetProps = {
-  // false를 돌려주면(예: 서버 저장 실패) '추가되었습니다' 팝오버를 띄우지 않는다
   onAdd: (song: SearchedSong) => void | boolean | Promise<void | boolean>
   onClose: () => void
   variant?: SongSearchSheetVariant
@@ -100,7 +99,6 @@ export function SongSearchSheet({
     if (isAdded !== false) setAddedSongId(item.id)
   }
 
-  // 새 검색어 결과가 오기 전에는 이전 결과를 보여주지 않는다 (페이지 이동 중에는 유지)
   const results = keyword !== '' && result?.keyword === keyword ? result.items : null
   const hasResults = results !== null && results.length > 0
   const isNoResult = results !== null && results.length === 0

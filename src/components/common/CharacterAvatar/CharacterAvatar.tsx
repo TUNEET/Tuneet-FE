@@ -4,7 +4,6 @@ import * as S from './CharacterAvatar.styles'
 
 type CharacterAvatarProps = {
   colorId: CharacterColorId
-  // 프로필 사진이 있으면 캐릭터 대신 보여준다
   imageUrl?: string | null
 }
 

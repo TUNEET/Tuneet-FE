@@ -9,7 +9,6 @@ import { GlobalStyle } from '@/styles/GlobalStyle'
 import { theme } from '@/styles/theme'
 import { reloadOnceForChunkError } from '@/utils/chunkReload'
 
-// 배포 직후 사라진 JS 파일을 불러오지 못하면 새로고침으로 최신 버전을 받는다
 window.addEventListener('vite:preloadError', (event) => {
   if (reloadOnceForChunkError()) event.preventDefault()
 })

@@ -16,7 +16,6 @@ export function reloadOnceForChunkError() {
 
     sessionStorage.setItem(CHUNK_RELOAD_KEY, String(Date.now()))
   } catch {
-    // 저장소를 쓸 수 없으면 무한 새로고침 위험이 있으므로 새로고침하지 않는다
     return false
   }
 

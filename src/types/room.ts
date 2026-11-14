@@ -15,11 +15,9 @@ export type RoomMember = {
   id: number
   nickname: string
   role: RoomMemberRole
-  // 프로필 사진이 없을 때 캐릭터 배경색
   characterColorId: CharacterColorId
   profilePicture: string | null
   song: Song | null
-  // 나와의 매칭률 (%). 방 홈 멤버 목록에는 없다
   similarity: number | null
 }
 
@@ -46,9 +44,7 @@ export type CreatedRoom = Room & {
 export type CreateRoomRequest = {
   name: string
   description: string
-  // 이미지 업로드 API로 먼저 올린 주소
   imageUrl: string | null
-  // 숫자 4자리, 없으면 null
   password: string | null
 }
 
@@ -75,7 +71,6 @@ export type RoomCreateResponse = RoomSummaryResponse & {
 
 export type RoomEntryResponse = {
   roomId: number
-  // 이미 참여 중인 방이었는지 (true면 비밀번호 확인 없이 바로 이동)
   alreadyJoined: boolean
 }
 
@@ -93,7 +88,6 @@ export type RoomPostResponse = {
   music: RoomMusicResponse
   content: string
   createdAt: string
-  // 내가 쓴 포스트인지 (삭제 버튼 표시용)
   isMine: boolean
 }
 

@@ -3,83 +3,200 @@ import { MobileLayout } from '@/components/layout/MobileLayout'
 import { RouteErrorFallback } from '@/components/layout/RouteErrorFallback'
 import { TabLayout } from '@/components/layout/TabLayout'
 import { ROUTES } from '@/constants/routes'
-import { ExplorePage } from '@/pages/explore/ExplorePage'
-import { NotificationsPage } from '@/pages/explore/notifications/NotificationsPage'
-import { ExploreWritePage } from '@/pages/explore/write/ExploreWritePage'
-import { HomePage } from '@/pages/home/HomePage'
-import { LoginPage } from '@/pages/login/LoginPage'
-import { MatchingPage } from '@/pages/matching/MatchingPage'
-import { MyPage } from '@/pages/my/MyPage'
-import { NotFoundPage } from '@/pages/not-found/NotFoundPage'
-import { OnboardingPage } from '@/pages/onboarding/OnboardingPage'
-import { ProfileSetupPage } from '@/pages/profile-setup/ProfileSetupPage'
-import { SignupPage } from '@/pages/signup/SignupPage'
 import { RequireAuth } from './RequireAuth'
-import { CreateRoomPage } from '@/pages/matching/create-room/CreateRoomPage'
-import { JoinRoomPage } from '@/pages/matching/join-room/JoinRoomPage'
-import { LetterWritePage } from '@/pages/matching/letter-write/LetterWritePage'
-import { LetterDetailPage } from '@/pages/matching/letter-detail/LetterDetailPage'
-import { SentLetterDetailPage } from '@/pages/matching/letter-detail/SentLetterDetailPage'
-import { LetterboxPage } from '@/pages/matching/letterbox/LetterboxPage'
-import { RecommendedUsersPage } from '@/pages/matching/recommended-users/RecommendedUsersPage'
-import { RoomFeedsPage } from '@/pages/matching/room/feeds/RoomFeedsPage'
-import { RoomMembersPage } from '@/pages/matching/room/members/RoomMembersPage'
-import { RoomPlaylistPage } from '@/pages/matching/room/playlist/RoomPlaylistPage'
-import { RoomHomePage } from '@/pages/matching/room/RoomHomePage'
-import { UserProfilePage } from '@/pages/matching/user-profile/UserProfilePage'
+
+const pageFallback = <></>
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <MobileLayout />,
-    // 레이아웃 자체에서 난 오류
     errorElement: <RouteErrorFallback />,
     children: [
       {
-        // 페이지에서 난 오류는 모바일 프레임 안에서 보여준다
         errorElement: <RouteErrorFallback />,
+        hydrateFallbackElement: pageFallback,
         children: [
           {
             element: <RequireAuth />,
             children: [
-              { path: ROUTES.profileSetup, element: <ProfileSetupPage /> },
+              {
+                path: ROUTES.profileSetup,
+                lazy: () =>
+                  import('@/pages/profile-setup/ProfileSetupPage').then((m) => ({
+                    Component: m.ProfileSetupPage,
+                  })),
+              },
               {
                 element: <TabLayout />,
                 children: [
                   {
-                    // 탭 페이지에서 난 오류는 헤더·하단 탭을 유지한 채 보여준다
                     errorElement: <RouteErrorFallback />,
+                    hydrateFallbackElement: pageFallback,
                     children: [
-                      { path: ROUTES.home, element: <HomePage /> },
-                      { path: ROUTES.explore, element: <ExplorePage /> },
-                      { path: ROUTES.exploreWrite, element: <ExploreWritePage /> },
-                      { path: ROUTES.exploreNotifications, element: <NotificationsPage /> },
-                      { path: ROUTES.matching, element: <MatchingPage /> },
-                      { path: ROUTES.recommendedUsers, element: <RecommendedUsersPage /> },
-                      { path: ROUTES.userProfile, element: <UserProfilePage /> },
-                      { path: ROUTES.letterWrite, element: <LetterWritePage /> },
-                      { path: ROUTES.anonymousLetterWrite, element: <LetterWritePage /> },
-                      { path: ROUTES.letterbox, element: <LetterboxPage /> },
-                      { path: ROUTES.letter, element: <LetterDetailPage /> },
-                      { path: ROUTES.sentLetter, element: <SentLetterDetailPage /> },
-                      { path: ROUTES.letterReply, element: <LetterWritePage /> },
-                      { path: ROUTES.createRoom, element: <CreateRoomPage /> },
-                      { path: ROUTES.joinRoom, element: <JoinRoomPage /> },
-                      { path: ROUTES.room, element: <RoomHomePage /> },
-                      { path: ROUTES.roomMembers, element: <RoomMembersPage /> },
-                      { path: ROUTES.roomFeeds, element: <RoomFeedsPage /> },
-                      { path: ROUTES.roomPlaylist, element: <RoomPlaylistPage /> },
-                      { path: ROUTES.my, element: <MyPage /> },
+                      {
+                        path: ROUTES.home,
+                        lazy: () =>
+                          import('@/pages/home/HomePage').then((m) => ({ Component: m.HomePage })),
+                      },
+                      {
+                        path: ROUTES.explore,
+                        lazy: () =>
+                          import('@/pages/explore/ExplorePage').then((m) => ({
+                            Component: m.ExplorePage,
+                          })),
+                      },
+                      {
+                        path: ROUTES.exploreWrite,
+                        lazy: () =>
+                          import('@/pages/explore/write/ExploreWritePage').then((m) => ({
+                            Component: m.ExploreWritePage,
+                          })),
+                      },
+                      {
+                        path: ROUTES.exploreNotifications,
+                        lazy: () =>
+                          import('@/pages/explore/notifications/NotificationsPage').then((m) => ({
+                            Component: m.NotificationsPage,
+                          })),
+                      },
+                      {
+                        path: ROUTES.matching,
+                        lazy: () =>
+                          import('@/pages/matching/MatchingPage').then((m) => ({
+                            Component: m.MatchingPage,
+                          })),
+                      },
+                      {
+                        path: ROUTES.recommendedUsers,
+                        lazy: () =>
+                          import('@/pages/matching/recommended-users/RecommendedUsersPage').then(
+                            (m) => ({ Component: m.RecommendedUsersPage }),
+                          ),
+                      },
+                      {
+                        path: ROUTES.userProfile,
+                        lazy: () =>
+                          import('@/pages/matching/user-profile/UserProfilePage').then((m) => ({
+                            Component: m.UserProfilePage,
+                          })),
+                      },
+                      {
+                        path: ROUTES.letterWrite,
+                        lazy: () =>
+                          import('@/pages/matching/letter-write/LetterWritePage').then((m) => ({
+                            Component: m.LetterWritePage,
+                          })),
+                      },
+                      {
+                        path: ROUTES.anonymousLetterWrite,
+                        lazy: () =>
+                          import('@/pages/matching/letter-write/LetterWritePage').then((m) => ({
+                            Component: m.LetterWritePage,
+                          })),
+                      },
+                      {
+                        path: ROUTES.letterbox,
+                        lazy: () =>
+                          import('@/pages/matching/letterbox/LetterboxPage').then((m) => ({
+                            Component: m.LetterboxPage,
+                          })),
+                      },
+                      {
+                        path: ROUTES.letter,
+                        lazy: () =>
+                          import('@/pages/matching/letter-detail/LetterDetailPage').then((m) => ({
+                            Component: m.LetterDetailPage,
+                          })),
+                      },
+                      {
+                        path: ROUTES.sentLetter,
+                        lazy: () =>
+                          import('@/pages/matching/letter-detail/SentLetterDetailPage').then(
+                            (m) => ({ Component: m.SentLetterDetailPage }),
+                          ),
+                      },
+                      {
+                        path: ROUTES.letterReply,
+                        lazy: () =>
+                          import('@/pages/matching/letter-write/LetterWritePage').then((m) => ({
+                            Component: m.LetterWritePage,
+                          })),
+                      },
+                      {
+                        path: ROUTES.createRoom,
+                        lazy: () =>
+                          import('@/pages/matching/create-room/CreateRoomPage').then((m) => ({
+                            Component: m.CreateRoomPage,
+                          })),
+                      },
+                      {
+                        path: ROUTES.joinRoom,
+                        lazy: () =>
+                          import('@/pages/matching/join-room/JoinRoomPage').then((m) => ({
+                            Component: m.JoinRoomPage,
+                          })),
+                      },
+                      {
+                        path: ROUTES.room,
+                        lazy: () =>
+                          import('@/pages/matching/room/RoomHomePage').then((m) => ({
+                            Component: m.RoomHomePage,
+                          })),
+                      },
+                      {
+                        path: ROUTES.roomMembers,
+                        lazy: () =>
+                          import('@/pages/matching/room/members/RoomMembersPage').then((m) => ({
+                            Component: m.RoomMembersPage,
+                          })),
+                      },
+                      {
+                        path: ROUTES.roomFeeds,
+                        lazy: () =>
+                          import('@/pages/matching/room/feeds/RoomFeedsPage').then((m) => ({
+                            Component: m.RoomFeedsPage,
+                          })),
+                      },
+                      {
+                        path: ROUTES.roomPlaylist,
+                        lazy: () =>
+                          import('@/pages/matching/room/playlist/RoomPlaylistPage').then((m) => ({
+                            Component: m.RoomPlaylistPage,
+                          })),
+                      },
+                      {
+                        path: ROUTES.my,
+                        lazy: () =>
+                          import('@/pages/my/MyPage').then((m) => ({ Component: m.MyPage })),
+                      },
                     ],
                   },
                 ],
               },
             ],
           },
-          { path: ROUTES.onboarding, element: <OnboardingPage /> },
-          { path: ROUTES.signup, element: <SignupPage /> },
-          { path: ROUTES.login, element: <LoginPage /> },
-          { path: '*', element: <NotFoundPage /> },
+          {
+            path: ROUTES.onboarding,
+            lazy: () =>
+              import('@/pages/onboarding/OnboardingPage').then((m) => ({
+                Component: m.OnboardingPage,
+              })),
+          },
+          {
+            path: ROUTES.signup,
+            lazy: () =>
+              import('@/pages/signup/SignupPage').then((m) => ({ Component: m.SignupPage })),
+          },
+          {
+            path: ROUTES.login,
+            lazy: () => import('@/pages/login/LoginPage').then((m) => ({ Component: m.LoginPage })),
+          },
+          {
+            path: '*',
+            lazy: () =>
+              import('@/pages/not-found/NotFoundPage').then((m) => ({ Component: m.NotFoundPage })),
+          },
         ],
       },
     ],

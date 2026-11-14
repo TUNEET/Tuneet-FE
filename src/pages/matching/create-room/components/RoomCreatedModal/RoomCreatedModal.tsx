@@ -16,7 +16,6 @@ const QR_IMAGE_SIZE = 336
 type RoomCreatedModalProps = {
   room: CreatedRoom | null
   onClose: () => void
-  // 방 정보 수정 API가 없어 넘기지 않으면 수정 버튼을 숨긴다
   onEdit?: () => void
   onDelete: () => void
 }
@@ -67,9 +66,7 @@ export function RoomCreatedModal({ room, onClose, onEdit, onDelete }: RoomCreate
           text: `${room.name} 방에 초대해요!`,
           url: room.inviteUrl,
         })
-      } catch {
-        // 사용자가 공유 창을 닫은 경우
-      }
+      } catch {}
       return
     }
 

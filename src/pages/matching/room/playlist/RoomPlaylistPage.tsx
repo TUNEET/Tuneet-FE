@@ -21,7 +21,6 @@ export function RoomPlaylistPage() {
   const showToast = useToast()
   const { roomId, room, isLoading } = useRoomHome()
 
-  // undefined: 불러오는 중
   const [songs, setSongs] = useState<PlaylistSong[] | undefined>(undefined)
   const [isClearOpen, setIsClearOpen] = useState(false)
   const [isClearing, setIsClearing] = useState(false)
@@ -82,7 +81,6 @@ export function RoomPlaylistPage() {
     }
   }
 
-  // 실패하면 false를 돌려서 검색 시트의 '추가되었습니다' 팝오버를 띄우지 않는다
   const handleAddSong = async ({ musicId }: SearchedSong) => {
     try {
       const song = await addRoomPlaylistSong(roomId, musicId)

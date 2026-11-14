@@ -17,7 +17,6 @@ export function RoomMembersPage() {
   const { roomId } = useParams()
   const id = Number(roomId)
   const isValidId = Number.isInteger(id) && id > 0
-  // undefined: 불러오는 중, null: 못 찾음 (없는 방이거나 멤버가 아님)
   const [room, setRoom] = useState<RoomMembers | null | undefined>(undefined)
 
   useEffect(() => {

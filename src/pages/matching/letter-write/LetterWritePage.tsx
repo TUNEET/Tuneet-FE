@@ -104,7 +104,6 @@ export function LetterWritePage() {
       if (mode.type === 'reply') await replyLetter(mode.letterId, body)
       else if (mode.type === 'direct') await sendLetter(mode.userId, body)
       else {
-        // 랜덤 편지는 보낸 뒤에 받는 사람이 정해진다
         const result = await sendRandomLetter(body)
         setRecipientName(result.receiverNickname)
       }

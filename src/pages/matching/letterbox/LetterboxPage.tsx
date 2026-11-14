@@ -85,7 +85,6 @@ export function LetterboxPage() {
         ...rest,
         letterId,
         nickname: `발신자 | ${senderNickname}`,
-        // 상대가 내 편지에 보낸 답장
         badge: isReply ? '답장' : undefined,
         onClick: () => navigate(getLetterPath(letterId)),
       }))
