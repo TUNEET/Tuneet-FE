@@ -16,7 +16,8 @@ const QR_IMAGE_SIZE = 336
 type RoomCreatedModalProps = {
   room: CreatedRoom | null
   onClose: () => void
-  onEdit: () => void
+  // 방 정보 수정 API가 없어 넘기지 않으면 수정 버튼을 숨긴다
+  onEdit?: () => void
   onDelete: () => void
 }
 
@@ -121,9 +122,11 @@ export function RoomCreatedModal({ room, onClose, onEdit, onDelete }: RoomCreate
           </S.ShareButton>
           <S.Divider />
           <S.Footer>
-            <S.IconButton type="button" aria-label="방 정보 수정" onClick={onEdit}>
-              <img src={editPurpleIcon} alt="" width={26} height={26} />
-            </S.IconButton>
+            {onEdit && (
+              <S.IconButton type="button" aria-label="방 정보 수정" onClick={onEdit}>
+                <img src={editPurpleIcon} alt="" width={26} height={26} />
+              </S.IconButton>
+            )}
             <S.IconButton
               ref={trashButtonRef}
               type="button"
