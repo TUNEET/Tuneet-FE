@@ -2,8 +2,12 @@ import type { Song } from './song'
 
 export type Profile = {
   nickname: string
+  /** 프로필 사진이 없을 때 보여줄 캐릭터 이미지 */
   characterImageUrl: string
-  song: Pick<Song, 'title' | 'artist'>
+  /** 사용자가 올린 프로필 사진 (없으면 캐릭터 이미지) */
+  photoUrl?: string | null
+  /** 프로필 음악 (설정하지 않았으면 null) */
+  song: Pick<Song, 'title' | 'artist'> | null
   genres: string[]
   artists: string[]
 }
