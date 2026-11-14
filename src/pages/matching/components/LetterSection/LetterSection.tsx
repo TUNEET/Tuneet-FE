@@ -3,7 +3,6 @@ import type { LetterQuota } from '@/types/letter'
 import * as S from './LetterSection.styles'
 
 type LetterSectionProps = {
-  /** 불러오는 중이면 null */
   quota: LetterQuota | null
   onWriteClick?: () => void
 }

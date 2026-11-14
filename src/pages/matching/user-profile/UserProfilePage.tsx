@@ -37,7 +37,6 @@ export function UserProfilePage() {
   const isValidId = Number.isInteger(id) && id > 0
   const letterQuota = useLetterQuota()
 
-  /** undefined: 불러오는 중, null: 못 찾음 */
   const [user, setUser] = useState<OtherUserProfileResponse | null | undefined>(undefined)
   const [isBlockOpen, setIsBlockOpen] = useState(false)
   const [isBlocking, setIsBlocking] = useState(false)

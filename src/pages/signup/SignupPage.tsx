@@ -42,12 +42,10 @@ type FieldErrors = Partial<Record<FieldId, string>>
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const PASSWORD_MIN_LENGTH = 8
 const PASSWORD_MAX_LENGTH = 16
-/* 서버 비밀번호 규칙과 동일: 영문·숫자·특수문자 중 2가지 이상 */
 const PASSWORD_CHAR_GROUPS = [/[A-Za-z]/, /\d/, /[!@#$%^&*()\-_=+[\]{};:'",.<>/?~`|\\]/]
 const PASSWORD_ALLOWED = /^[A-Za-z\d!@#$%^&*()\-_=+[\]{};:'",.<>/?~`|\\]*$/
 const PASSWORD_MIN_GROUPS = 2
 
-/** 서버 검증 실패 응답(data)의 필드명 → 화면 입력칸 */
 const SERVER_FIELD_IDS: Record<string, FieldId> = {
   email: 'email',
   password: 'password',

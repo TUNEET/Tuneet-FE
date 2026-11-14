@@ -19,12 +19,6 @@ import * as S from './LetterWritePage.styles'
 const CONTENT_MAX_LENGTH = 100
 const RANDOM_RECIPIENT = '누군가'
 
-/**
- * 받는 사람에 따라 세 가지로 쓴다.
- * - 답장: /matching/letters/:letterId/reply
- * - 지정 편지: /matching/users/:userId/letter
- * - 랜덤 편지: /matching/letter
- */
 type WriteMode =
   { type: 'reply'; letterId: number } | { type: 'direct'; userId: number } | { type: 'random' }
 

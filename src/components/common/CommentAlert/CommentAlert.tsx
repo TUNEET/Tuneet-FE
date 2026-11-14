@@ -11,7 +11,6 @@ type CommentAlertProps = {
   onClose: () => void
 }
 
-/** 내 피드에 코멘트가 도착했을 때 화면 하단에 뜨는 알림 카드 */
 export function CommentAlert({ nickname, createdAt, onConfirm, onClose }: CommentAlertProps) {
   const cardRef = useRef<HTMLDivElement>(null)
   const titleId = useId()

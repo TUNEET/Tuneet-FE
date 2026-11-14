@@ -81,7 +81,6 @@ export const MOCK_NOTIFICATIONS: ReceivedNotification[] = [
   },
 ]
 
-/** 실시간 알림 연동 전, 탐색 피드에 띄울 새 코멘트 알림 */
 export const MOCK_INCOMING_COMMENT = {
   senderNickname: '노래하는 튜니',
   createdAt: minutesAgo(0),

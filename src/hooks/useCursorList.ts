@@ -2,10 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 type CursorPage<T> = { items: T[]; hasNext: boolean }
 
-/**
- * 커서 기반 목록 (편지·알림 등). 처음 한 페이지를 불러오고 loadMore로 이어 붙인다.
- * 넘기는 함수들은 컴포넌트 밖에 두거나 useCallback으로 고정한다.
- */
 export function useCursorList<T>(
   fetchPage: (cursor?: number) => Promise<CursorPage<T>>,
   getCursor: (item: T) => number,

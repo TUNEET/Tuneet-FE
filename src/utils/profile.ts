@@ -7,7 +7,6 @@ type ProfileSource = Pick<
   'nickname' | 'profilePicture' | 'profileMusic' | 'genres' | 'favoriteArtists'
 >
 
-/** 내 프로필·다른 사용자 프로필 조회 응답을 프로필 카드 데이터로 바꾼다 */
 export const toProfileCard = ({
   nickname,
   profilePicture,

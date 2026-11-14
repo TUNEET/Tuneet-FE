@@ -1,7 +1,5 @@
 import styled from 'styled-components'
 
-/* 하단 탭이 있는 화면(홈·탐색·마이 등)이 함께 쓰는 스타일 */
-
 export const Page = styled.div`
   position: relative;
   display: flex;
