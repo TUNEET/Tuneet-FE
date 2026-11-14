@@ -3,11 +3,15 @@ import heartOutlineIcon from '@/assets/icons/heart-outline.svg'
 import trashIcon from '@/assets/icons/trash_icon.svg'
 import { ArtistSearchSheet } from '@/components/common/ArtistSearchSheet/ArtistSearchSheet'
 import { Modal } from '@/components/common/Modal/Modal'
+import { SongSearchSheet } from '@/components/common/SongSearchSheet/SongSearchSheet'
 import { GENRE_ROWS } from '@/constants/genres'
-import type { ProfileArtist } from '@/types/music'
+import type { ProfileArtist, ProfileMusic } from '@/types/music'
 import * as S from './ProfileEditModal.styles'
 
 type ProfileEditModalProps = {
+  /** 좋아하는 노래 = 프로필 음악 (한 곡) */
+  selectedSong: ProfileMusic | null
+  onSelectSong: (song: ProfileMusic) => void
   selectedGenres: string[]
   onToggleGenre: (genre: string) => void
   selectedArtists: ProfileArtist[]
@@ -29,6 +33,8 @@ function Chevron() {
 }
 
 export function ProfileEditModal({
+  selectedSong,
+  onSelectSong,
   selectedGenres,
   onToggleGenre,
   selectedArtists,
@@ -37,20 +43,45 @@ export function ProfileEditModal({
   onClose,
 }: ProfileEditModalProps) {
   const [isArtistSearchOpen, setIsArtistSearchOpen] = useState(false)
+  const [isSongSearchOpen, setIsSongSearchOpen] = useState(false)
+  const isSheetOpen = isArtistSearchOpen || isSongSearchOpen
 
   return (
     <>
       {/* 검색 시트가 열려 있으면 ESC로 시트만 닫히게 모달 닫기를 막는다 */}
-      <Modal open onClose={isArtistSearchOpen ? noop : onClose} labelledBy="profile-edit-song">
+      <Modal open onClose={isSheetOpen ? noop : onClose} labelledBy="profile-edit-song">
         <S.Panels>
-          <S.Panel $height="9.7rem">
+          <S.Panel $height={selectedSong ? 'auto' : '9.7rem'}>
             <S.PanelHeader as="div">
               <S.PanelIcon $isOpen={false}>
                 <img src={heartOutlineIcon} alt="" width={12} height={11} />
               </S.PanelIcon>
               <S.PanelLabel id="profile-edit-song">좋아하는 노래</S.PanelLabel>
             </S.PanelHeader>
-            <S.Search type="search" placeholder="노래 검색하기" aria-label="노래 검색" />
+            <S.Search
+              type="search"
+              readOnly
+              placeholder="노래 검색하기"
+              aria-label="노래 검색"
+              onClick={() => setIsSongSearchOpen(true)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') setIsSongSearchOpen(true)
+              }}
+            />
+            {selectedSong && (
+              <S.SelectedArtists>
+                <S.SelectedArtist>
+                  {selectedSong.albumImage ? (
+                    <img src={selectedSong.albumImage} alt="" width={12} height={12} />
+                  ) : (
+                    <S.ArtistFallback />
+                  )}
+                  <span>
+                    {selectedSong.title} - {selectedSong.artist}
+                  </span>
+                </S.SelectedArtist>
+              </S.SelectedArtists>
+            )}
           </S.Panel>
 
           <S.Panel $height="17.9rem">
@@ -120,6 +151,17 @@ export function ProfileEditModal({
           </S.Panel>
         </S.Panels>
       </Modal>
+
+      {isSongSearchOpen && (
+        <SongSearchSheet
+          variant="profile"
+          hiddenTitle="좋아하는 노래"
+          onAdd={({ musicId, title, artist, albumImageUrl }) =>
+            onSelectSong({ musicId, title, artist, albumImage: albumImageUrl })
+          }
+          onClose={() => setIsSongSearchOpen(false)}
+        />
+      )}
 
       {isArtistSearchOpen && (
         <ArtistSearchSheet onAdd={onAddArtist} onClose={() => setIsArtistSearchOpen(false)} />
