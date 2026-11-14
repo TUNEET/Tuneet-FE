@@ -1,7 +1,4 @@
-import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router'
-import { getApiError } from '@/apis/error'
-import { getRoomHome } from '@/apis/room'
+import { useNavigate } from 'react-router'
 import { Divider } from '@/components/common/Divider/Divider'
 import { FeedCard } from '@/components/common/FeedCard/FeedCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
@@ -13,43 +10,18 @@ import {
   getRoomPlaylistPath,
   ROUTES,
 } from '@/constants/routes'
-import { useToast } from '@/hooks/useToast'
-import type { RoomDetail } from '@/types/room'
 import { MemberCarousel } from './components/MemberCarousel/MemberCarousel'
 import { Playlist } from './components/Playlist/Playlist'
 import { RoomHeader } from './components/RoomHeader/RoomHeader'
+import { useRoomHome } from './hooks/useRoomHome'
 import * as S from './RoomHomePage.styles'
 
 export function RoomHomePage() {
   const navigate = useNavigate()
-  const showToast = useToast()
-  const { roomId } = useParams()
-  const id = Number(roomId)
-  const isValidId = Number.isInteger(id) && id > 0
-  // undefined: 불러오는 중, null: 못 찾음 (없는 방이거나 멤버가 아님)
-  const [room, setRoom] = useState<RoomDetail | null | undefined>(undefined)
+  const { room, isLoading } = useRoomHome()
   const goToMatching = () => navigate(ROUTES.matching)
 
-  useEffect(() => {
-    if (!isValidId) return
-    let isStale = false
-
-    getRoomHome(id)
-      .then((data) => {
-        if (!isStale) setRoom(data)
-      })
-      .catch((error) => {
-        if (isStale) return
-        setRoom(null)
-        showToast(getApiError(error).message)
-      })
-
-    return () => {
-      isStale = true
-    }
-  }, [id, isValidId, showToast])
-
-  if (isValidId && room === undefined) return <SheetPage>{null}</SheetPage>
+  if (isLoading) return <SheetPage>{null}</SheetPage>
 
   if (!room) {
     return (

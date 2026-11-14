@@ -86,26 +86,31 @@ export type RoomUserResponse = {
   role: RoomRoleResponse
 }
 
+export type RoomPostResponse = {
+  roomPostId: number
+  nickname: string
+  profilePicture: string | null
+  music: RoomMusicResponse
+  content: string
+  createdAt: string
+  // 내가 쓴 포스트인지 (삭제 버튼 표시용)
+  isMine: boolean
+}
+
+export type RoomPlaylistResponse = {
+  roomPlaylistId: number
+  position: number
+  music: RoomMusicResponse
+}
+
 export type RoomHomeResponse = RoomSummaryResponse & {
   inviteCode: string
   hasPassword: boolean
   myRole: RoomRoleResponse
   memberCount: number
   roomUsers: RoomUserResponse[]
-  roomPosts: {
-    roomPostId: number
-    nickname: string
-    profilePicture: string | null
-    music: RoomMusicResponse
-    content: string
-    createdAt: string
-    isMine: boolean
-  }[]
-  roomPlaylists: {
-    roomPlaylistId: number
-    position: number
-    music: RoomMusicResponse
-  }[]
+  roomPosts: RoomPostResponse[]
+  roomPlaylists: RoomPlaylistResponse[]
 }
 
 export type RoomMembersResponse = {
