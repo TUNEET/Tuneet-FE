@@ -11,11 +11,11 @@ export function MemberCarousel({ members }: MemberCarouselProps) {
   return (
     <S.Wrapper>
       <S.List>
-        {members.map(({ id, nickname, role, characterColorId }) => {
+        {members.map(({ id, nickname, role, characterColorId, profilePicture }) => {
           const isOwner = role === 'owner'
           return (
             <S.Card key={id} $owner={isOwner}>
-              <CharacterAvatar colorId={characterColorId} />
+              <CharacterAvatar colorId={characterColorId} imageUrl={profilePicture} />
               <S.Texts>
                 <S.Nickname>{nickname}</S.Nickname>
                 <S.Role $owner={isOwner}>{ROOM_ROLE_LABELS[role]}</S.Role>

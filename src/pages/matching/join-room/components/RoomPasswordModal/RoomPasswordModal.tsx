@@ -30,8 +30,10 @@ export function RoomPasswordModal({ onClose, onSubmit }: RoomPasswordModalProps)
             value={password}
             placeholder="비밀번호를 입력해 주세요."
             aria-label="방 비밀번호"
+            inputMode="numeric"
+            maxLength={4}
             autoFocus
-            onChange={(event) => setPassword(event.target.value)}
+            onChange={(event) => setPassword(event.target.value.replace(/\D/g, ''))}
           />
           <S.SubmitButton type="submit" aria-label="입장하기" disabled={!trimmedPassword}>
             <img src={chevronRightWhiteIcon} alt="" />
