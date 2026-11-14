@@ -13,6 +13,8 @@ export const ROUTES = {
   profileSetup: '/profile-setup',
   letterbox: '/matching/letters',
   letter: '/matching/letters/:letterId',
+  letterReply: '/matching/letters/:letterId/reply',
+  sentLetter: '/matching/letters/sent/:letterId',
   recommendedUsers: '/matching/recommended',
   userProfile: '/matching/users/:userId',
   letterWrite: '/matching/users/:userId/letter',
@@ -30,6 +32,12 @@ export const getUserProfilePath = (userId: number) =>
 
 export const getLetterWritePath = (userId: number) =>
   generatePath(ROUTES.letterWrite, { userId: String(userId) })
+
+export const getLetterReplyPath = (letterId: number) =>
+  generatePath(ROUTES.letterReply, { letterId: String(letterId) })
+
+export const getSentLetterPath = (letterId: number) =>
+  generatePath(ROUTES.sentLetter, { letterId: String(letterId) })
 
 export const getLetterPath = (letterId: number) =>
   generatePath(ROUTES.letter, { letterId: String(letterId) })

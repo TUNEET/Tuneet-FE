@@ -7,6 +7,7 @@ import type {
   SignUpRequest,
   SignUpResponse,
 } from '@/types/auth'
+import type { OtherUserProfileResponse } from '@/types/user'
 import { instance } from './instance'
 
 export async function signUp(body: SignUpRequest) {
@@ -52,5 +53,13 @@ export async function replaceMusics(musicIds: string[]) {
 
 export async function getMyProfile() {
   const { data } = await instance.get<ApiResponse<MyProfileResponse>>('/api/v1/users')
+  return data.data
+}
+
+/** 다른 사용자 프로필 조회 */
+export async function getUserProfile(userId: number) {
+  const { data } = await instance.get<ApiResponse<OtherUserProfileResponse>>(
+    `/api/v1/users/${userId}`,
+  )
   return data.data
 }
