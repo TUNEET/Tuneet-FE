@@ -23,7 +23,7 @@ type ProfileCardProps = {
 }
 
 export function ProfileCard({ profile, tone = 'pink', meta, onEditClick }: ProfileCardProps) {
-  const { nickname, characterImageUrl, song, genres, artists } = profile
+  const { nickname, characterImageUrl, photoUrl, song, genres, artists } = profile
   const icons = ICONS[tone]
 
   return (
@@ -31,14 +31,20 @@ export function ProfileCard({ profile, tone = 'pink', meta, onEditClick }: Profi
       <S.Content>
         <S.Profile>
           <S.Avatar $tone={tone}>
-            <img src={characterImageUrl} alt="" />
+            {photoUrl ? (
+              <S.AvatarPhoto src={photoUrl} alt="" />
+            ) : (
+              <S.AvatarCharacter src={characterImageUrl} alt="" />
+            )}
           </S.Avatar>
           <S.Info>
             <S.Nickname>{nickname}</S.Nickname>
-            <S.Song>
-              <img src={icons.musicNote} alt="" width={8} height={10} />
-              {song.title} - {song.artist}
-            </S.Song>
+            {song && (
+              <S.Song>
+                <img src={icons.musicNote} alt="" width={8} height={10} />
+                {song.title} - {song.artist}
+              </S.Song>
+            )}
           </S.Info>
         </S.Profile>
         <S.Tags>

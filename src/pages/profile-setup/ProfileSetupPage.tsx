@@ -8,6 +8,7 @@ import {
   replaceArtists,
   replaceGenres,
   replaceMusics,
+  updateProfileMusic,
 } from '@/apis/user'
 import { ChevronIcon } from '@/components/common/ChevronIcon/ChevronIcon'
 import { ProfileComplete } from '@/components/common/ProfileComplete/ProfileComplete'
@@ -45,6 +46,8 @@ export function ProfileSetupPage() {
   const [nickname, setNickname] = useState('')
   const [nicknameError, setNicknameError] = useState<string | null>(null)
   const [music, setMusic] = useState<ProfileMusic | null>(null)
+  const [savedMusicId, setSavedMusicId] = useState<string | null>(null)
+  const [isSavingMusic, setIsSavingMusic] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [savedProfile, setSavedProfile] = useState<SavedProfile | null>(null)
@@ -78,6 +81,28 @@ export function ProfileSetupPage() {
         ? artists
         : [...artists, newArtist],
     )
+  }
+
+  const submitMusic = async () => {
+    if (isSavingMusic) return
+
+    // 곡을 고르지 않았거나 이미 저장한 곡이면 저장 없이 넘어간다
+    const musicId = music?.musicId
+    if (!musicId || musicId === savedMusicId) {
+      setStep('platform')
+      return
+    }
+
+    setIsSavingMusic(true)
+    try {
+      await updateProfileMusic(musicId)
+      setSavedMusicId(musicId)
+      setStep('platform')
+    } catch (error) {
+      showToast(getApiError(error).message)
+    } finally {
+      setIsSavingMusic(false)
+    }
   }
 
   const submitTaste = async () => {
@@ -304,7 +329,7 @@ export function ProfileSetupPage() {
             music={music}
             onMusicChange={setMusic}
             onPrev={() => setStep('profile')}
-            onNext={isMusicStep ? () => setStep('platform') : submitNickname}
+            onNext={isMusicStep ? submitMusic : submitNickname}
             onLater={finishSetup}
           />
         </SetupStepLayout>
