@@ -10,6 +10,7 @@ import { getApiError } from '@/apis/error'
 import { getReceivedLetter, replyLetter, sendLetter, sendRandomLetter } from '@/apis/letter'
 import { searchMusics } from '@/apis/music'
 import { getMyProfile, getUserProfile } from '@/apis/user'
+import { LETTER_ERROR_MESSAGES } from '@/constants/letterErrors'
 import { ROUTES } from '@/constants/routes'
 import { useToast } from '@/hooks/useToast'
 import type { SearchedSong } from '@/types/music'
@@ -62,7 +63,7 @@ export function LetterWritePage() {
         setSenderName(profile.nickname ?? '')
       })
       .catch((error) => {
-        if (!isStale) showToast(getApiError(error).message)
+        if (!isStale) showToast(getApiError(error, LETTER_ERROR_MESSAGES).message)
       })
 
     return () => {
@@ -88,7 +89,7 @@ export function LetterWritePage() {
         albumImageUrl: first.coverUrl ?? '',
       })
     } catch (error) {
-      showToast(getApiError(error).message)
+      showToast(getApiError(error, LETTER_ERROR_MESSAGES).message)
     }
   }
 
@@ -110,7 +111,7 @@ export function LetterWritePage() {
       setIsSent(true)
       setIsSentPopoverOpen(true)
     } catch (error) {
-      showToast(getApiError(error).message)
+      showToast(getApiError(error, LETTER_ERROR_MESSAGES).message)
     } finally {
       setIsSending(false)
     }
