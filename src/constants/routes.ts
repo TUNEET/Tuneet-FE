@@ -4,6 +4,7 @@ export const ROUTES = {
   home: '/',
   explore: '/explore',
   exploreWrite: '/explore/write',
+  exploreEdit: '/explore/write/:feedId',
   exploreNotifications: '/explore/notifications',
   matching: '/matching',
   my: '/my',
@@ -26,6 +27,9 @@ export const ROUTES = {
   roomFeeds: '/matching/rooms/:roomId/feeds',
   roomPlaylist: '/matching/rooms/:roomId/playlist',
 } as const
+
+export const getExploreEditPath = (feedId: number) =>
+  generatePath(ROUTES.exploreEdit, { feedId: String(feedId) })
 
 export const getUserProfilePath = (userId: number) =>
   generatePath(ROUTES.userProfile, { userId: String(userId) })

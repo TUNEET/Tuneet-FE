@@ -26,6 +26,8 @@ export const Card = styled.div`
   border-radius: 2.4rem;
   background: rgba(250, 250, 250, 0.7);
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.08);
+  -webkit-backdrop-filter: blur(2rem);
+  backdrop-filter: blur(2rem);
 `
 
 export const Title = styled.p`

@@ -49,7 +49,7 @@ export function TabLayout() {
           createdAt={incomingComment.createdAt}
           onConfirm={() => {
             setIncomingComment(null)
-            navigate(ROUTES.letterbox)
+            navigate(ROUTES.exploreNotifications)
           }}
           onClose={() => setIncomingComment(null)}
         />
