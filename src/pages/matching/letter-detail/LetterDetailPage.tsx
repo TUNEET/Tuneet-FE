@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { getApiError } from '@/apis/error'
+import { LETTER_ERROR_MESSAGES } from '@/constants/letterErrors'
 import { deleteReceivedLetter, getReceivedLetter } from '@/apis/letter'
 import { getMyProfile } from '@/apis/user'
 import { Badge } from '@/components/common/Badge/Badge'
@@ -46,7 +47,7 @@ export function LetterDetailPage() {
       .catch((error) => {
         if (isStale) return
         setLetter((prev) => prev ?? null)
-        showToast(getApiError(error).message)
+        showToast(getApiError(error, LETTER_ERROR_MESSAGES).message)
       })
 
     return () => {
@@ -63,7 +64,7 @@ export function LetterDetailPage() {
       showToast('편지를 삭제했어요')
       goToLetterbox()
     } catch (error) {
-      showToast(getApiError(error).message)
+      showToast(getApiError(error, LETTER_ERROR_MESSAGES).message)
       setIsDeleting(false)
     }
   }

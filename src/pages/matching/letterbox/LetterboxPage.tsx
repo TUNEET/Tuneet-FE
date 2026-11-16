@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { getApiError } from '@/apis/error'
+import { LETTER_ERROR_MESSAGES } from '@/constants/letterErrors'
 import {
   deleteAllReceivedLetters,
   deleteAllSentLetters,
@@ -71,7 +72,7 @@ export function LetterboxPage() {
   const headerRef = useRef<HTMLDivElement>(null)
   const closeClear = useCallback(() => setIsClearOpen(false), [])
   const handleLoadError = useCallback(
-    (error: unknown) => showToast(getApiError(error).message),
+    (error: unknown) => showToast(getApiError(error, LETTER_ERROR_MESSAGES).message),
     [showToast],
   )
 
@@ -117,7 +118,7 @@ export function LetterboxPage() {
       current.setItems([])
       showToast(TAB_TEXT[tab].toast)
     } catch (error) {
-      showToast(getApiError(error).message)
+      showToast(getApiError(error, LETTER_ERROR_MESSAGES).message)
     } finally {
       setIsClearing(false)
     }
