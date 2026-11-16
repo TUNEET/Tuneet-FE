@@ -5,14 +5,12 @@ import musicIcon from '@/assets/icons/music-icon-add.svg'
 import musicNoteWhiteIcon from '@/assets/icons/music-note-white.svg'
 import upIcon from '@/assets/icons/upIcon.svg'
 import { getApiError } from '@/apis/error'
-import { createFeed, deleteFeed, getFeed, updateFeed } from '@/apis/feed'
+import { createFeed, getFeed, updateFeed } from '@/apis/feed'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SongSearchSheet } from '@/components/common/SongSearchSheet/SongSearchSheet'
 import { ROUTES } from '@/constants/routes'
 import { useToast } from '@/hooks/useToast'
-import type { ExploreFeed } from '@/types/feed'
 import type { SearchedSong } from '@/types/music'
-import { FeedDetailModal } from '../components/FeedDetailModal/FeedDetailModal'
 import * as S from './ExploreWritePage.styles'
 
 const COMMENT_MAX_LENGTH = 100
@@ -21,12 +19,11 @@ export function ExploreWritePage() {
   const navigate = useNavigate()
   const showToast = useToast()
   const params = useParams()
-  const [feedId, setFeedId] = useState(params.feedId ? Number(params.feedId) : null)
+  const feedId = params.feedId ? Number(params.feedId) : null
   const [song, setSong] = useState<SearchedSong | null>(null)
   const [isSongSearchOpen, setIsSongSearchOpen] = useState(false)
   const [comment, setComment] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [postedFeed, setPostedFeed] = useState<ExploreFeed | null>(null)
   const canSubmit = song !== null && comment.trim() !== '' && !isSubmitting
 
   useEffect(() => {
@@ -54,24 +51,12 @@ export function ExploreWritePage() {
     const body = { musicId: song.musicId, content: comment.trim() }
     setIsSubmitting(true)
     try {
-      const feed = feedId === null ? await createFeed(body) : await updateFeed(feedId, body)
-      setFeedId(feed.id)
-      setPostedFeed(feed)
-    } catch (error) {
-      showToast(getApiError(error).message)
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  const handleDelete = async () => {
-    if (feedId === null) return
-    try {
-      await deleteFeed(feedId)
-      showToast('게시물을 삭제했어요')
+      if (feedId === null) await createFeed(body)
+      else await updateFeed(feedId, body)
       navigate(ROUTES.explore, { replace: true })
     } catch (error) {
       showToast(getApiError(error).message)
+      setIsSubmitting(false)
     }
   }
 
@@ -143,16 +128,6 @@ export function ExploreWritePage() {
           variant="explore"
           onAdd={setSong}
           onClose={() => setIsSongSearchOpen(false)}
-        />
-      )}
-
-      {postedFeed && (
-        <FeedDetailModal
-          feed={postedFeed}
-          isMine
-          onEdit={() => setPostedFeed(null)}
-          onDelete={handleDelete}
-          onClose={() => setPostedFeed(null)}
         />
       )}
     </S.Page>
