@@ -177,6 +177,13 @@ export const router = createBrowserRouter([
                         lazy: () =>
                           import('@/pages/my/MyPage').then((m) => ({ Component: m.MyPage })),
                       },
+                      {
+                        path: '*',
+                        lazy: () =>
+                          import('@/pages/not-found/NotFoundPage').then((m) => ({
+                            Component: m.NotFoundPage,
+                          })),
+                      },
                     ],
                   },
                 ],
@@ -198,11 +205,6 @@ export const router = createBrowserRouter([
           {
             path: ROUTES.login,
             lazy: () => import('@/pages/login/LoginPage').then((m) => ({ Component: m.LoginPage })),
-          },
-          {
-            path: '*',
-            lazy: () =>
-              import('@/pages/not-found/NotFoundPage').then((m) => ({ Component: m.NotFoundPage })),
           },
         ],
       },
