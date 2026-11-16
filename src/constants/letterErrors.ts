@@ -1,4 +1,3 @@
-// 편지 API 에러 코드별 안내 문구 (코드가 없으면 서버 메시지를 그대로 보여준다)
 export const LETTER_ERROR_MESSAGES: Record<string, string> = {
   // 받는 사람
   U4002: '탈퇴했거나 없는 사용자예요',

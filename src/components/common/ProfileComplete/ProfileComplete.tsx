@@ -16,6 +16,7 @@ import { MOCK_PROFILE_ARTISTS } from '@/mocks/profile'
 import { SongChip as Song, SongNote } from '@/styles/song'
 import { ChevronIcon } from '@/components/common/ChevronIcon/ChevronIcon'
 import * as S from './ProfileComplete.styles'
+import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 const RAYS = [
   { angle: 0.5, spread: 25 },
@@ -109,7 +110,7 @@ export function ProfileComplete({
           <S.TagRow>
             {artists.map(({ name, image }) => (
               <S.ArtistTag key={name}>
-                {image ? <img src={image} alt="" width={12} height={12} /> : <S.ArtistFallback />}
+                {image ? <CoverImage src={image} width={12} height={12} /> : <S.ArtistFallback />}
                 {name}
               </S.ArtistTag>
             ))}

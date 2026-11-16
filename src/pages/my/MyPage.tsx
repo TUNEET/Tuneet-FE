@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { logout } from '@/apis/auth'
 import { getApiError } from '@/apis/error'
 import {
@@ -20,6 +20,7 @@ import { ROUTES } from '@/constants/routes'
 import { useToast } from '@/hooks/useToast'
 import type { MyProfileResponse } from '@/types/auth'
 import type { ProfileArtist, ProfileMusic } from '@/types/music'
+import type { MyPageLocationState } from '@/types/user'
 import { clearTokens } from '@/utils/auth'
 import { BlockedUsers } from './components/BlockedUsers/BlockedUsers'
 import { ProfileEditModal } from './components/ProfileEditModal/ProfileEditModal'
@@ -36,6 +37,7 @@ const getArtistKey = ({ id, name }: ProfileArtist) => id ?? name
 
 export function MyPage() {
   const navigate = useNavigate()
+  const locationState = useLocation().state as MyPageLocationState | null
   const showToast = useToast()
   const [profile, setProfile] = useState<MyProfileResponse | null>(null)
   const [nickname, setNickname] = useState('')
@@ -51,7 +53,10 @@ export function MyPage() {
   const [isTasteOpen, setIsTasteOpen] = useState(false)
   const [isSavedOpen, setIsSavedOpen] = useState(false)
   const [confirmType, setConfirmType] = useState<'delete' | 'logout' | null>(null)
-  const [subView, setSubView] = useState<'blocked' | 'settings' | null>(null)
+  // 위치 서비스 안내 모달 등에서 '설정으로 이동'으로 들어오면 설정을 바로 연다
+  const [subView, setSubView] = useState<'blocked' | 'settings' | null>(
+    locationState?.view === 'settings' ? 'settings' : null,
+  )
   const [settings, setSettings] = useState<Settings | null>(null)
   const saveButtonRef = useRef<HTMLButtonElement>(null)
   const deleteButtonRef = useRef<HTMLButtonElement>(null)
