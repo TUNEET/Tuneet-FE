@@ -1,7 +1,11 @@
 import { useCallback, useRef, useState } from 'react'
+import { getApiError } from '@/apis/error'
+import { updateSettings } from '@/apis/user'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { TermDetailModal } from '@/components/common/TermDetailModal/TermDetailModal'
 import { TERMS } from '@/constants/terms'
+import { useToast } from '@/hooks/useToast'
+import { toSettings } from './settings'
 import type { Settings } from './settings'
 import * as S from './SettingsPanel.styles'
 
@@ -43,7 +47,9 @@ type SettingsPanelProps = {
 }
 
 export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) {
+  const showToast = useToast()
   const [draft, setDraft] = useState(settings)
+  const [isSaving, setIsSaving] = useState(false)
   const [saveResult, setSaveResult] = useState<SaveResult | null>(null)
   const [openTermId, setOpenTermId] = useState<string | null>(null)
   const [offNoticeKey, setOffNoticeKey] = useState<ToggleKey | null>(null)
@@ -57,14 +63,30 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
   const closeSaveResult = useCallback(() => setSaveResult(null), [])
   const openTermDetail = TERMS.find(({ id }) => id === openTermId)?.detail
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    if (isSaving) return
     if (TERMS.some(({ id, required }) => required && !draft.terms[id])) {
       setSaveResult('termsRequired')
       return
     }
 
-    onSave(draft)
-    setSaveResult('saved')
+    setIsSaving(true)
+    try {
+      const saved = toSettings(
+        await updateSettings({
+          locationVisible: draft.locationVisible,
+          letterReceivable: draft.letterEnabled,
+          locationAgreed: draft.terms.locationConsent,
+        }),
+      )
+      setDraft(saved)
+      onSave(saved)
+      setSaveResult('saved')
+    } catch (error) {
+      showToast(getApiError(error).message)
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   return (
