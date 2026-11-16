@@ -7,7 +7,7 @@ import type {
   SignUpRequest,
   SignUpResponse,
 } from '@/types/auth'
-import type { OtherUserProfileResponse } from '@/types/user'
+import type { OtherUserProfileResponse, SettingsResponse } from '@/types/user'
 import { instance } from './instance'
 
 export async function signUp(body: SignUpRequest) {
@@ -70,4 +70,25 @@ export async function blockUser(userId: number) {
 
 export async function unblockUser(userId: number) {
   await instance.delete<ApiResponse<unknown>>(`/api/v1/users/me/blocks/${userId}`)
+}
+
+export async function getSettings() {
+  const { data } = await instance.get<ApiResponse<SettingsResponse>>('/api/v1/users/me/settings')
+  return data.data
+}
+
+export async function updateSettings(body: {
+  locationVisible: boolean
+  letterReceivable: boolean
+  locationAgreed: boolean
+}) {
+  const { data } = await instance.patch<ApiResponse<SettingsResponse>>(
+    '/api/v1/users/me/settings',
+    body,
+  )
+  return data.data
+}
+
+export async function withdraw() {
+  await instance.delete<ApiResponse<unknown>>('/api/v1/users')
 }

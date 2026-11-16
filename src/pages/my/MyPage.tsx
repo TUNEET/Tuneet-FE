@@ -6,9 +6,11 @@ import {
   addProfile,
   checkNicknameAvailability,
   getMyProfile,
+  getSettings,
   replaceArtists,
   replaceGenres,
   updateProfileMusic,
+  withdraw,
 } from '@/apis/user'
 import settingIcon from '@/assets/icons/setting.svg'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
@@ -21,7 +23,8 @@ import type { ProfileArtist, ProfileMusic } from '@/types/music'
 import { clearTokens } from '@/utils/auth'
 import { BlockedUsers } from './components/BlockedUsers/BlockedUsers'
 import { ProfileEditModal } from './components/ProfileEditModal/ProfileEditModal'
-import { DEFAULT_SETTINGS } from './components/SettingsPanel/settings'
+import { toSettings } from './components/SettingsPanel/settings'
+import type { Settings } from './components/SettingsPanel/settings'
 import { SettingsPanel } from './components/SettingsPanel/SettingsPanel'
 import * as S from './MyPage.styles'
 
@@ -49,12 +52,13 @@ export function MyPage() {
   const [isSavedOpen, setIsSavedOpen] = useState(false)
   const [confirmType, setConfirmType] = useState<'delete' | 'logout' | null>(null)
   const [subView, setSubView] = useState<'blocked' | 'settings' | null>(null)
-  const [settings, setSettings] = useState(DEFAULT_SETTINGS)
+  const [settings, setSettings] = useState<Settings | null>(null)
   const saveButtonRef = useRef<HTMLButtonElement>(null)
   const deleteButtonRef = useRef<HTMLButtonElement>(null)
   const logoutButtonRef = useRef<HTMLButtonElement>(null)
 
   const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const [isWithdrawing, setIsWithdrawing] = useState(false)
 
   useEffect(() => {
     let isStale = false
@@ -90,6 +94,23 @@ export function MyPage() {
     }
   }, [showToast])
 
+  useEffect(() => {
+    if (subView !== 'settings' || settings) return
+
+    let isStale = false
+    getSettings()
+      .then((data) => {
+        if (!isStale) setSettings(toSettings(data))
+      })
+      .catch((error) => {
+        if (!isStale) showToast(getApiError(error).message)
+      })
+
+    return () => {
+      isStale = true
+    }
+  }, [subView, settings, showToast])
+
   const shownSong = isEditing ? draftSong : song
   const songs = shownSong ? [shownSong] : []
 
@@ -105,6 +126,21 @@ export function MyPage() {
 
     clearTokens()
     navigate(ROUTES.onboarding, { replace: true })
+  }
+
+  const handleWithdraw = async () => {
+    closeConfirm()
+    if (isWithdrawing) return
+    setIsWithdrawing(true)
+
+    try {
+      await withdraw()
+      clearTokens()
+      navigate(ROUTES.onboarding, { replace: true })
+    } catch (error) {
+      showToast(getApiError(error).message)
+      setIsWithdrawing(false)
+    }
   }
 
   const toggleConfirm = (type: 'delete' | 'logout') => {
@@ -241,7 +277,9 @@ export function MyPage() {
         {subView === 'blocked' ? (
           <BlockedUsers onExit={exitSubView} />
         ) : (
-          <SettingsPanel settings={settings} onSave={setSettings} onExit={exitSubView} />
+          settings && (
+            <SettingsPanel settings={settings} onSave={setSettings} onExit={exitSubView} />
+          )
         )}
       </S.Page>
     )
@@ -308,7 +346,7 @@ export function MyPage() {
                   open={confirmType === 'delete'}
                   message="계정을 삭제하시겠어요?"
                   confirmLabel="계정 삭제"
-                  onConfirm={closeConfirm}
+                  onConfirm={handleWithdraw}
                   onClose={closeConfirm}
                   anchorRef={deleteButtonRef}
                   surface="dim"
