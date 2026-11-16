@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router'
-import youtubeMusicIcon from '@/assets/icons/Apple_Music.svg'
+import youtubeMusicIcon from '@/assets/icons/youtube_Music.svg'
 import logo from '@/assets/images/logo.svg'
 import { login } from '@/apis/auth'
 import { getApiError } from '@/apis/error'

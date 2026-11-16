@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import youtubeMusicIcon from '@/assets/icons/Apple_Music.svg'
+import youtubeMusicIcon from '@/assets/icons/youtube_Music.svg'
 import characterSleeping from '@/assets/images/character-sleeping.webp'
 import characterFailure from '@/assets/images/character-failure.webp'
 import characterImage from '@/assets/images/character-profile.png'
