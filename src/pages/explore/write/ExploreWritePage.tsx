@@ -126,6 +126,7 @@ export function ExploreWritePage() {
       {isSongSearchOpen && (
         <SongSearchSheet
           variant="explore"
+          title="게시할 노래"
           onAdd={setSong}
           onClose={() => setIsSongSearchOpen(false)}
         />
