@@ -45,6 +45,7 @@ type SongSearchSheetProps = {
   onAdd: (song: SearchedSong) => void | boolean | Promise<void | boolean>
   onClose: () => void
   variant?: SongSearchSheetVariant
+  title?: string
   hiddenTitle?: string
 }
 
@@ -52,6 +53,7 @@ export function SongSearchSheet({
   onAdd,
   onClose,
   variant = 'playlist',
+  title,
   hiddenTitle,
 }: SongSearchSheetProps) {
   const titleId = useId()
@@ -114,7 +116,7 @@ export function SongSearchSheet({
         </S.CloseButton>
         <S.Sheet $variant={variant}>
           <S.Title id={titleId} $variant={variant} $isHidden={hiddenTitle !== undefined}>
-            {hiddenTitle ?? (isPlaylist ? '플레이리스트' : '프로필')}
+            {hiddenTitle ?? title ?? (isPlaylist ? '플레이리스트' : '프로필')}
           </S.Title>
           <S.SearchInput
             $variant={variant}
