@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { getApiError } from '@/apis/error'
+import { getFeeds } from '@/apis/feed'
 import { getMyProfile } from '@/apis/user'
 import characterSleeping from '@/assets/images/character-sleeping.png'
 import { FeedCard } from '@/components/common/FeedCard/FeedCard'
@@ -9,15 +10,22 @@ import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { TasteMatchCard } from '@/components/common/TasteMatchCard/TasteMatchCard'
 import { getUserProfilePath, ROUTES } from '@/constants/routes'
 import { useToast } from '@/hooks/useToast'
-import { MOCK_FEEDS, MOCK_TASTE_MATCHES } from '@/mocks/data'
+import { MOCK_TASTE_MATCHES } from '@/mocks/data'
+import type { ExploreFeed } from '@/types/feed'
 import type { Profile } from '@/types/user'
 import { toProfileCard } from '@/utils/profile'
 import * as S from './HomePage.styles'
+
+const HOME_FEED_COUNT = 2
+
+type FeedState =
+  { status: 'loading' } | { status: 'error' } | { status: 'done'; items: ExploreFeed[] }
 
 export function HomePage() {
   const navigate = useNavigate()
   const showToast = useToast()
   const [profile, setProfile] = useState<Profile | null>(null)
+  const [feeds, setFeeds] = useState<FeedState>({ status: 'loading' })
 
   useEffect(() => {
     let isStale = false
@@ -34,6 +42,23 @@ export function HomePage() {
       isStale = true
     }
   }, [showToast])
+
+  useEffect(() => {
+    let isStale = false
+
+    // 실패해도 토스트 대신 섹션 안에 안내한다 (프로필 실패 토스트와 겹치지 않도록)
+    getFeeds(undefined, HOME_FEED_COUNT)
+      .then(({ items }) => {
+        if (!isStale) setFeeds({ status: 'done', items })
+      })
+      .catch(() => {
+        if (!isStale) setFeeds({ status: 'error' })
+      })
+
+    return () => {
+      isStale = true
+    }
+  }, [])
 
   return (
     <S.Page>
@@ -59,11 +84,17 @@ export function HomePage() {
             actionLabel="더보기"
             onActionClick={() => navigate(ROUTES.explore)}
           />
-          <S.CardList>
-            {MOCK_FEEDS.map((feed) => (
-              <FeedCard key={feed.id} feed={feed} />
-            ))}
-          </S.CardList>
+          {feeds.status === 'done' && feeds.items.length > 0 && (
+            <S.CardList>
+              {feeds.items.map((feed) => (
+                <FeedCard key={feed.id} feed={feed} onClick={() => navigate(ROUTES.explore)} />
+              ))}
+            </S.CardList>
+          )}
+          {feeds.status === 'done' && feeds.items.length === 0 && (
+            <S.Empty>아직 올라온 피드가 없어요</S.Empty>
+          )}
+          {feeds.status === 'error' && <S.Empty>피드를 불러오지 못했어요</S.Empty>}
         </S.Section>
 
         <S.Section>
