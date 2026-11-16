@@ -49,3 +49,12 @@ export type OtherUserProfileResponse = {
     genres: UserGenreResponse[]
   }
 }
+
+export type SettingsResponse = {
+  locationVisible: boolean
+  letterReceivable: boolean
+  platformConnected: boolean
+  termsAgreed: boolean
+  privacyAgreed: boolean
+  locationAgreed: boolean
+}

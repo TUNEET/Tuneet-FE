@@ -1,10 +1,19 @@
-import { TERMS } from '@/constants/terms'
+import type { SettingsResponse } from '@/types/user'
 
-export const DEFAULT_SETTINGS = {
-  locationVisible: true,
-  letterEnabled: true,
-  platformLinked: true,
-  terms: Object.fromEntries(TERMS.map(({ id }) => [id, true])) as Record<string, boolean>,
+export type Settings = {
+  locationVisible: boolean
+  letterEnabled: boolean
+  platformLinked: boolean
+  terms: Record<string, boolean>
 }
 
-export type Settings = typeof DEFAULT_SETTINGS
+export const toSettings = (response: SettingsResponse): Settings => ({
+  locationVisible: response.locationVisible,
+  letterEnabled: response.letterReceivable,
+  platformLinked: response.platformConnected,
+  terms: {
+    termsOfService: response.termsAgreed,
+    privacyPolicy: response.privacyAgreed,
+    locationConsent: response.locationAgreed,
+  },
+})
