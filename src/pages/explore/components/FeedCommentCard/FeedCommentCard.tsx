@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { createPortal } from 'react-dom'
 import commentIcon from '@/assets/icons/comt-icon-add.svg'
 import messageIcon from '@/assets/icons/duo-icons_message.svg'
 import sentIcon from '@/assets/icons/duo-icons_sent.svg'
@@ -90,15 +89,14 @@ export function FeedCommentCard({ feedId, onSent }: FeedCommentCardProps) {
         </S.SendButton>
       </S.Body>
 
-      {isSongSearchOpen &&
-        createPortal(
-          <SongSearchSheet
-            variant="explore"
-            onAdd={setSong}
-            onClose={() => setIsSongSearchOpen(false)}
-          />,
-          document.body,
-        )}
+      {isSongSearchOpen && (
+        <SongSearchSheet
+          variant="explore"
+          title="함께 보낼 노래"
+          onAdd={setSong}
+          onClose={() => setIsSongSearchOpen(false)}
+        />
+      )}
     </S.Card>
   )
 }
