@@ -123,12 +123,6 @@ export const ListenLabel = styled.p`
   color: ${({ theme }) => theme.colors.textPrimary};
 `
 
-export const Platforms = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-`
-
 export const PlatformButton = styled.button`
   display: flex;
   align-items: center;

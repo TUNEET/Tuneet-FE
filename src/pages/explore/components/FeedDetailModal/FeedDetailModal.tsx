@@ -1,10 +1,8 @@
 import { useRef, useState } from 'react'
-import appleMusicIcon from '@/assets/icons/Apple_Music.svg'
+import youtubeMusicIcon from '@/assets/icons/youtube_Music.svg'
 import deleteIcon from '@/assets/icons/del-icon.svg'
 import editIcon from '@/assets/icons/edit-icon.svg'
 import feedIcon from '@/assets/icons/feed-icon.svg'
-import genieIcon from '@/assets/icons/genie.svg'
-import melonIcon from '@/assets/icons/melon.svg'
 import characterImage from '@/assets/images/character-feed.webp'
 import userBlueIcon from '@/assets/icons/user-blue.svg'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
@@ -13,12 +11,6 @@ import type { Feed } from '@/types/feed'
 import { formatTimeAgo } from '@/utils/format'
 import { FeedCommentCard } from '../FeedCommentCard/FeedCommentCard'
 import * as S from './FeedDetailModal.styles'
-
-const PLATFORMS = [
-  { id: 'youtubeMusic', label: '유튜브 뮤직에서 듣기', icon: appleMusicIcon },
-  { id: 'melon', label: '멜론에서 듣기', icon: melonIcon },
-  { id: 'genie', label: '지니 뮤직에서 듣기', icon: genieIcon },
-]
 
 type FeedDetailModalProps = {
   feed: Feed
@@ -82,13 +74,9 @@ export function FeedDetailModal({
 
         <S.Listen>
           <S.ListenLabel>지금 들어보기</S.ListenLabel>
-          <S.Platforms>
-            {PLATFORMS.map(({ id, label, icon }) => (
-              <S.PlatformButton key={id} type="button" aria-label={label}>
-                <img src={icon} alt="" />
-              </S.PlatformButton>
-            ))}
-          </S.Platforms>
+          <S.PlatformButton type="button" aria-label="유튜브 뮤직에서 듣기">
+            <img src={youtubeMusicIcon} alt="" />
+          </S.PlatformButton>
         </S.Listen>
 
         <S.Divider />

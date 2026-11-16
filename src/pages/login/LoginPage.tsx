@@ -1,9 +1,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router'
-import appleMusicIcon from '@/assets/icons/Apple_Music.svg'
-import genieIcon from '@/assets/icons/genie.svg'
-import melonIcon from '@/assets/icons/melon.svg'
+import youtubeMusicIcon from '@/assets/icons/youtube_Music.svg'
 import logo from '@/assets/images/logo.svg'
 import { login } from '@/apis/auth'
 import { getApiError } from '@/apis/error'
@@ -14,9 +12,9 @@ import * as S from './LoginPage.styles'
 const FIELDS = [
   {
     id: 'email',
-    label: '아이디',
+    label: '이메일',
     type: 'email',
-    placeholder: '아이디를 입력하세요.',
+    placeholder: '이메일을 입력하세요.',
     autoComplete: 'username',
   },
   {
@@ -26,12 +24,6 @@ const FIELDS = [
     placeholder: '비밀번호를 입력하세요.',
     autoComplete: 'current-password',
   },
-]
-
-const SOCIAL_LOGINS = [
-  { id: 'appleMusic', label: 'Apple Music으로 로그인', icon: appleMusicIcon },
-  { id: 'melon', label: '멜론으로 로그인', icon: melonIcon },
-  { id: 'genie', label: '지니로 로그인', icon: genieIcon },
 ]
 
 export function LoginPage() {
@@ -48,7 +40,7 @@ export function LoginPage() {
     const password = String(formData.get('password'))
 
     if (!email || !password) {
-      setErrorMessage('아이디와 비밀번호를 입력해 주세요.')
+      setErrorMessage('이메일과 비밀번호를 입력해 주세요.')
       return
     }
 
@@ -113,13 +105,10 @@ export function LoginPage() {
         회원가입
       </S.SignupButton>
 
-      <S.SocialLogins>
-        {SOCIAL_LOGINS.map(({ id, label, icon }) => (
-          <S.SocialButton key={id} type="button" aria-label={label}>
-            <img src={icon} alt="" width={30} height={30} />
-          </S.SocialButton>
-        ))}
-      </S.SocialLogins>
+      <S.YoutubeMusicButton type="button">
+        <img src={youtubeMusicIcon} alt="" width={30} height={30} />
+        유튜브 뮤직으로 로그인
+      </S.YoutubeMusicButton>
     </S.Page>
   )
 }

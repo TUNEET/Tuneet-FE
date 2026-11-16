@@ -1,7 +1,5 @@
 import { useState } from 'react'
-import appleMusicIcon from '@/assets/icons/Apple_Music.svg'
-import genieIcon from '@/assets/icons/genie.svg'
-import melonIcon from '@/assets/icons/melon.svg'
+import youtubeMusicIcon from '@/assets/icons/youtube_Music.svg'
 import characterSleeping from '@/assets/images/character-sleeping.webp'
 import characterFailure from '@/assets/images/character-failure.webp'
 import characterImage from '@/assets/images/character-profile.png'
@@ -9,11 +7,7 @@ import { MOCK_FAILING_PLATFORM_ID } from '@/mocks/profile'
 import { ChevronIcon } from '@/components/common/ChevronIcon/ChevronIcon'
 import * as S from './PlatformConnect.styles'
 
-const PLATFORMS = [
-  { id: 'youtubeMusic', label: '유튜브 뮤직 연결하기', icon: appleMusicIcon },
-  { id: 'melon', label: '멜론 연결하기', icon: melonIcon },
-  { id: 'genie', label: '지니 뮤직 연결하기', icon: genieIcon },
-]
+const PLATFORM_ID: string = 'youtubeMusic'
 
 type PlatformConnectProps = {
   nickname: string
@@ -48,22 +42,17 @@ export function PlatformConnect({ nickname, previewUrl, music, onNext }: Platfor
         </S.Info>
       </S.Card>
 
-      <S.Platforms>
-        {PLATFORMS.map(({ id, label, icon }) => (
-          <S.PlatformButton
-            key={id}
-            type="button"
-            onClick={() =>
-              setConnectResult(id === MOCK_FAILING_PLATFORM_ID ? 'failure' : 'success')
-            }
-          >
-            <S.PlatformIcon>
-              <img src={icon} alt="" width={20} height={20} />
-            </S.PlatformIcon>
-            <S.PlatformLabel>{label}</S.PlatformLabel>
-          </S.PlatformButton>
-        ))}
-      </S.Platforms>
+      <S.PlatformButton
+        type="button"
+        onClick={() =>
+          setConnectResult(PLATFORM_ID === MOCK_FAILING_PLATFORM_ID ? 'failure' : 'success')
+        }
+      >
+        <S.PlatformIcon>
+          <img src={youtubeMusicIcon} alt="" width={20} height={20} />
+        </S.PlatformIcon>
+        <S.PlatformLabel>유튜브 뮤직 연결하기</S.PlatformLabel>
+      </S.PlatformButton>
 
       <S.SleepingCharacter src={characterSleeping} alt="" />
 
