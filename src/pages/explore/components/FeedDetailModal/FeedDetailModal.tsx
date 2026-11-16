@@ -24,20 +24,39 @@ type FeedDetailModalProps = {
   feed: Feed
   isMine?: boolean
   onEdit?: () => void
+  onDelete?: () => void | Promise<void>
   onClose: () => void
 }
 
-export function FeedDetailModal({ feed, isMine = false, onEdit, onClose }: FeedDetailModalProps) {
+export function FeedDetailModal({
+  feed,
+  isMine = false,
+  onEdit,
+  onDelete,
+  onClose,
+}: FeedDetailModalProps) {
   const { nickname, song, content, createdAt } = feed
   const deleteButtonRef = useRef<HTMLButtonElement>(null)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isCommenting, setIsCommenting] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const closeDelete = () => setIsDeleteOpen(false)
+
+  const handleDelete = async () => {
+    closeDelete()
+    if (!onDelete || isDeleting) return
+    setIsDeleting(true)
+    try {
+      await onDelete()
+    } finally {
+      setIsDeleting(false)
+    }
+  }
 
   if (isCommenting) {
     return (
       <Modal open onClose={onClose} labelledBy="feed-comment-title">
-        <FeedCommentCard />
+        <FeedCommentCard feedId={feed.id} onSent={onClose} />
       </Modal>
     )
   }
@@ -99,7 +118,7 @@ export function FeedDetailModal({ feed, isMine = false, onEdit, onClose }: FeedD
           open={isDeleteOpen}
           message="게시물을 삭제하시겠어요?"
           confirmLabel="게시물 삭제"
-          onConfirm={closeDelete}
+          onConfirm={handleDelete}
           onClose={closeDelete}
           anchorRef={deleteButtonRef}
           surface="dim"

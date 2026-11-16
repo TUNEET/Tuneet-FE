@@ -1,6 +1,12 @@
 import styled from 'styled-components'
 
-export { CommentInput, Label, SearchInput } from '@/pages/explore/write/ExploreWritePage.styles'
+export {
+  CommentInput,
+  Label,
+  SearchInput,
+  SelectedSong,
+  SongNote,
+} from '@/pages/explore/write/ExploreWritePage.styles'
 
 export const Card = styled.div`
   width: 100%;

@@ -1,14 +1,21 @@
 import { useCallback, useRef, useState } from 'react'
+import { getApiError } from '@/apis/error'
+import { deleteAllSentFeedMessages, getSentFeedMessages } from '@/apis/feed'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { MusicCard } from '@/components/common/MusicCard/MusicCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SegmentTabs } from '@/components/common/SegmentTabs/SegmentTabs'
+import { useCursorList } from '@/hooks/useCursorList'
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import { useToast } from '@/hooks/useToast'
-import { MOCK_NOTIFICATIONS, MOCK_SENT_NOTIFICATIONS } from '@/mocks/data'
+import { MOCK_NOTIFICATIONS } from '@/mocks/data'
 import * as S from '@/pages/explore/ExplorePage.styles'
+import type { SentNotification } from '@/types/notification'
 import { formatTimeAgo } from '@/utils/format'
 
 type CommentTab = 'received' | 'sent'
+
+const getSentId = ({ id }: SentNotification) => id
 
 const TABS = [
   { value: 'received', label: '받은 코멘트' },
@@ -31,34 +38,50 @@ const TAB_TEXT: Record<CommentTab, { confirm: string; toast: string; empty: stri
 export function NotificationsPage() {
   const showToast = useToast()
   const [tab, setTab] = useState<CommentTab>('received')
-  const [notificationsByTab, setNotificationsByTab] = useState({
-    received: MOCK_NOTIFICATIONS,
-    sent: MOCK_SENT_NOTIFICATIONS,
-  })
+  const [received, setReceived] = useState(MOCK_NOTIFICATIONS)
+  const handleLoadError = useCallback(
+    (error: unknown) => showToast(getApiError(error).message),
+    [showToast],
+  )
+  const sent = useCursorList(getSentFeedMessages, getSentId, handleLoadError)
+  const sentinelRef = useInfiniteScroll<HTMLDivElement>(
+    sent.loadMore,
+    tab === 'sent' && sent.hasNext && !sent.isLoading,
+  )
   const [isClearOpen, setIsClearOpen] = useState(false)
   const headerRef = useRef<HTMLDivElement>(null)
   const closeClear = useCallback(() => setIsClearOpen(false), [])
   const notifications =
     tab === 'received'
-      ? notificationsByTab.received.map(({ senderNickname, ...rest }) => ({
+      ? received.map(({ senderNickname, ...rest }) => ({
           ...rest,
           nickname: senderNickname,
         }))
-      : notificationsByTab.sent.map(({ receiverNickname, ...rest }) => ({
+      : sent.items.map(({ receiverNickname, ...rest }) => ({
           ...rest,
           nickname: receiverNickname,
         }))
   const isEmpty = notifications.length === 0
+  const isLoading = tab === 'sent' && sent.isLoading
 
   const handleTabChange = (next: CommentTab) => {
     closeClear()
     setTab(next)
   }
 
-  const handleClear = () => {
+  const handleClear = async () => {
     closeClear()
-    setNotificationsByTab((prev) => ({ ...prev, [tab]: [] }))
-    showToast(TAB_TEXT[tab].toast)
+    try {
+      if (tab === 'sent') {
+        await deleteAllSentFeedMessages()
+        sent.setItems([])
+      } else {
+        setReceived([])
+      }
+      showToast(TAB_TEXT[tab].toast)
+    } catch (error) {
+      showToast(getApiError(error).message)
+    }
   }
 
   return (
@@ -91,7 +114,7 @@ export function NotificationsPage() {
           </S.NotificationHeader>
           <SegmentTabs items={TABS} value={tab} onChange={handleTabChange} ariaLabel="알림 구분" />
           {isEmpty ? (
-            <S.Empty>{TAB_TEXT[tab].empty}</S.Empty>
+            !isLoading && <S.Empty>{TAB_TEXT[tab].empty}</S.Empty>
           ) : (
             <S.CardList>
               {notifications.map(({ id, nickname, message, song, createdAt }) => (
@@ -108,6 +131,7 @@ export function NotificationsPage() {
               ))}
             </S.CardList>
           )}
+          {tab === 'sent' && <div ref={sentinelRef} aria-hidden />}
         </S.Section>
       </S.ExploreSheet>
     </S.Page>

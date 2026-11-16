@@ -54,6 +54,13 @@ export const router = createBrowserRouter([
                           })),
                       },
                       {
+                        path: ROUTES.exploreEdit,
+                        lazy: () =>
+                          import('@/pages/explore/write/ExploreWritePage').then((m) => ({
+                            Component: m.ExploreWritePage,
+                          })),
+                      },
+                      {
                         path: ROUTES.exploreNotifications,
                         lazy: () =>
                           import('@/pages/explore/notifications/NotificationsPage').then((m) => ({
