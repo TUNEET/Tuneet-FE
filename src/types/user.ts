@@ -58,3 +58,6 @@ export type SettingsResponse = {
   privacyAgreed: boolean
   locationAgreed: boolean
 }
+
+// 다른 화면에서 마이페이지로 이동할 때 바로 열 화면
+export type MyPageLocationState = { view?: 'settings' }
