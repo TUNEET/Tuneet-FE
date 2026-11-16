@@ -9,6 +9,7 @@ import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopove
 import type { MusicSearchItem, SearchedSong } from '@/types/music'
 import * as S from './SongSearchSheet.styles'
 import type { SongSearchSheetVariant } from './SongSearchSheet.styles'
+import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 const SEARCH_DEBOUNCE_MS = 200
 const PAGE_SIZE = 5
@@ -135,7 +136,7 @@ export function SongSearchSheet({
               {results.map((song) => (
                 <S.ResultItem key={song.id} $variant={variant}>
                   <S.ResultSong>
-                    {song.coverUrl ? <img src={song.coverUrl} alt="" /> : <S.CoverFallback />}
+                    <CoverImage src={song.coverUrl} />
                     <span>
                       {song.title} - {song.artist}
                     </span>

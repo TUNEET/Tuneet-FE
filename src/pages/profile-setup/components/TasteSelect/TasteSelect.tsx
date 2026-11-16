@@ -4,6 +4,7 @@ import { ArtistSearchSheet } from '@/components/common/ArtistSearchSheet/ArtistS
 import { GENRE_ROWS } from '@/constants/genres'
 import type { ProfileArtist } from '@/types/music'
 import * as S from './TasteSelect.styles'
+import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 type TasteSelectProps = {
   selectedGenres: string[]
@@ -97,7 +98,7 @@ export function TasteSelect({
             <S.SelectedArtists>
               {selectedArtists.map(({ id, name, image }) => (
                 <S.SelectedArtist key={id ?? name}>
-                  {image ? <img src={image} alt="" width={12} height={12} /> : <S.ArtistFallback />}
+                  {image ? <CoverImage src={image} width={12} height={12} /> : <S.ArtistFallback />}
                   <span>{name}</span>
                   <S.RemoveArtistButton
                     type="button"

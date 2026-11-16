@@ -1,6 +1,7 @@
 import musicNoteIcon from '@/assets/icons/music-note.svg'
 import type { CommonTaste } from '@/types/user'
 import * as S from './CommonTasteSection.styles'
+import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 type CommonTasteSectionProps = {
   nickname: string
@@ -22,7 +23,7 @@ export function CommonTasteSection({ nickname, commonTaste }: CommonTasteSection
           <S.Row>
             {artists.map(({ name, imageUrl }) => (
               <S.ImageChip key={name}>
-                {imageUrl ? <img src={imageUrl} alt="" /> : <S.ImageFallback />}
+                {imageUrl ? <CoverImage src={imageUrl} /> : <S.ImageFallback />}
                 {name}
               </S.ImageChip>
             ))}
@@ -32,7 +33,7 @@ export function CommonTasteSection({ nickname, commonTaste }: CommonTasteSection
           <S.Row>
             {songs.map(({ title, artist, albumImageUrl }) => (
               <S.ImageChip key={`${title}-${artist}`}>
-                {albumImageUrl ? <img src={albumImageUrl} alt="" /> : <S.ImageFallback />}
+                {albumImageUrl ? <CoverImage src={albumImageUrl} /> : <S.ImageFallback />}
                 {title} - {artist}
               </S.ImageChip>
             ))}

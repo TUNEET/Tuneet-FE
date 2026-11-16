@@ -34,7 +34,8 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico}', '*.{svg,png}'],
+        // 캐릭터·아이콘 이미지도 미리 받아 두어 화면 전환 때 바로 보이게 한다
+        globPatterns: ['**/*.{js,css,html,ico}', '*.{svg,png}', 'assets/*.{svg,png,webp}'],
         runtimeCaching: [
           {
             urlPattern: ({ request }) => request.destination === 'font',
