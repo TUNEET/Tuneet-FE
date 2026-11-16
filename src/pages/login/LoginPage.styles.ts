@@ -55,23 +55,20 @@ export const SignupButton = styled.button`
   transform: translateX(-50%);
 `
 
-export const SocialLogins = styled.div`
+export const YoutubeMusicButton = styled.button`
   position: absolute;
-  top: ${shiftTop('72.5rem', LOGIN_SHIFT)};
-  right: 0;
-  left: 0;
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-`
-
-export const SocialButton = styled.button`
-  display: flex;
+  top: ${shiftTop('73.8rem', LOGIN_SHIFT)};
+  left: 50%;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 5rem;
-  height: 5rem;
+  gap: 1rem;
+  padding: 0.4rem 1.8rem 0.4rem 1rem;
   overflow: hidden;
   border-radius: 1000px;
   background-color: white;
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #555555;
+  white-space: nowrap;
+  transform: translateX(-50%);
 `

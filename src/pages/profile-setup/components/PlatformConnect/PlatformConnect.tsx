@@ -1,7 +1,5 @@
 import { useState } from 'react'
 import appleMusicIcon from '@/assets/icons/Apple_Music.svg'
-import genieIcon from '@/assets/icons/genie.svg'
-import melonIcon from '@/assets/icons/melon.svg'
 import characterSleeping from '@/assets/images/character-sleeping.webp'
 import characterFailure from '@/assets/images/character-failure.webp'
 import characterImage from '@/assets/images/character-profile.png'
@@ -11,8 +9,6 @@ import * as S from './PlatformConnect.styles'
 
 const PLATFORMS = [
   { id: 'youtubeMusic', label: '유튜브 뮤직 연결하기', icon: appleMusicIcon },
-  { id: 'melon', label: '멜론 연결하기', icon: melonIcon },
-  { id: 'genie', label: '지니 뮤직 연결하기', icon: genieIcon },
 ]
 
 type PlatformConnectProps = {
