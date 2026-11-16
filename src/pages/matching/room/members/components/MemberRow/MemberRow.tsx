@@ -4,6 +4,7 @@ import { CharacterAvatar } from '@/components/common/CharacterAvatar/CharacterAv
 import { ROOM_ROLE_LABELS } from '@/constants/room'
 import type { RoomMember } from '@/types/room'
 import * as S from './MemberRow.styles'
+import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 type MemberRowProps = {
   member: RoomMember
@@ -39,7 +40,7 @@ export function MemberRow({ member, onClick, onLetterClick }: MemberRowProps) {
         </S.NameLine>
         {song && (
           <S.Song>
-            <img src={song.albumImageUrl} alt="" />
+            <CoverImage src={song.albumImageUrl} />
             <span>
               {song.title} - {song.artist}
             </span>

@@ -7,10 +7,19 @@ type ModalProps = {
   onClose: () => void
   closeLabel?: string
   labelledBy?: string
+  // 모달 안에 닫기 버튼이 따로 있으면 false로 아래 닫기 버튼을 숨긴다
+  showCloseButton?: boolean
   children: ReactNode
 }
 
-export function Modal({ open, onClose, closeLabel = '닫기', labelledBy, children }: ModalProps) {
+export function Modal({
+  open,
+  onClose,
+  closeLabel = '닫기',
+  labelledBy,
+  showCloseButton = true,
+  children,
+}: ModalProps) {
   useEffect(() => {
     if (!open) return
 
@@ -27,9 +36,11 @@ export function Modal({ open, onClose, closeLabel = '닫기', labelledBy, childr
     <S.Overlay>
       <S.Content role="dialog" aria-modal="true" aria-labelledby={labelledBy}>
         {children}
-        <S.CloseButton type="button" onClick={onClose}>
-          {closeLabel}
-        </S.CloseButton>
+        {showCloseButton && (
+          <S.CloseButton type="button" onClick={onClose}>
+            {closeLabel}
+          </S.CloseButton>
+        )}
       </S.Content>
     </S.Overlay>
   )

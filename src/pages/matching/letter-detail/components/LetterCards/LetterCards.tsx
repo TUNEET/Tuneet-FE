@@ -2,6 +2,7 @@ import playIcon from '@/assets/icons/play-circle-gray.svg'
 import characterLetter from '@/assets/images/character-letter-detail.png'
 import type { LetterMusic } from '@/types/letter'
 import * as S from './LetterCards.styles'
+import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 type LetterCardsProps = {
   content: string
@@ -20,7 +21,7 @@ export function LetterCards({ content, from, music }: LetterCardsProps) {
         <S.Character src={characterLetter} alt="" />
         <S.PlayIcon src={playIcon} alt="" />
         <S.Song>
-          <img src={music.musicPicture ?? ''} alt="" />
+          <CoverImage src={music.musicPicture} />
           <span>
             {music.title} - {music.artist}
           </span>
