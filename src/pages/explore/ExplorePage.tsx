@@ -1,16 +1,44 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router'
+import { getApiError } from '@/apis/error'
+import { deleteFeed, getFeeds } from '@/apis/feed'
 import { FeedCard } from '@/components/common/FeedCard/FeedCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
-import { ROUTES } from '@/constants/routes'
-import { MOCK_EXPLORE_FEEDS } from '@/mocks/data'
-import type { Feed } from '@/types/feed'
+import { getExploreEditPath, ROUTES } from '@/constants/routes'
+import { useCursorList } from '@/hooks/useCursorList'
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
+import { useToast } from '@/hooks/useToast'
+import type { ExploreFeed } from '@/types/feed'
 import { FeedDetailModal } from './components/FeedDetailModal/FeedDetailModal'
 import * as S from './ExplorePage.styles'
 
+const getFeedId = ({ id }: ExploreFeed) => id
+
 export function ExplorePage() {
   const navigate = useNavigate()
-  const [selectedFeed, setSelectedFeed] = useState<Feed | null>(null)
+  const showToast = useToast()
+  const [selectedFeed, setSelectedFeed] = useState<ExploreFeed | null>(null)
+
+  const handleLoadError = useCallback(
+    (error: unknown) => showToast(getApiError(error).message),
+    [showToast],
+  )
+  const feeds = useCursorList(getFeeds, getFeedId, handleLoadError)
+  const sentinelRef = useInfiniteScroll<HTMLDivElement>(
+    feeds.loadMore,
+    feeds.hasNext && !feeds.isLoading,
+  )
+
+  const handleDelete = async (feedId: number) => {
+    try {
+      await deleteFeed(feedId)
+      feeds.setItems((prev) => prev.filter((feed) => feed.id !== feedId))
+      setSelectedFeed(null)
+      showToast('게시물을 삭제했어요')
+    } catch (error) {
+      showToast(getApiError(error).message)
+    }
+  }
 
   return (
     <S.Page>
@@ -27,18 +55,29 @@ export function ExplorePage() {
             actionLabel="글쓰기"
             onActionClick={() => navigate(ROUTES.exploreWrite)}
           />
-          <S.CardList>
-            {MOCK_EXPLORE_FEEDS.map((feed) => (
-              <FeedCard key={feed.id} feed={feed} onClick={setSelectedFeed} />
-            ))}
-          </S.CardList>
+          {feeds.items.length > 0 ? (
+            <S.CardList>
+              {feeds.items.map((feed) => (
+                <FeedCard key={feed.id} feed={feed} onClick={() => setSelectedFeed(feed)} />
+              ))}
+            </S.CardList>
+          ) : (
+            !feeds.isLoading && <S.Empty>아직 올라온 피드가 없어요</S.Empty>
+          )}
+          <div ref={sentinelRef} aria-hidden />
         </S.Section>
       </S.ExploreSheet>
 
       <S.BottomFade />
 
       {selectedFeed && (
-        <FeedDetailModal feed={selectedFeed} onClose={() => setSelectedFeed(null)} />
+        <FeedDetailModal
+          feed={selectedFeed}
+          isMine={selectedFeed.isMine}
+          onEdit={() => navigate(getExploreEditPath(selectedFeed.id))}
+          onDelete={() => handleDelete(selectedFeed.id)}
+          onClose={() => setSelectedFeed(null)}
+        />
       )}
     </S.Page>
   )
