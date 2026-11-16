@@ -1,14 +1,17 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router'
 import commentIcon from '@/assets/icons/comt-icon-add.svg'
 import musicIcon from '@/assets/icons/music-icon-add.svg'
 import musicNoteWhiteIcon from '@/assets/icons/music-note-white.svg'
 import upIcon from '@/assets/icons/upIcon.svg'
+import { getApiError } from '@/apis/error'
+import { createFeed, deleteFeed, getFeed, updateFeed } from '@/apis/feed'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
-import { ROUTES } from '@/constants/routes'
-import { MOCK_PROFILE, MOCK_WRITE_SONG } from '@/mocks/data'
 import { SongSearchSheet } from '@/components/common/SongSearchSheet/SongSearchSheet'
-import type { Feed } from '@/types/feed'
+import { ROUTES } from '@/constants/routes'
+import { useToast } from '@/hooks/useToast'
+import type { ExploreFeed } from '@/types/feed'
+import type { SearchedSong } from '@/types/music'
 import { FeedDetailModal } from '../components/FeedDetailModal/FeedDetailModal'
 import * as S from './ExploreWritePage.styles'
 
@@ -16,20 +19,60 @@ const COMMENT_MAX_LENGTH = 100
 
 export function ExploreWritePage() {
   const navigate = useNavigate()
-  const [song, setSong] = useState(MOCK_WRITE_SONG)
+  const showToast = useToast()
+  const params = useParams()
+  const [feedId, setFeedId] = useState(params.feedId ? Number(params.feedId) : null)
+  const [song, setSong] = useState<SearchedSong | null>(null)
   const [isSongSearchOpen, setIsSongSearchOpen] = useState(false)
-  const { title, artist, albumImageUrl } = song
   const [comment, setComment] = useState('')
-  const [postedFeed, setPostedFeed] = useState<Feed | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [postedFeed, setPostedFeed] = useState<ExploreFeed | null>(null)
+  const canSubmit = song !== null && comment.trim() !== '' && !isSubmitting
 
-  const handleSubmit = () => {
-    setPostedFeed({
-      id: 0,
-      nickname: MOCK_PROFILE.nickname,
-      song,
-      content: comment.trim(),
-      createdAt: new Date().toISOString(),
-    })
+  useEffect(() => {
+    if (!params.feedId) return
+
+    let isStale = false
+    getFeed(Number(params.feedId))
+      .then((feed) => {
+        if (isStale) return
+        setSong(feed.song)
+        setComment(feed.content)
+      })
+      .catch((error) => {
+        if (!isStale) showToast(getApiError(error).message)
+      })
+
+    return () => {
+      isStale = true
+    }
+  }, [params.feedId, showToast])
+
+  const handleSubmit = async () => {
+    if (!canSubmit || !song) return
+
+    const body = { musicId: song.musicId, content: comment.trim() }
+    setIsSubmitting(true)
+    try {
+      const feed = feedId === null ? await createFeed(body) : await updateFeed(feedId, body)
+      setFeedId(feed.id)
+      setPostedFeed(feed)
+    } catch (error) {
+      showToast(getApiError(error).message)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const handleDelete = async () => {
+    if (feedId === null) return
+    try {
+      await deleteFeed(feedId)
+      showToast('게시물을 삭제했어요')
+      navigate(ROUTES.explore, { replace: true })
+    } catch (error) {
+      showToast(getApiError(error).message)
+    }
   }
 
   return (
@@ -62,13 +105,15 @@ export function ExploreWritePage() {
                 if (event.key === 'Enter') setIsSongSearchOpen(true)
               }}
             />
-            <S.SelectedSong>
-              <img src={albumImageUrl} alt="" width={12} height={12} />
-              <span>
-                {title} - {artist}
-              </span>
-              <S.SongNote src={musicNoteWhiteIcon} alt="" />
-            </S.SelectedSong>
+            {song && (
+              <S.SelectedSong>
+                <img src={song.albumImageUrl} alt="" width={12} height={12} />
+                <span>
+                  {song.title} - {song.artist}
+                </span>
+                <S.SongNote src={musicNoteWhiteIcon} alt="" />
+              </S.SelectedSong>
+            )}
             <S.Label htmlFor="explore-comment">
               <img src={commentIcon} alt="" width={20} height={20} />
               코멘트 작성
@@ -84,14 +129,19 @@ export function ExploreWritePage() {
         </S.Section>
       </S.ExploreSheet>
 
-      <S.SubmitButton type="button" aria-label="게시하기" onClick={handleSubmit}>
+      <S.SubmitButton
+        type="button"
+        aria-label="게시하기"
+        disabled={!canSubmit}
+        onClick={handleSubmit}
+      >
         <img src={upIcon} alt="" width={40} height={40} />
       </S.SubmitButton>
 
       {isSongSearchOpen && (
         <SongSearchSheet
           variant="explore"
-          onAdd={({ title, artist, albumImageUrl }) => setSong({ title, artist, albumImageUrl })}
+          onAdd={setSong}
           onClose={() => setIsSongSearchOpen(false)}
         />
       )}
@@ -101,6 +151,7 @@ export function ExploreWritePage() {
           feed={postedFeed}
           isMine
           onEdit={() => setPostedFeed(null)}
+          onDelete={handleDelete}
           onClose={() => setPostedFeed(null)}
         />
       )}

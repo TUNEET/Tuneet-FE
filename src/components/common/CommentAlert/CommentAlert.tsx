@@ -27,7 +27,7 @@ export function CommentAlert({ nickname, createdAt, onConfirm, onClose }: Commen
           <time dateTime={createdAt}>{formatKoreanDateTime(createdAt)}</time>
         </S.Info>
         <S.ConfirmButton type="button" onClick={onConfirm}>
-          편지함에서 확인하기
+          코멘트 확인하기
         </S.ConfirmButton>
       </S.Card>
     </S.Wrapper>
