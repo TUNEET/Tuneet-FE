@@ -7,6 +7,7 @@ import { SongSearchSheet } from '@/components/common/SongSearchSheet/SongSearchS
 import { GENRE_ROWS } from '@/constants/genres'
 import type { ProfileArtist, ProfileMusic } from '@/types/music'
 import * as S from './ProfileEditModal.styles'
+import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 type ProfileEditModalProps = {
   selectedSong: ProfileMusic | null
@@ -130,7 +131,7 @@ export function ProfileEditModal({
                 {selectedArtists.map((artist) => (
                   <S.SelectedArtist key={artist.id ?? artist.name}>
                     {artist.image ? (
-                      <img src={artist.image} alt="" width={12} height={12} />
+                      <CoverImage src={artist.image} width={12} height={12} />
                     ) : (
                       <S.ArtistFallback />
                     )}

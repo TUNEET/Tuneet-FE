@@ -3,6 +3,7 @@ import type { KeyboardEvent } from 'react'
 import musicNoteRoseIcon from '@/assets/icons/music-note-rose.svg'
 import type { Song } from '@/types/song'
 import * as S from './SongField.styles'
+import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 type SongFieldProps = {
   id: string
@@ -37,7 +38,7 @@ export function SongField({ id, song, onSearch }: SongFieldProps) {
       {song && (
         <S.SelectedSong>
           <S.SongInfo>
-            <img src={song.albumImageUrl} alt="" />
+            <CoverImage src={song.albumImageUrl} />
             <span>
               {song.title} - {song.artist}
             </span>

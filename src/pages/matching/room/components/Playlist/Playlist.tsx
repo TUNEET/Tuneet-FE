@@ -1,6 +1,7 @@
 import playCircleIcon from '@/assets/icons/play-circle.svg'
 import type { PlaylistSong } from '@/types/room'
 import * as S from './Playlist.styles'
+import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 type PlaylistProps = {
   songs: PlaylistSong[]
@@ -13,7 +14,7 @@ export function Playlist({ songs, onPlayClick }: PlaylistProps) {
       {songs.map((song) => (
         <S.Item key={song.id}>
           <S.Song>
-            <img src={song.albumImageUrl} alt="" />
+            <CoverImage src={song.albumImageUrl} />
             <span>
               {song.title} - {song.artist}
             </span>

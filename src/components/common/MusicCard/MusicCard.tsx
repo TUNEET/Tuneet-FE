@@ -5,6 +5,7 @@ import userRoseIcon from '@/assets/icons/user-rose.svg'
 import { Badge } from '@/components/common/Badge/Badge'
 import * as S from './MusicCard.styles'
 import type { MusicCardTone } from './MusicCard.styles'
+import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 const USER_ICONS = {
   blue: userBlueIcon,
@@ -67,7 +68,7 @@ export function MusicCard({
       <S.Body>
         <S.Main $expanded={expanded}>
           <S.Thumbnail $playable={playable}>
-            <img src={image} alt="" />
+            <CoverImage src={image} />
           </S.Thumbnail>
           <S.Texts>
             <S.Title $tone={tone} $expanded={expanded}>
