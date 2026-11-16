@@ -96,24 +96,17 @@ export const MusicChip = styled.div`
   }
 `
 
-export const Platforms = styled.div`
+export const PlatformButton = styled.button`
   position: absolute;
   top: ${shiftTop('51.7rem', SETUP_SHIFT.platform)};
   right: 3rem;
   left: 3rem;
   display: flex;
-  flex-direction: column;
-  gap: 2rem;
-`
-
-export const PlatformButton = styled.button`
-  display: flex;
   align-items: center;
   gap: 1rem;
-  width: 100%;
   height: 4.8rem;
   padding: 0 1rem;
-  border-radius: 1000px;
+  border-radius: 10000px;
   ${glassSurface}
 `
 
