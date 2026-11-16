@@ -5,6 +5,7 @@ import { findSentLetter } from '@/apis/letter'
 import { getMyProfile } from '@/apis/user'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
+import { LETTER_ERROR_MESSAGES } from '@/constants/letterErrors'
 import { ROUTES } from '@/constants/routes'
 import { useToast } from '@/hooks/useToast'
 import type { SentLetter, SentLetterLocationState } from '@/types/letter'
@@ -43,7 +44,7 @@ export function SentLetterDetailPage() {
         .catch((error) => {
           if (isStale) return
           setFetchedLetter(null)
-          showToast(getApiError(error).message)
+          showToast(getApiError(error, LETTER_ERROR_MESSAGES).message)
         })
     }
 
