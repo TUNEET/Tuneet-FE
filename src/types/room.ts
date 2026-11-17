@@ -21,7 +21,11 @@ export type RoomMember = {
   similarity: number | null
 }
 
-export type PlaylistSong = Song & { id: number }
+// deletable: 내가 추가한 곡이거나 내가 방장이면 삭제할 수 있다
+export type PlaylistSong = Song & { id: number; deletable: boolean }
+
+// 방 피드 글 (내 글이면 삭제할 수 있다)
+export type RoomPost = Feed & { isMine: boolean }
 
 export type RoomDetail = Room & {
   myRole: RoomMemberRole
@@ -29,7 +33,7 @@ export type RoomDetail = Room & {
   hasPassword: boolean
   memberCount: number
   members: RoomMember[]
-  feeds: Feed[]
+  feeds: RoomPost[]
   playlist: PlaylistSong[]
 }
 
@@ -95,6 +99,8 @@ export type RoomPlaylistResponse = {
   roomPlaylistId: number
   position: number
   music: RoomMusicResponse
+  isMine: boolean
+  deletable: boolean
 }
 
 export type RoomHomeResponse = RoomSummaryResponse & {

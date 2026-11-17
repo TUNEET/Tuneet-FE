@@ -19,3 +19,21 @@ export const Empty = styled.p`
   text-align: center;
   color: ${({ theme }) => theme.colors.textPlaceholder};
 `
+
+export const LeaveArea = styled.div`
+  position: relative;
+  align-self: center;
+  margin-top: 1rem;
+`
+
+export const LeaveButton = styled.button`
+  padding: 1rem;
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-weight: 500;
+  color: ${({ theme }) => theme.colors.danger};
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+`
