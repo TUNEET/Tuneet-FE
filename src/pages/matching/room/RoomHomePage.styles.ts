@@ -22,13 +22,13 @@ export const Empty = styled.p`
 
 export const LeaveArea = styled.div`
   position: relative;
-  align-self: center;
-  margin-top: 1rem;
+  align-self: flex-end;
+  margin-top: -1rem;
 `
 
 export const LeaveButton = styled.button`
-  padding: 1rem;
-  font-size: ${({ theme }) => theme.fontSize.sm};
+  padding: 0.6rem 0;
+  font-size: ${({ theme }) => theme.fontSize.xs};
   font-weight: 500;
   color: ${({ theme }) => theme.colors.danger};
 
