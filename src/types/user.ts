@@ -60,3 +60,14 @@ export type SettingsResponse = {
 }
 
 export type MyPageLocationState = { view?: 'settings' }
+
+export type BlockedUserResponse = {
+  userId: number
+  nickname: string
+  profilePicture: string | null
+  blockedAt: string
+}
+
+export type BlockedUserListResponse = {
+  blockedUsers: BlockedUserResponse[]
+}
