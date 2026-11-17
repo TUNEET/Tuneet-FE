@@ -5,6 +5,7 @@ import editIcon from '@/assets/icons/edit-icon.svg'
 import feedIcon from '@/assets/icons/feed-icon.svg'
 import characterImage from '@/assets/images/character-feed.webp'
 import userBlueIcon from '@/assets/icons/user-blue.svg'
+import { HeartIcon } from '@/components/common/HeartIcon/HeartIcon'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { Modal } from '@/components/common/Modal/Modal'
 import type { Feed } from '@/types/feed'
@@ -15,6 +16,8 @@ import * as S from './FeedDetailModal.styles'
 type FeedDetailModalProps = {
   feed: Feed
   isMine?: boolean
+  liked?: boolean
+  onLikeToggle?: () => void
   onEdit?: () => void
   onDelete?: () => void | Promise<void>
   commentable?: boolean
@@ -24,6 +27,8 @@ type FeedDetailModalProps = {
 export function FeedDetailModal({
   feed,
   isMine = false,
+  liked = false,
+  onLikeToggle,
   onEdit,
   onDelete,
   commentable = true,
@@ -70,7 +75,19 @@ export function FeedDetailModal({
           <S.Time>{formatTimeAgo(createdAt)}</S.Time>
         </S.Top>
 
-        <S.Album src={song.albumImageUrl} alt="" />
+        <S.AlbumWrap>
+          <S.Album src={song.albumImageUrl} alt="" />
+          {onLikeToggle && (
+            <S.LikeButton
+              type="button"
+              aria-label={liked ? '좋아요 취소' : '좋아요'}
+              aria-pressed={liked}
+              onClick={onLikeToggle}
+            >
+              <HeartIcon filled={liked} size={12} />
+            </S.LikeButton>
+          )}
+        </S.AlbumWrap>
         <S.SongTitle id="feed-detail-title">{song.title}</S.SongTitle>
         <S.Artist>{song.artist}</S.Artist>
         {content && <S.Comment>{content}</S.Comment>}

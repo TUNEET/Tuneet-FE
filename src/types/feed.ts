@@ -12,6 +12,7 @@ export type Feed = {
 export type ExploreFeed = Feed & {
   song: SearchedSong
   isMine: boolean
+  liked: boolean
 }
 
 export type FeedMusicResponse = {
@@ -19,6 +20,7 @@ export type FeedMusicResponse = {
   title: string
   artist: string
   musicPicture: string | null
+  liked?: boolean | null
 }
 
 export type FeedResponse = {

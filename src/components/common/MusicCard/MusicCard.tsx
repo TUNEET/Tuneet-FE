@@ -20,9 +20,11 @@ export type MusicCardProps = {
   image: string
   title: string
   description: string
+  descriptionAction?: ReactNode
   playable?: boolean
   badge?: string
   action?: ReactNode
+  actionAlign?: 'start' | 'end'
   expanded?: boolean
   onClick?: () => void
 }
@@ -34,9 +36,11 @@ export function MusicCard({
   image,
   title,
   description,
+  descriptionAction,
   playable = false,
   badge,
   action,
+  actionAlign = 'end',
   expanded = false,
   onClick,
 }: MusicCardProps) {
@@ -74,12 +78,15 @@ export function MusicCard({
             <S.Title $tone={tone} $expanded={expanded}>
               {title}
             </S.Title>
-            <S.Description $tone={tone} $expanded={expanded}>
-              {description}
-            </S.Description>
+            <S.DescriptionRow>
+              <S.Description $tone={tone} $expanded={expanded}>
+                {description}
+              </S.Description>
+              {descriptionAction}
+            </S.DescriptionRow>
           </S.Texts>
         </S.Main>
-        {action && <S.Action>{action}</S.Action>}
+        {action && <S.Action $align={actionAlign}>{action}</S.Action>}
       </S.Body>
     </S.Card>
   )

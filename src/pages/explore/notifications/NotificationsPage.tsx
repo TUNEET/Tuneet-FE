@@ -1,21 +1,23 @@
 import { useCallback, useRef, useState } from 'react'
 import { getApiError } from '@/apis/error'
 import { deleteAllSentFeedMessages, getSentFeedMessages } from '@/apis/feed'
+import { deleteAllNotifications, getReceivedFeedMessages } from '@/apis/notification'
+import { LikeButton } from '@/components/common/LikeButton/LikeButton'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { MusicCard } from '@/components/common/MusicCard/MusicCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SegmentTabs } from '@/components/common/SegmentTabs/SegmentTabs'
 import { useCursorList } from '@/hooks/useCursorList'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
+import { useMusicLike } from '@/hooks/useMusicLike'
 import { useToast } from '@/hooks/useToast'
-import { MOCK_NOTIFICATIONS } from '@/mocks/data'
 import * as S from '@/pages/explore/ExplorePage.styles'
-import type { SentNotification } from '@/types/notification'
+import type { ReceivedNotification, SentNotification } from '@/types/notification'
 import { formatTimeAgo } from '@/utils/format'
 
 type CommentTab = 'received' | 'sent'
 
-const getSentId = ({ id }: SentNotification) => id
+const getNotificationId = ({ id }: ReceivedNotification | SentNotification) => id
 
 const TABS = [
   { value: 'received', label: '받은 코멘트' },
@@ -38,31 +40,37 @@ const TAB_TEXT: Record<CommentTab, { confirm: string; toast: string; empty: stri
 export function NotificationsPage() {
   const showToast = useToast()
   const [tab, setTab] = useState<CommentTab>('received')
-  const [received, setReceived] = useState(MOCK_NOTIFICATIONS)
   const handleLoadError = useCallback(
     (error: unknown) => showToast(getApiError(error).message),
     [showToast],
   )
-  const sent = useCursorList(getSentFeedMessages, getSentId, handleLoadError)
+  const received = useCursorList(getReceivedFeedMessages, getNotificationId, handleLoadError)
+  const sent = useCursorList(getSentFeedMessages, getNotificationId, handleLoadError)
+  const current = tab === 'received' ? received : sent
   const sentinelRef = useInfiniteScroll<HTMLDivElement>(
-    sent.loadMore,
-    tab === 'sent' && sent.hasNext && !sent.isLoading,
+    current.loadMore,
+    current.hasNext && !current.isLoading,
   )
+  // 두 탭에 같은 곡이 있으면 하트를 함께 맞춘다
+  const handleLikeToggle = useMusicLike((update) => {
+    received.setItems(update)
+    sent.setItems(update)
+  })
   const [isClearOpen, setIsClearOpen] = useState(false)
   const headerRef = useRef<HTMLDivElement>(null)
   const closeClear = useCallback(() => setIsClearOpen(false), [])
   const notifications =
     tab === 'received'
-      ? received.map(({ senderNickname, ...rest }) => ({
+      ? received.items.map(({ senderNickname, ...rest }) => ({
           ...rest,
-          nickname: senderNickname,
+          nickname: `발신자 | ${senderNickname}`,
         }))
       : sent.items.map(({ receiverNickname, ...rest }) => ({
           ...rest,
-          nickname: receiverNickname,
+          nickname: `수신자 | ${receiverNickname}`,
         }))
   const isEmpty = notifications.length === 0
-  const isLoading = tab === 'sent' && sent.isLoading
+  const isLoading = current.isLoading
 
   const handleTabChange = (next: CommentTab) => {
     closeClear()
@@ -76,7 +84,8 @@ export function NotificationsPage() {
         await deleteAllSentFeedMessages()
         sent.setItems([])
       } else {
-        setReceived([])
+        await deleteAllNotifications()
+        received.setItems([])
       }
       showToast(TAB_TEXT[tab].toast)
     } catch (error) {
@@ -117,21 +126,27 @@ export function NotificationsPage() {
             !isLoading && <S.Empty>{TAB_TEXT[tab].empty}</S.Empty>
           ) : (
             <S.CardList>
-              {notifications.map(({ id, nickname, message, song, createdAt }) => (
-                <MusicCard
-                  key={id}
-                  tone="blue"
-                  nickname={nickname}
-                  meta={formatTimeAgo(createdAt)}
-                  image={song.albumImageUrl}
-                  title={message}
-                  description={`${song.title} - ${song.artist}`}
-                  playable
-                />
-              ))}
+              {notifications.map((notification) => {
+                const { id, nickname, message, song, liked, createdAt } = notification
+                return (
+                  <MusicCard
+                    key={id}
+                    tone="blue"
+                    nickname={nickname}
+                    meta={formatTimeAgo(createdAt)}
+                    image={song.albumImageUrl}
+                    title={message}
+                    description={`${song.title} - ${song.artist}`}
+                    descriptionAction={
+                      <LikeButton liked={liked} onToggle={() => handleLikeToggle(notification)} />
+                    }
+                    playable
+                  />
+                )
+              })}
             </S.CardList>
           )}
-          {tab === 'sent' && <div ref={sentinelRef} aria-hidden />}
+          <div ref={sentinelRef} aria-hidden />
         </S.Section>
       </S.ExploreSheet>
     </S.Page>

@@ -8,6 +8,7 @@ import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { getExploreEditPath, ROUTES } from '@/constants/routes'
 import { useCursorList } from '@/hooks/useCursorList'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
+import { useMusicLike } from '@/hooks/useMusicLike'
 import { useToast } from '@/hooks/useToast'
 import type { ExploreFeed } from '@/types/feed'
 import { takePrefetched } from '@/utils/prefetch'
@@ -23,23 +24,27 @@ const fetchFeedPage = (cursor?: number) =>
 export function ExplorePage() {
   const navigate = useNavigate()
   const showToast = useToast()
-  const [selectedFeed, setSelectedFeed] = useState<ExploreFeed | null>(null)
+  const [selectedFeedId, setSelectedFeedId] = useState<number | null>(null)
 
   const handleLoadError = useCallback(
     (error: unknown) => showToast(getApiError(error).message),
     [showToast],
   )
   const feeds = useCursorList(fetchFeedPage, getFeedId, handleLoadError)
+  // 목록에서 꺼내 써야 상세에서 누른 좋아요가 카드에도 바로 반영된다
+  const selectedFeed = feeds.items.find((feed) => feed.id === selectedFeedId) ?? null
   const sentinelRef = useInfiniteScroll<HTMLDivElement>(
     feeds.loadMore,
     feeds.hasNext && !feeds.isLoading,
   )
 
+  const handleLikeToggle = useMusicLike((update) => feeds.setItems(update))
+
   const handleDelete = async (feedId: number) => {
     try {
       await deleteFeed(feedId)
       feeds.setItems((prev) => prev.filter((feed) => feed.id !== feedId))
-      setSelectedFeed(null)
+      setSelectedFeedId(null)
       showToast('게시물을 삭제했어요')
     } catch (error) {
       showToast(getApiError(error).message)
@@ -64,7 +69,13 @@ export function ExplorePage() {
           {feeds.items.length > 0 ? (
             <S.CardList>
               {feeds.items.map((feed) => (
-                <FeedCard key={feed.id} feed={feed} onClick={() => setSelectedFeed(feed)} />
+                <FeedCard
+                  key={feed.id}
+                  feed={feed}
+                  liked={feed.liked}
+                  onClick={() => setSelectedFeedId(feed.id)}
+                  onLikeToggle={() => handleLikeToggle(feed)}
+                />
               ))}
             </S.CardList>
           ) : (
@@ -80,9 +91,11 @@ export function ExplorePage() {
         <FeedDetailModal
           feed={selectedFeed}
           isMine={selectedFeed.isMine}
+          liked={selectedFeed.liked}
+          onLikeToggle={() => handleLikeToggle(selectedFeed)}
           onEdit={() => navigate(getExploreEditPath(selectedFeed.id))}
           onDelete={() => handleDelete(selectedFeed.id)}
-          onClose={() => setSelectedFeed(null)}
+          onClose={() => setSelectedFeedId(null)}
         />
       )}
     </S.Page>
