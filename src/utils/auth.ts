@@ -1,4 +1,5 @@
 import { invalidateRequest } from './requestCache'
+import { clearLastSeenComment } from './commentAlert'
 
 const ACCESS_TOKEN_KEY = 'accessToken'
 const REFRESH_TOKEN_KEY = 'refreshToken'
@@ -30,6 +31,7 @@ export function setTokens({
 export function clearTokens() {
   // 로그아웃·탈퇴하면 이전 계정 데이터를 지운다
   invalidateRequest()
+  clearLastSeenComment()
   localStorage.removeItem(ACCESS_TOKEN_KEY)
   localStorage.removeItem(REFRESH_TOKEN_KEY)
 }
