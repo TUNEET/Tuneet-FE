@@ -12,7 +12,6 @@ import noteLargeIcon from '@/assets/icons/nrk_music-note-solid-expressive.svg'
 import waveformLargeIcon from '@/assets/icons/withicons_audio-waveform-duo-1.svg'
 import waveformSmallIcon from '@/assets/icons/withicons_audio-waveform-duo.svg'
 import characterImage from '@/assets/images/character-profile.png'
-import { MOCK_PROFILE_ARTISTS } from '@/mocks/profile'
 import { SongChip as Song, SongNote } from '@/styles/song'
 import { ChevronIcon } from '@/components/common/ChevronIcon/ChevronIcon'
 import * as S from './ProfileComplete.styles'
@@ -66,7 +65,7 @@ export function ProfileComplete({
   previewUrl,
   songs,
   genres,
-  artists = MOCK_PROFILE_ARTISTS,
+  artists = [],
   frame = 'image',
   isEditing = false,
   onNicknameChange,
