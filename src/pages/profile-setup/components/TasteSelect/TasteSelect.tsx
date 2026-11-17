@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import trashIcon from '@/assets/icons/trash_icon.svg'
 import { ArtistSearchSheet } from '@/components/common/ArtistSearchSheet/ArtistSearchSheet'
-import { GENRE_ROWS } from '@/constants/genres'
 import type { ProfileArtist } from '@/types/music'
 import * as S from './TasteSelect.styles'
 import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 type TasteSelectProps = {
+  genreRows: string[][]
   selectedGenres: string[]
   onToggleGenre: (genre: string) => void
   selectedArtists: ProfileArtist[]
@@ -15,6 +15,7 @@ type TasteSelectProps = {
 }
 
 export function TasteSelect({
+  genreRows,
   selectedGenres,
   onToggleGenre,
   selectedArtists,
@@ -43,7 +44,7 @@ export function TasteSelect({
           </S.PanelHeader>
           {isGenreOpen && (
             <S.GenreRows>
-              {GENRE_ROWS.map((row) => (
+              {genreRows.map((row) => (
                 <S.GenreRow key={row[0]}>
                   {row.map((genre) => {
                     const isSelected = selectedGenres.includes(genre)
