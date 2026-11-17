@@ -30,6 +30,19 @@ export const requestFcmToken = async (): Promise<string | null> => {
   }
 }
 
+/** 이미 알림을 허용한 기기의 현재 토큰. 권한을 새로 묻지 않는다 */
+export const getCurrentFcmToken = async (): Promise<string | null> => {
+  try {
+    if (!(await isSupported()) || Notification.permission !== 'granted') return null
+    return await getToken(getMessaging(app), {
+      vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+    })
+  } catch (e) {
+    console.error('FCM 토큰 조회 실패', e)
+    return null
+  }
+}
+
 /** 앱이 열려 있을 때(포그라운드) 받은 메시지 처리 */
 export const listenForegroundMessage = async (cb: (title?: string, body?: string) => void) => {
   if (!(await isSupported())) return

@@ -43,3 +43,11 @@ export async function getReceivedFeedMessages(cursor?: number, size = PAGE_SIZE)
 export async function deleteAllNotifications() {
   await instance.delete<ApiResponse<unknown>>('/api/v1/notifications')
 }
+
+export async function registerFcmToken(token: string) {
+  await instance.post<ApiResponse<unknown>>('/api/v1/notifications/tokens', { token })
+}
+
+export async function deleteFcmToken(token: string) {
+  await instance.delete<ApiResponse<unknown>>('/api/v1/notifications/tokens', { data: { token } })
+}
