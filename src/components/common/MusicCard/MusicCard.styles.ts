@@ -73,6 +73,7 @@ export const Body = styled.div`
 export const Main = styled.div<{ $expanded: boolean }>`
   display: flex;
   align-items: ${({ $expanded }) => ($expanded ? 'flex-start' : 'center')};
+  flex: 1;
   gap: 1rem;
   min-width: 0;
 `
@@ -123,6 +124,7 @@ export const Thumbnail = styled.div<{ $playable: boolean }>`
 
 export const Texts = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 0.6rem;
   min-width: 0;
@@ -134,6 +136,14 @@ export const Title = styled.p<{ $tone: MusicCardTone; $expanded: boolean }>`
   font-weight: 600;
   line-height: 1.8rem;
   color: ${({ theme, $tone }) => theme.colors[TONES[$tone].title]};
+`
+
+export const DescriptionRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.6rem;
+  min-width: 0;
 `
 
 export const Description = styled.p<{ $tone: MusicCardTone; $expanded: boolean }>`
