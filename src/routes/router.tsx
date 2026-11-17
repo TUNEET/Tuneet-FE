@@ -60,6 +60,8 @@ export const router = createBrowserRouter([
                           import('@/pages/explore/ExplorePage').then((m) => ({
                             Component: m.ExplorePage,
                           })),
+                        // 상세 모달은 ExplorePage가 URL을 보고 직접 띄워서 목록 스크롤·상태가 유지된다
+                        children: [{ path: ROUTES.feed }],
                       },
                       {
                         path: ROUTES.exploreWrite,
