@@ -7,11 +7,15 @@ import { ThemeProvider } from 'styled-components'
 import { router } from '@/routes/router'
 import { GlobalStyle } from '@/styles/GlobalStyle'
 import { theme } from '@/styles/theme'
+import { isLoggedIn } from '@/utils/auth'
 import { reloadOnceForChunkError } from '@/utils/chunkReload'
+import { syncPushToken } from '@/utils/push'
 
 window.addEventListener('vite:preloadError', (event) => {
   if (reloadOnceForChunkError()) event.preventDefault()
 })
+
+if (isLoggedIn()) void syncPushToken()
 
 // TODO(FCM 테스트용): 확인 끝나면 삭제
 if (import.meta.env.DEV) {
