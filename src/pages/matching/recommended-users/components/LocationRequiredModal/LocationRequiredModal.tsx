@@ -8,7 +8,6 @@ import * as S from './LocationRequiredModal.styles'
 const LOCATION_TERM = TERMS.find(({ id }) => id === 'locationConsent')
 
 type LocationRequiredModalProps = {
-  // 이미 위치정보 수집·이용에 동의했는지
   isAgreed: boolean
   isSubmitting: boolean
   // agreeNow: 모달에서 동의를 새로 체크했는지
@@ -16,7 +15,6 @@ type LocationRequiredModalProps = {
   onLater: () => void
 }
 
-// 위치 동의 없이 가입했거나 위치 노출을 꺼 둔 사용자가 추천 사용자를 보려 할 때 띄운다
 export function LocationRequiredModal({
   isAgreed,
   isSubmitting,

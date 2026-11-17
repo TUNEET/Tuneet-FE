@@ -1,23 +1,33 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { getApiError } from '@/apis/error'
+import { PAGE_DATA } from '@/apis/pageData'
 import { getMyProfile } from '@/apis/user'
 import characterSleeping from '@/assets/images/character-sleeping.png'
 import { FeedCard } from '@/components/common/FeedCard/FeedCard'
 import { ProfileCard } from '@/components/common/ProfileCard/ProfileCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
-import { TasteMatchCard } from '@/components/common/TasteMatchCard/TasteMatchCard'
+import { RecommendationList } from '@/components/common/RecommendationList/RecommendationList'
 import { getUserProfilePath, ROUTES } from '@/constants/routes'
+import { useRecommendations } from '@/hooks/useRecommendations'
 import { useToast } from '@/hooks/useToast'
-import { MOCK_FEEDS, MOCK_TASTE_MATCHES } from '@/mocks/data'
+import type { ExploreFeed } from '@/types/feed'
 import type { Profile } from '@/types/user'
 import { toProfileCard } from '@/utils/profile'
 import * as S from './HomePage.styles'
+import { takePrefetched } from '@/utils/prefetch'
+
+const HOME_RECOMMENDATION_COUNT = 2
+
+type FeedState =
+  { status: 'loading' } | { status: 'error' } | { status: 'done'; items: ExploreFeed[] }
 
 export function HomePage() {
   const navigate = useNavigate()
   const showToast = useToast()
   const [profile, setProfile] = useState<Profile | null>(null)
+  const [feeds, setFeeds] = useState<FeedState>({ status: 'loading' })
+  const { state: recommendations } = useRecommendations()
 
   useEffect(() => {
     let isStale = false
@@ -34,6 +44,22 @@ export function HomePage() {
       isStale = true
     }
   }, [showToast])
+
+  useEffect(() => {
+    let isStale = false
+
+    takePrefetched(PAGE_DATA.homeFeeds)
+      .then(({ items }) => {
+        if (!isStale) setFeeds({ status: 'done', items })
+      })
+      .catch(() => {
+        if (!isStale) setFeeds({ status: 'error' })
+      })
+
+    return () => {
+      isStale = true
+    }
+  }, [])
 
   return (
     <S.Page>
@@ -59,11 +85,17 @@ export function HomePage() {
             actionLabel="더보기"
             onActionClick={() => navigate(ROUTES.explore)}
           />
-          <S.CardList>
-            {MOCK_FEEDS.map((feed) => (
-              <FeedCard key={feed.id} feed={feed} />
-            ))}
-          </S.CardList>
+          {feeds.status === 'done' && feeds.items.length > 0 && (
+            <S.CardList>
+              {feeds.items.map((feed) => (
+                <FeedCard key={feed.id} feed={feed} onClick={() => navigate(ROUTES.explore)} />
+              ))}
+            </S.CardList>
+          )}
+          {feeds.status === 'done' && feeds.items.length === 0 && (
+            <S.Empty>아직 올라온 피드가 없어요</S.Empty>
+          )}
+          {feeds.status === 'error' && <S.Empty>피드를 불러오지 못했어요</S.Empty>}
         </S.Section>
 
         <S.Section>
@@ -72,15 +104,11 @@ export function HomePage() {
             actionLabel="더보기"
             onActionClick={() => navigate(ROUTES.matching)}
           />
-          <S.CardList>
-            {MOCK_TASTE_MATCHES.map((match) => (
-              <TasteMatchCard
-                key={match.id}
-                match={match}
-                onClick={() => navigate(getUserProfilePath(match.id))}
-              />
-            ))}
-          </S.CardList>
+          <RecommendationList
+            state={recommendations}
+            limit={HOME_RECOMMENDATION_COUNT}
+            onUserClick={(match) => navigate(getUserProfilePath(match.id))}
+          />
         </S.Section>
       </S.Sheet>
 

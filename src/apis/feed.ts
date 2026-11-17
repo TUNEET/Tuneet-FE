@@ -49,7 +49,6 @@ export async function getFeed(feedId: number) {
   return toExploreFeed(data.data)
 }
 
-/** 작성·수정 응답에는 isMine이 없어 내 글로 채운다 */
 export async function createFeed(body: FeedContentRequest) {
   const { data } = await instance.post<ApiResponse<FeedResponse>>('/api/v1/feeds', body)
   return toExploreFeed(data.data, true)
@@ -91,7 +90,6 @@ export async function getSentFeedMessages(cursor?: number, size = PAGE_SIZE) {
   return { items: data.data.messages.map(toSentNotification), hasNext: data.data.hasNext }
 }
 
-/** 내 보낸 목록에서만 지워지고 받는 사람의 알림은 남는다 */
 export async function deleteAllSentFeedMessages() {
   await instance.delete<ApiResponse<unknown>>('/api/v1/feeds/messages/sent')
 }

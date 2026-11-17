@@ -15,3 +15,11 @@ export const SleepingCharacter = styled.img`
   width: 6.3rem;
   height: 5rem;
 `
+
+export const Empty = styled.p`
+  padding: 4rem 0;
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-weight: 500;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.textPlaceholder};
+`

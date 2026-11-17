@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { getApiError } from '@/apis/error'
 import { deleteFeed, getFeeds } from '@/apis/feed'
+import { PAGE_DATA } from '@/apis/pageData'
 import { FeedCard } from '@/components/common/FeedCard/FeedCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { getExploreEditPath, ROUTES } from '@/constants/routes'
@@ -10,10 +11,15 @@ import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import { useMusicLike } from '@/hooks/useMusicLike'
 import { useToast } from '@/hooks/useToast'
 import type { ExploreFeed } from '@/types/feed'
+import { takePrefetched } from '@/utils/prefetch'
 import { FeedDetailModal } from './components/FeedDetailModal/FeedDetailModal'
 import * as S from './ExplorePage.styles'
 
 const getFeedId = ({ id }: ExploreFeed) => id
+
+// 첫 페이지는 탭에 들어올 때 미리 받아 둔 요청을 이어받는다
+const fetchFeedPage = (cursor?: number) =>
+  cursor === undefined ? takePrefetched(PAGE_DATA.exploreFeeds) : getFeeds(cursor)
 
 export function ExplorePage() {
   const navigate = useNavigate()
@@ -27,6 +33,7 @@ export function ExplorePage() {
   const feeds = useCursorList(getFeeds, getFeedId, handleLoadError)
   // 목록에서 꺼내 써야 상세에서 누른 좋아요가 카드에도 바로 반영된다
   const selectedFeed = feeds.items.find((feed) => feed.id === selectedFeedId) ?? null
+  const feeds = useCursorList(fetchFeedPage, getFeedId, handleLoadError)
   const sentinelRef = useInfiniteScroll<HTMLDivElement>(
     feeds.loadMore,
     feeds.hasNext && !feeds.isLoading,
