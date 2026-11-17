@@ -1,6 +1,5 @@
 import characterProfile from '@/assets/images/character-profile.png'
 import type { Feed } from '@/types/feed'
-import type { TasteMatch } from '@/types/match'
 import type { ReceivedNotification, SentNotification } from '@/types/notification'
 import type { Song } from '@/types/song'
 import type { Profile } from '@/types/user'
@@ -100,32 +99,4 @@ export const MOCK_SENT_NOTIFICATIONS: SentNotification[] = [
     song: { title: 'not the same', artist: 'ROSÉ', albumImageUrl: 'https://placehold.co/80x80' },
     createdAt: minutesAgo(90),
   },
-]
-
-export const MOCK_TASTE_MATCHES: TasteMatch[] = [
-  {
-    id: 1,
-    nickname: '커피 마시는 튜니',
-    similarity: 92,
-    distanceKm: 1.2,
-    matchType: 'artist',
-    name: 'RESCENE',
-    imageUrl: 'https://placehold.co/80x80',
-  },
-  {
-    id: 2,
-    nickname: '산책하는 튜니',
-    similarity: 87,
-    distanceKm: 3.5,
-    matchType: 'song',
-    name: '3am',
-    imageUrl: 'https://placehold.co/80x80',
-  },
-]
-
-export const MOCK_RECOMMENDED_USERS: TasteMatch[] = [
-  ...MOCK_TASTE_MATCHES,
-  { ...MOCK_TASTE_MATCHES[0], id: 3 },
-  { ...MOCK_TASTE_MATCHES[1], id: 4 },
-  { ...MOCK_TASTE_MATCHES[0], id: 5 },
 ]
