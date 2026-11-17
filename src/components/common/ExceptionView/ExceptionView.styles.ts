@@ -6,7 +6,6 @@ export const Content = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* 시안처럼 화면 가운데보다 살짝 위에 놓는다 */
   padding-bottom: 6rem;
   text-align: center;
 `
