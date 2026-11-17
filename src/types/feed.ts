@@ -9,7 +9,6 @@ export type Feed = {
   createdAt: string
 }
 
-/** 탐색 피드: 수정할 때 다시 보낼 노래 id와 내 글 여부를 함께 가진다 */
 export type ExploreFeed = Feed & {
   song: SearchedSong
   isMine: boolean

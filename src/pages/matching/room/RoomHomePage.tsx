@@ -1,4 +1,8 @@
+import { useCallback, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
+import { getApiError } from '@/apis/error'
+import { leaveRoom } from '@/apis/room'
+import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { Divider } from '@/components/common/Divider/Divider'
 import { FeedCard } from '@/components/common/FeedCard/FeedCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
@@ -10,6 +14,7 @@ import {
   getRoomPlaylistPath,
   ROUTES,
 } from '@/constants/routes'
+import { useToast } from '@/hooks/useToast'
 import { MemberCarousel } from './components/MemberCarousel/MemberCarousel'
 import { Playlist } from './components/Playlist/Playlist'
 import { RoomHeader } from './components/RoomHeader/RoomHeader'
@@ -18,8 +23,13 @@ import * as S from './RoomHomePage.styles'
 
 export function RoomHomePage() {
   const navigate = useNavigate()
+  const showToast = useToast()
   const { room, isLoading } = useRoomHome()
   const goToMatching = () => navigate(ROUTES.matching)
+  const [isLeaveOpen, setIsLeaveOpen] = useState(false)
+  const [isLeaving, setIsLeaving] = useState(false)
+  const leaveButtonRef = useRef<HTMLButtonElement>(null)
+  const closeLeave = useCallback(() => setIsLeaveOpen(false), [])
 
   if (isLoading) return <SheetPage>{null}</SheetPage>
 
@@ -30,6 +40,21 @@ export function RoomHomePage() {
         <S.Empty>방을 찾을 수 없어요</S.Empty>
       </SheetPage>
     )
+  }
+
+  // 방장이 나가면 백엔드가 다른 멤버에게 방장을 넘기고, 남은 멤버가 없으면 방을 지운다
+  const handleLeave = async () => {
+    if (isLeaving) return
+    closeLeave()
+    setIsLeaving(true)
+    try {
+      await leaveRoom(room.id)
+      showToast('방에서 나갔어요')
+      navigate(ROUTES.matching, { replace: true })
+    } catch (error) {
+      showToast(getApiError(error).message)
+      setIsLeaving(false)
+    }
   }
 
   return (
@@ -78,6 +103,27 @@ export function RoomHomePage() {
           <S.Empty>아직 담긴 노래가 없어요</S.Empty>
         )}
       </S.Section>
+
+      <S.LeaveArea>
+        <S.LeaveButton
+          ref={leaveButtonRef}
+          type="button"
+          aria-expanded={isLeaveOpen}
+          disabled={isLeaving}
+          onClick={() => setIsLeaveOpen((prev) => !prev)}
+        >
+          나가기
+        </S.LeaveButton>
+        <ConfirmPopover
+          open={isLeaveOpen}
+          message="방에서 나가시겠어요?"
+          confirmLabel="방 나가기"
+          onConfirm={handleLeave}
+          onClose={closeLeave}
+          anchorRef={leaveButtonRef}
+          placement="top"
+        />
+      </S.LeaveArea>
     </SheetPage>
   )
 }
