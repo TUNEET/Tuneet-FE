@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router'
+import eyeClosedIcon from '@/assets/icons/deye.svg'
+import eyeIcon from '@/assets/icons/eye.svg'
 import youtubeMusicIcon from '@/assets/icons/youtube_Music.svg'
 import logo from '@/assets/images/logo.svg'
 import { login } from '@/apis/auth'
@@ -30,6 +32,7 @@ export function LoginPage() {
   const navigate = useNavigate()
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -69,7 +72,9 @@ export function LoginPage() {
       <form onSubmit={handleSubmit} noValidate>
         <S.Fields>
           {FIELDS.map(({ id, label, type, placeholder, autoComplete }) => {
-            const showError = errorMessage && id === 'password'
+            const isPassword = type === 'password'
+            const InputComponent = isPassword ? S.PasswordInput : S.Input
+            const showError = errorMessage && isPassword
 
             return (
               <S.Field key={id}>
@@ -81,16 +86,32 @@ export function LoginPage() {
                     </S.FieldError>
                   )}
                 </S.LabelRow>
-                <S.Input
-                  id={id}
-                  name={id}
-                  type={type}
-                  placeholder={placeholder}
-                  autoComplete={autoComplete}
-                  aria-invalid={Boolean(errorMessage)}
-                  aria-describedby={errorMessage ? 'login-error' : undefined}
-                  onChange={() => setErrorMessage(null)}
-                />
+                <S.InputBox>
+                  <InputComponent
+                    id={id}
+                    name={id}
+                    type={isPassword && isPasswordVisible ? 'text' : type}
+                    placeholder={placeholder}
+                    autoComplete={autoComplete}
+                    aria-invalid={Boolean(errorMessage)}
+                    aria-describedby={errorMessage ? 'login-error' : undefined}
+                    onChange={() => setErrorMessage(null)}
+                  />
+                  {isPassword && (
+                    <S.EyeButton
+                      type="button"
+                      aria-label={`${label} ${isPasswordVisible ? '숨기기' : '표시'}`}
+                      aria-pressed={isPasswordVisible}
+                      onClick={() => setIsPasswordVisible((prev) => !prev)}
+                    >
+                      {isPasswordVisible ? (
+                        <img src={eyeIcon} alt="" width={16} height={12} />
+                      ) : (
+                        <img src={eyeClosedIcon} alt="" width={14} height={6} />
+                      )}
+                    </S.EyeButton>
+                  )}
+                </S.InputBox>
               </S.Field>
             )
           })}

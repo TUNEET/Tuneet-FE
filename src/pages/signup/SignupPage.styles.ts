@@ -1,17 +1,20 @@
 import styled from 'styled-components'
-import { Page as BasePage, Input, shiftTop } from '@/styles/authPage'
+import { Page as BasePage, shiftTop } from '@/styles/authPage'
 import { glass } from '@/styles/glass'
 
 export {
   Blob,
   Description,
+  EyeButton,
   Field,
   FieldError,
   Heading,
   Input,
+  InputBox,
   Label,
   LabelRow,
   Logo,
+  PasswordInput,
 } from '@/styles/authPage'
 export { Checkbox, Term, TermDetail, TermLabel } from '@/styles/term'
 
@@ -29,39 +32,6 @@ export const Fields = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
-`
-
-export const InputBox = styled.div`
-  position: relative;
-`
-
-export const PasswordInput = styled(Input)`
-  padding-right: 5rem;
-  font-family:
-    'PasswordMask',
-    'Pretendard Variable',
-    Pretendard,
-    -apple-system,
-    BlinkMacSystemFont,
-    system-ui,
-    'Apple SD Gothic Neo',
-    'Malgun Gothic',
-    sans-serif;
-
-  &::-ms-reveal {
-    display: none;
-  }
-`
-
-export const EyeButton = styled.button`
-  position: absolute;
-  top: 0.5rem;
-  right: 0.6rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 4rem;
-  height: 4rem;
 `
 
 export const Terms = styled.div`

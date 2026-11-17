@@ -4,13 +4,16 @@ import { Page as BasePage, shiftTop } from '@/styles/authPage'
 export {
   Blob,
   Description,
+  EyeButton,
   Field,
   FieldError,
   Heading,
   Input,
+  InputBox,
   Label,
   LabelRow,
   Logo,
+  PasswordInput,
 } from '@/styles/authPage'
 
 const LOGIN_SHIFT = 0.6
