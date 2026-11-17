@@ -157,28 +157,25 @@ export function ProfileSetupPage() {
     setPreviewUrl(URL.createObjectURL(file))
   }
 
-  const submitNickname = async () => {
-    if (isSavingProfile) return
+  // 닉네임과 사진을 저장하고 저장됐는지 돌려준다 (닉네임은 꼭 있어야 해서 건너뛸 때도 먼저 저장한다)
+  const saveProfile = async () => {
+    if (isSavingProfile) return false
 
     const trimmedNickname = nickname.trim()
     if (!trimmedNickname) {
       setNicknameError(NICKNAME_ERROR_MESSAGES.empty)
-      return
+      return false
     }
 
     const isNicknameChanged = savedProfile?.nickname !== trimmedNickname
     const isImageChanged = savedProfile?.imageFile !== imageFile
-
-    if (!isNicknameChanged && !isImageChanged) {
-      setStep('music')
-      return
-    }
+    if (!isNicknameChanged && !isImageChanged) return true
 
     setIsSavingProfile(true)
     try {
       if (isNicknameChanged && !(await checkNicknameAvailability(trimmedNickname))) {
         setNicknameError(NICKNAME_ERROR_MESSAGES.duplicated)
-        return
+        return false
       }
 
       const profilePicture = imageFile ? await uploadImage(imageFile, 'PROFILE') : undefined
@@ -186,13 +183,22 @@ export function ProfileSetupPage() {
 
       setSavedProfile({ nickname: trimmedNickname, imageFile })
       setNickname(trimmedNickname)
-      setStep('music')
+      return true
     } catch (error) {
       const { message, fields } = getApiError(error)
       setNicknameError(fields.nickname ?? message)
+      return false
     } finally {
       setIsSavingProfile(false)
     }
+  }
+
+  const submitNickname = async () => {
+    if (await saveProfile()) setStep('music')
+  }
+
+  const skipAfterNickname = async () => {
+    if (await saveProfile()) finishSetup()
   }
 
   const removeSong = (song: ProfileMusic) => {
@@ -329,7 +335,7 @@ export function ProfileSetupPage() {
             onMusicChange={setMusic}
             onPrev={() => setStep('profile')}
             onNext={isMusicStep ? submitMusic : submitNickname}
-            onLater={finishSetup}
+            onLater={isMusicStep ? finishSetup : skipAfterNickname}
           />
         </SetupStepLayout>
       )
