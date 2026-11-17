@@ -1,13 +1,15 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { getApiError } from '@/apis/error'
+import { getBlockedUsers, unblockUser } from '@/apis/user'
 import blockIcon from '@/assets/icons/block.svg'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
-import { MOCK_BLOCKED_USERS } from '@/mocks/data'
+import { useToast } from '@/hooks/useToast'
+import type { BlockedUserResponse } from '@/types/user'
+import { formatDate } from '@/utils/format'
 import * as S from './BlockedUsers.styles'
 
-type BlockedUser = (typeof MOCK_BLOCKED_USERS)[number]
-
 type BlockedUserRowProps = {
-  user: BlockedUser
+  user: BlockedUserResponse
   isConfirmOpen: boolean
   onToggleConfirm: () => void
   onCloseConfirm: () => void
@@ -26,11 +28,12 @@ function BlockedUserRow({
   return (
     <S.Row>
       <S.Avatar aria-hidden>
-        <img src={blockIcon} alt="" width={20} height={20} />
+        {user.profilePicture && <S.Photo src={user.profilePicture} />}
+        <S.BlockIcon src={blockIcon} alt="" width={20} height={20} />
       </S.Avatar>
       <S.Info>
         <S.Nickname>{user.nickname}</S.Nickname>
-        <S.BlockedDate>{user.blockedDate} 차단</S.BlockedDate>
+        <S.BlockedDate>{formatDate(user.blockedAt)} 차단</S.BlockedDate>
       </S.Info>
       <S.UnblockButton
         ref={unblockButtonRef}
@@ -59,13 +62,40 @@ type BlockedUsersProps = {
 }
 
 export function BlockedUsers({ onExit }: BlockedUsersProps) {
-  const [users, setUsers] = useState(MOCK_BLOCKED_USERS)
+  const showToast = useToast()
+  const [users, setUsers] = useState<BlockedUserResponse[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const [confirmUserId, setConfirmUserId] = useState<number | null>(null)
   const closeConfirm = useCallback(() => setConfirmUserId(null), [])
 
-  const unblockUser = (id: number) => {
+  useEffect(() => {
+    let isStale = false
+
+    getBlockedUsers()
+      .then((data) => {
+        if (!isStale) setUsers(data)
+      })
+      .catch((error) => {
+        if (!isStale) showToast(getApiError(error).message)
+      })
+      .finally(() => {
+        if (!isStale) setIsLoading(false)
+      })
+
+    return () => {
+      isStale = true
+    }
+  }, [showToast])
+
+  const handleUnblock = async (userId: number) => {
     closeConfirm()
-    setUsers((current) => current.filter((user) => user.id !== id))
+    try {
+      await unblockUser(userId)
+      setUsers((current) => current.filter((user) => user.userId !== userId))
+      showToast('차단을 해제했어요')
+    } catch (error) {
+      showToast(getApiError(error).message)
+    }
   }
 
   return (
@@ -77,20 +107,24 @@ export function BlockedUsers({ onExit }: BlockedUsersProps) {
             나가기
           </S.ExitButton>
         </S.Header>
-        <S.List>
-          {users.map((user) => (
-            <BlockedUserRow
-              key={user.id}
-              user={user}
-              isConfirmOpen={confirmUserId === user.id}
-              onToggleConfirm={() =>
-                setConfirmUserId((current) => (current === user.id ? null : user.id))
-              }
-              onCloseConfirm={closeConfirm}
-              onUnblock={() => unblockUser(user.id)}
-            />
-          ))}
-        </S.List>
+        {users.length > 0 ? (
+          <S.List>
+            {users.map((user) => (
+              <BlockedUserRow
+                key={user.userId}
+                user={user}
+                isConfirmOpen={confirmUserId === user.userId}
+                onToggleConfirm={() =>
+                  setConfirmUserId((current) => (current === user.userId ? null : user.userId))
+                }
+                onCloseConfirm={closeConfirm}
+                onUnblock={() => handleUnblock(user.userId)}
+              />
+            ))}
+          </S.List>
+        ) : (
+          !isLoading && <S.Empty>차단한 사용자가 없어요</S.Empty>
+        )}
       </S.Section>
     </S.BlockedSheet>
   )
