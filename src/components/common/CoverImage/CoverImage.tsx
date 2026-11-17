@@ -19,7 +19,6 @@ export function CoverImage({ src, alt = '', style, ...props }: CoverImageProps) 
       alt={alt}
       decoding="async"
       {...props}
-      // 이미지가 도착하기 전에도 빈칸 대신 단색 자리가 보이게 한다
       style={{ backgroundColor: theme.colors.border, ...style }}
       src={isUnavailable ? FALLBACK_SRC : src}
       onError={() => {
