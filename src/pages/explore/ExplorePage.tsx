@@ -30,10 +30,9 @@ export function ExplorePage() {
     (error: unknown) => showToast(getApiError(error).message),
     [showToast],
   )
-  const feeds = useCursorList(getFeeds, getFeedId, handleLoadError)
+  const feeds = useCursorList(fetchFeedPage, getFeedId, handleLoadError)
   // 목록에서 꺼내 써야 상세에서 누른 좋아요가 카드에도 바로 반영된다
   const selectedFeed = feeds.items.find((feed) => feed.id === selectedFeedId) ?? null
-  const feeds = useCursorList(fetchFeedPage, getFeedId, handleLoadError)
   const sentinelRef = useInfiniteScroll<HTMLDivElement>(
     feeds.loadMore,
     feeds.hasNext && !feeds.isLoading,
