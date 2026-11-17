@@ -1,13 +1,13 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { getApiError } from '@/apis/error'
 import { deleteFeed, getFeeds } from '@/apis/feed'
-import { likeMusic, unlikeMusic } from '@/apis/music'
 import { FeedCard } from '@/components/common/FeedCard/FeedCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { getExploreEditPath, ROUTES } from '@/constants/routes'
 import { useCursorList } from '@/hooks/useCursorList'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
+import { useMusicLike } from '@/hooks/useMusicLike'
 import { useToast } from '@/hooks/useToast'
 import type { ExploreFeed } from '@/types/feed'
 import { FeedDetailModal } from './components/FeedDetailModal/FeedDetailModal'
@@ -32,27 +32,7 @@ export function ExplorePage() {
     feeds.hasNext && !feeds.isLoading,
   )
 
-  const pendingLikesRef = useRef(new Set<string>())
-
-  // 좋아요는 곡 단위라 같은 곡을 올린 피드의 하트도 함께 바뀐다
-  const setSongLiked = (musicId: string, liked: boolean) =>
-    feeds.setItems((prev) =>
-      prev.map((feed) => (feed.song.musicId === musicId ? { ...feed, liked } : feed)),
-    )
-
-  const handleLikeToggle = async ({ song: { musicId }, liked }: ExploreFeed) => {
-    if (pendingLikesRef.current.has(musicId)) return
-    pendingLikesRef.current.add(musicId)
-    setSongLiked(musicId, !liked)
-    try {
-      await (liked ? unlikeMusic(musicId) : likeMusic(musicId))
-    } catch (error) {
-      setSongLiked(musicId, liked)
-      showToast(getApiError(error).message)
-    } finally {
-      pendingLikesRef.current.delete(musicId)
-    }
-  }
+  const handleLikeToggle = useMusicLike((update) => feeds.setItems(update))
 
   const handleDelete = async (feedId: number) => {
     try {
