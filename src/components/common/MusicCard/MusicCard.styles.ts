@@ -77,9 +77,10 @@ export const Main = styled.div<{ $expanded: boolean }>`
   min-width: 0;
 `
 
-export const Action = styled.div`
+export const Action = styled.div<{ $align: 'start' | 'end' }>`
   display: flex;
   flex-shrink: 0;
+  align-self: ${({ $align }) => ($align === 'start' ? 'flex-start' : 'flex-end')};
 `
 
 export const Thumbnail = styled.div<{ $playable: boolean }>`
