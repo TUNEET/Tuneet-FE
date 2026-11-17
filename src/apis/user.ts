@@ -8,7 +8,13 @@ import type {
   SignUpResponse,
 } from '@/types/auth'
 import type { OtherUserProfileResponse, SettingsResponse } from '@/types/user'
+import { cachedRequest, invalidateRequest } from '@/utils/requestCache'
 import { instance } from './instance'
+
+const MY_PROFILE_KEY = 'myProfile'
+// 내 정보는 여러 화면에서 쓰므로 잠깐 저장해 두고 같이 쓴다 (프로필을 바꾸면 바로 지운다)
+const MY_PROFILE_TTL_MS = 60_000
+const invalidateMyProfile = () => invalidateRequest(MY_PROFILE_KEY)
 
 export async function signUp(body: SignUpRequest) {
   const { data } = await instance.post<ApiResponse<SignUpResponse>>('/api/v1/users', body)
@@ -33,28 +39,39 @@ export async function checkNicknameAvailability(nickname: string) {
 
 export async function addProfile(body: ProfileAddRequest) {
   const { data } = await instance.patch<ApiResponse<ProfileAddResponse>>('/api/v1/users/me', body)
+  invalidateMyProfile()
   return data.data
 }
 
 export async function replaceGenres(genres: string[]) {
   await instance.put<ApiResponse<unknown>>('/api/v1/users/me/genres', { genres })
+  invalidateMyProfile()
 }
 
 export async function replaceArtists(artistIds: string[]) {
   await instance.put<ApiResponse<unknown>>('/api/v1/users/me/artists', { artistIds })
+  invalidateMyProfile()
 }
 
 export async function replaceMusics(musicIds: string[]) {
   await instance.put<ApiResponse<unknown>>('/api/v1/users/me/musics', { musicIds })
+  invalidateMyProfile()
 }
 
 export async function updateProfileMusic(musicId: string) {
   await instance.put<ApiResponse<unknown>>('/api/v1/users/me/profile-music', { musicId })
+  invalidateMyProfile()
 }
 
-export async function getMyProfile() {
-  const { data } = await instance.get<ApiResponse<MyProfileResponse>>('/api/v1/users')
-  return data.data
+export function getMyProfile() {
+  return cachedRequest(
+    MY_PROFILE_KEY,
+    async () => {
+      const { data } = await instance.get<ApiResponse<MyProfileResponse>>('/api/v1/users')
+      return data.data
+    },
+    MY_PROFILE_TTL_MS,
+  )
 }
 
 export async function getUserProfile(userId: number) {
