@@ -166,6 +166,13 @@ export const router = createBrowserRouter([
                           })),
                       },
                       {
+                        path: ROUTES.roomFeedWrite,
+                        lazy: () =>
+                          import('@/pages/matching/room/feed-write/RoomFeedWritePage').then(
+                            (m) => ({ Component: m.RoomFeedWritePage }),
+                          ),
+                      },
+                      {
                         path: ROUTES.roomPlaylist,
                         lazy: () =>
                           import('@/pages/matching/room/playlist/RoomPlaylistPage').then((m) => ({

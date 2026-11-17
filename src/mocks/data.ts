@@ -1,60 +1,12 @@
-import characterProfile from '@/assets/images/character-profile.png'
-import type { Feed } from '@/types/feed'
-import type { TasteMatch } from '@/types/match'
-import type { ReceivedNotification, SentNotification } from '@/types/notification'
-import type { Song } from '@/types/song'
-import type { Profile } from '@/types/user'
+import type { ReceivedNotification } from '@/types/notification'
 
 const minutesAgo = (minutes: number) => new Date(Date.now() - minutes * 60 * 1000).toISOString()
-
-export const MOCK_PROFILE: Profile = {
-  nickname: '튜니',
-  characterImageUrl: characterProfile,
-  song: { title: 'Pretty Girl', artist: 'RESCENE' },
-  genres: ['K-POP', 'POP', 'HIP-HOP'],
-  artists: ['RESCENE', 'ROSÉ', 'Travis Scott'],
-}
-
-export const MOCK_FEEDS: Feed[] = [
-  {
-    id: 1,
-    nickname: '노래하는 튜니',
-    song: { title: 'not the same', artist: 'ROSÉ', albumImageUrl: 'https://placehold.co/80x80' },
-    content: '요즘 출퇴근길마다 무한 반복 중..',
-    createdAt: minutesAgo(3),
-  },
-  {
-    id: 2,
-    nickname: '기타치는 튜니',
-    song: {
-      title: 'SICKO MODE',
-      artist: 'Travis Scott',
-      albumImageUrl: 'https://placehold.co/80x80',
-    },
-    content: '졸릴 땐 이게 최고!',
-    createdAt: minutesAgo(12),
-  },
-]
-
-export const MOCK_EXPLORE_FEEDS: Feed[] = [
-  ...MOCK_FEEDS,
-  { ...MOCK_FEEDS[0], id: 3, createdAt: minutesAgo(20) },
-  { ...MOCK_FEEDS[1], id: 4, createdAt: minutesAgo(45) },
-  { ...MOCK_FEEDS[0], id: 5, createdAt: minutesAgo(60) },
-  { ...MOCK_FEEDS[1], id: 6, createdAt: minutesAgo(120) },
-]
 
 export const MOCK_BLOCKED_USERS = Array.from({ length: 5 }, (_, index) => ({
   id: index + 1,
   nickname: '산책하는 튜니',
   blockedDate: '2026. 11. 21',
 }))
-
-export const MOCK_WRITE_SONG: Song = {
-  title: 'Pretty Girl',
-  artist: 'RESCENE',
-  albumImageUrl: 'https://placehold.co/24x24',
-}
 
 export const MOCK_NOTIFICATIONS: ReceivedNotification[] = [
   {
@@ -84,48 +36,3 @@ export const MOCK_INCOMING_COMMENT = {
   senderNickname: '노래하는 튜니',
   createdAt: minutesAgo(0),
 }
-
-export const MOCK_SENT_NOTIFICATIONS: SentNotification[] = [
-  {
-    id: 101,
-    receiverNickname: '산책하는 튜니',
-    message: '이 노래 들으면서 걸어보세요!',
-    song: { title: 'Pretty Girl', artist: 'RESCENE', albumImageUrl: 'https://placehold.co/80x80' },
-    createdAt: minutesAgo(5),
-  },
-  {
-    id: 102,
-    receiverNickname: '커피 마시는 튜니',
-    message: '잔잔해서 작업할 때 듣기 좋아요.',
-    song: { title: 'not the same', artist: 'ROSÉ', albumImageUrl: 'https://placehold.co/80x80' },
-    createdAt: minutesAgo(90),
-  },
-]
-
-export const MOCK_TASTE_MATCHES: TasteMatch[] = [
-  {
-    id: 1,
-    nickname: '커피 마시는 튜니',
-    similarity: 92,
-    distanceKm: 1.2,
-    matchType: 'artist',
-    name: 'RESCENE',
-    imageUrl: 'https://placehold.co/80x80',
-  },
-  {
-    id: 2,
-    nickname: '산책하는 튜니',
-    similarity: 87,
-    distanceKm: 3.5,
-    matchType: 'song',
-    name: '3am',
-    imageUrl: 'https://placehold.co/80x80',
-  },
-]
-
-export const MOCK_RECOMMENDED_USERS: TasteMatch[] = [
-  ...MOCK_TASTE_MATCHES,
-  { ...MOCK_TASTE_MATCHES[0], id: 3 },
-  { ...MOCK_TASTE_MATCHES[1], id: 4 },
-  { ...MOCK_TASTE_MATCHES[0], id: 5 },
-]

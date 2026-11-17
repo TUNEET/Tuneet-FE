@@ -53,7 +53,6 @@ export function MyPage() {
   const [isTasteOpen, setIsTasteOpen] = useState(false)
   const [isSavedOpen, setIsSavedOpen] = useState(false)
   const [confirmType, setConfirmType] = useState<'delete' | 'logout' | null>(null)
-  // 위치 서비스 안내 모달 등에서 '설정으로 이동'으로 들어오면 설정을 바로 연다
   const [subView, setSubView] = useState<'blocked' | 'settings' | null>(
     locationState?.view === 'settings' ? 'settings' : null,
   )

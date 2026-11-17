@@ -7,7 +7,6 @@ type ModalProps = {
   onClose: () => void
   closeLabel?: string
   labelledBy?: string
-  // 모달 안에 닫기 버튼이 따로 있으면 false로 아래 닫기 버튼을 숨긴다
   showCloseButton?: boolean
   children: ReactNode
 }

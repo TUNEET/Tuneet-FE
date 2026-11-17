@@ -17,6 +17,7 @@ type FeedDetailModalProps = {
   isMine?: boolean
   onEdit?: () => void
   onDelete?: () => void | Promise<void>
+  commentable?: boolean
   onClose: () => void
 }
 
@@ -25,6 +26,7 @@ export function FeedDetailModal({
   isMine = false,
   onEdit,
   onDelete,
+  commentable = true,
   onClose,
 }: FeedDetailModalProps) {
   const { nickname, song, content, createdAt } = feed
@@ -33,6 +35,7 @@ export function FeedDetailModal({
   const [isCommenting, setIsCommenting] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const closeDelete = () => setIsDeleteOpen(false)
+  const hasActions = isMine || commentable
 
   const handleDelete = async () => {
     closeDelete()
@@ -79,29 +82,41 @@ export function FeedDetailModal({
           </S.PlatformButton>
         </S.Listen>
 
-        <S.Divider />
-        <S.Actions>
-          {isMine ? (
-            <>
-              <S.ActionButton type="button" aria-label="수정" onClick={onEdit}>
-                <img src={editIcon} alt="" width={16} height={16} />
-              </S.ActionButton>
-              <S.ActionButton
-                ref={deleteButtonRef}
-                type="button"
-                aria-label="삭제"
-                aria-expanded={isDeleteOpen}
-                onClick={() => setIsDeleteOpen((isOpen) => !isOpen)}
-              >
-                <img src={deleteIcon} alt="" width={26} height={26} />
-              </S.ActionButton>
-            </>
-          ) : (
-            <S.ActionButton type="button" aria-label="코멘트" onClick={() => setIsCommenting(true)}>
-              <img src={feedIcon} alt="" width={26} height={26} />
-            </S.ActionButton>
-          )}
-        </S.Actions>
+        {hasActions && (
+          <>
+            <S.Divider />
+            <S.Actions>
+              {isMine ? (
+                <>
+                  {onEdit && (
+                    <S.ActionButton type="button" aria-label="수정" onClick={onEdit}>
+                      <img src={editIcon} alt="" width={16} height={16} />
+                    </S.ActionButton>
+                  )}
+                  <S.ActionButton
+                    ref={deleteButtonRef}
+                    type="button"
+                    aria-label="삭제"
+                    aria-expanded={isDeleteOpen}
+                    onClick={() => setIsDeleteOpen((isOpen) => !isOpen)}
+                  >
+                    <img src={deleteIcon} alt="" width={26} height={26} />
+                  </S.ActionButton>
+                </>
+              ) : (
+                commentable && (
+                  <S.ActionButton
+                    type="button"
+                    aria-label="코멘트"
+                    onClick={() => setIsCommenting(true)}
+                  >
+                    <img src={feedIcon} alt="" width={26} height={26} />
+                  </S.ActionButton>
+                )
+              )}
+            </S.Actions>
+          </>
+        )}
         <ConfirmPopover
           open={isDeleteOpen}
           message="게시물을 삭제하시겠어요?"

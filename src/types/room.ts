@@ -21,7 +21,9 @@ export type RoomMember = {
   similarity: number | null
 }
 
-export type PlaylistSong = Song & { id: number }
+export type PlaylistSong = Song & { id: number; deletable: boolean }
+
+export type RoomPost = Feed & { isMine: boolean }
 
 export type RoomDetail = Room & {
   myRole: RoomMemberRole
@@ -29,7 +31,7 @@ export type RoomDetail = Room & {
   hasPassword: boolean
   memberCount: number
   members: RoomMember[]
-  feeds: Feed[]
+  feeds: RoomPost[]
   playlist: PlaylistSong[]
 }
 
@@ -95,6 +97,8 @@ export type RoomPlaylistResponse = {
   roomPlaylistId: number
   position: number
   music: RoomMusicResponse
+  isMine: boolean
+  deletable: boolean
 }
 
 export type RoomHomeResponse = RoomSummaryResponse & {
