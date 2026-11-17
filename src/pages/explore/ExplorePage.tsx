@@ -18,13 +18,15 @@ const getFeedId = ({ id }: ExploreFeed) => id
 export function ExplorePage() {
   const navigate = useNavigate()
   const showToast = useToast()
-  const [selectedFeed, setSelectedFeed] = useState<ExploreFeed | null>(null)
+  const [selectedFeedId, setSelectedFeedId] = useState<number | null>(null)
 
   const handleLoadError = useCallback(
     (error: unknown) => showToast(getApiError(error).message),
     [showToast],
   )
   const feeds = useCursorList(getFeeds, getFeedId, handleLoadError)
+  // 목록에서 꺼내 써야 상세에서 누른 좋아요가 카드에도 바로 반영된다
+  const selectedFeed = feeds.items.find((feed) => feed.id === selectedFeedId) ?? null
   const sentinelRef = useInfiniteScroll<HTMLDivElement>(
     feeds.loadMore,
     feeds.hasNext && !feeds.isLoading,
@@ -56,7 +58,7 @@ export function ExplorePage() {
     try {
       await deleteFeed(feedId)
       feeds.setItems((prev) => prev.filter((feed) => feed.id !== feedId))
-      setSelectedFeed(null)
+      setSelectedFeedId(null)
       showToast('게시물을 삭제했어요')
     } catch (error) {
       showToast(getApiError(error).message)
@@ -85,7 +87,7 @@ export function ExplorePage() {
                   key={feed.id}
                   feed={feed}
                   liked={feed.liked}
-                  onClick={() => setSelectedFeed(feed)}
+                  onClick={() => setSelectedFeedId(feed.id)}
                   onLikeToggle={() => handleLikeToggle(feed)}
                 />
               ))}
@@ -103,9 +105,11 @@ export function ExplorePage() {
         <FeedDetailModal
           feed={selectedFeed}
           isMine={selectedFeed.isMine}
+          liked={selectedFeed.liked}
+          onLikeToggle={() => handleLikeToggle(selectedFeed)}
           onEdit={() => navigate(getExploreEditPath(selectedFeed.id))}
           onDelete={() => handleDelete(selectedFeed.id)}
-          onClose={() => setSelectedFeed(null)}
+          onClose={() => setSelectedFeedId(null)}
         />
       )}
     </S.Page>
