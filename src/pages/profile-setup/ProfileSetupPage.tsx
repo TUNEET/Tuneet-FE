@@ -12,8 +12,8 @@ import {
 } from '@/apis/user'
 import { ChevronIcon } from '@/components/common/ChevronIcon/ChevronIcon'
 import { ProfileComplete } from '@/components/common/ProfileComplete/ProfileComplete'
-import { GENRE_NAMES } from '@/constants/genres'
 import { ROUTES } from '@/constants/routes'
+import { useGenres } from '@/hooks/useGenres'
 import { useToast } from '@/hooks/useToast'
 import { getMusicKey } from '@/types/music'
 import type { ProfileArtist, ProfileMusic } from '@/types/music'
@@ -52,6 +52,7 @@ export function ProfileSetupPage() {
   const [savedProfile, setSavedProfile] = useState<SavedProfile | null>(null)
   const [isSavingProfile, setIsSavingProfile] = useState(false)
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
+  const { rows: genreRows, toGenreName } = useGenres()
   const [selectedArtists, setSelectedArtists] = useState<ProfileArtist[]>([])
   const [isSavingTaste, setIsSavingTaste] = useState(false)
   const [isSavingSongs, setIsSavingSongs] = useState(false)
@@ -109,7 +110,7 @@ export function ProfileSetupPage() {
     setIsSavingTaste(true)
     try {
       await Promise.all([
-        replaceGenres(selectedGenres.map((genre) => GENRE_NAMES[genre] ?? genre)),
+        replaceGenres(selectedGenres.map(toGenreName)),
         replaceArtists(selectedArtists.flatMap(({ id }) => (id ? [id] : []))),
       ])
       setStep('song')
@@ -257,6 +258,7 @@ export function ProfileSetupPage() {
           onBack={() => setStep('platform')}
         >
           <TasteSelect
+            genreRows={genreRows}
             selectedGenres={selectedGenres}
             onToggleGenre={toggleGenre}
             selectedArtists={selectedArtists}

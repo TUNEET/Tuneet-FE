@@ -4,7 +4,6 @@ import trashIcon from '@/assets/icons/trash_icon.svg'
 import { ArtistSearchSheet } from '@/components/common/ArtistSearchSheet/ArtistSearchSheet'
 import { Modal } from '@/components/common/Modal/Modal'
 import { SongSearchSheet } from '@/components/common/SongSearchSheet/SongSearchSheet'
-import { GENRE_ROWS } from '@/constants/genres'
 import type { ProfileArtist, ProfileMusic } from '@/types/music'
 import * as S from './ProfileEditModal.styles'
 import { CoverImage } from '@/components/common/CoverImage/CoverImage'
@@ -12,6 +11,7 @@ import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 type ProfileEditModalProps = {
   selectedSong: ProfileMusic | null
   onSelectSong: (song: ProfileMusic) => void
+  genreRows: string[][]
   selectedGenres: string[]
   onToggleGenre: (genre: string) => void
   selectedArtists: ProfileArtist[]
@@ -35,6 +35,7 @@ function Chevron() {
 export function ProfileEditModal({
   selectedSong,
   onSelectSong,
+  genreRows,
   selectedGenres,
   onToggleGenre,
   selectedArtists,
@@ -89,7 +90,7 @@ export function ProfileEditModal({
               <S.PanelLabel>장르 선택</S.PanelLabel>
             </S.PanelHeader>
             <S.GenreRows>
-              {GENRE_ROWS.map((row) => (
+              {genreRows.map((row) => (
                 <S.GenreRow key={row[0]}>
                   {row.map((genre) => {
                     const isSelected = selectedGenres.includes(genre)

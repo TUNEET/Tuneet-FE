@@ -15,8 +15,8 @@ import {
 import settingIcon from '@/assets/icons/setting.svg'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { ProfileComplete } from '@/components/common/ProfileComplete/ProfileComplete'
-import { GENRE_NAMES } from '@/constants/genres'
 import { ROUTES } from '@/constants/routes'
+import { useGenres } from '@/hooks/useGenres'
 import { useToast } from '@/hooks/useToast'
 import type { MyProfileResponse } from '@/types/auth'
 import type { ProfileArtist, ProfileMusic } from '@/types/music'
@@ -40,6 +40,7 @@ export function MyPage() {
   const navigate = useNavigate()
   const locationState = useLocation().state as MyPageLocationState | null
   const showToast = useToast()
+  const { rows: genreRows, toGenreName } = useGenres()
   const [profile, setProfile] = useState<MyProfileResponse | null>(null)
   const [nickname, setNickname] = useState('')
   const [draftNickname, setDraftNickname] = useState(nickname)
@@ -202,7 +203,7 @@ export function MyPage() {
         })
       }
       if (isGenresChanged) {
-        await replaceGenres(draftGenres.map((genre) => GENRE_NAMES[genre] ?? genre))
+        await replaceGenres(draftGenres.map(toGenreName))
       }
       if (isSongChanged) {
         await updateProfileMusic(draftSongId)
@@ -412,6 +413,7 @@ export function MyPage() {
         <ProfileEditModal
           selectedSong={draftSong}
           onSelectSong={setDraftSong}
+          genreRows={genreRows}
           selectedGenres={draftGenres}
           onToggleGenre={toggleGenre}
           selectedArtists={draftArtists}
