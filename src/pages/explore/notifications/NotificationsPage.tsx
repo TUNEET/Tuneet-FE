@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { getApiError } from '@/apis/error'
 import { deleteAllSentFeedMessages, getSentFeedMessages } from '@/apis/feed'
 import { deleteAllNotifications, getReceivedFeedMessages } from '@/apis/notification'
@@ -13,6 +13,7 @@ import { useMusicLike } from '@/hooks/useMusicLike'
 import { useToast } from '@/hooks/useToast'
 import * as S from '@/pages/explore/ExplorePage.styles'
 import type { ReceivedNotification, SentNotification } from '@/types/notification'
+import { markCommentSeen } from '@/utils/commentAlert'
 import { formatTimeAgo } from '@/utils/format'
 
 type CommentTab = 'received' | 'sent'
@@ -47,6 +48,12 @@ export function NotificationsPage() {
   const received = useCursorList(getReceivedFeedMessages, getNotificationId, handleLoadError)
   const sent = useCursorList(getSentFeedMessages, getNotificationId, handleLoadError)
   const current = tab === 'received' ? received : sent
+  const latestReceivedId = received.items[0]?.id
+
+  // 받은 코멘트 목록을 봤으면 그 코멘트로는 알림을 다시 띄우지 않는다
+  useEffect(() => {
+    if (latestReceivedId) markCommentSeen(latestReceivedId)
+  }, [latestReceivedId])
   const sentinelRef = useInfiniteScroll<HTMLDivElement>(
     current.loadMore,
     current.hasNext && !current.isLoading,

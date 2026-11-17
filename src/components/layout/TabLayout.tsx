@@ -3,8 +3,10 @@ import { Outlet, useLocation, useNavigate } from 'react-router'
 import styled from 'styled-components'
 import { CommentAlert } from '@/components/common/CommentAlert/CommentAlert'
 import { ROUTES } from '@/constants/routes'
-import { MOCK_INCOMING_COMMENT } from '@/mocks/data'
+import { getReceivedFeedMessages } from '@/apis/notification'
 import { preloadTabPages } from '@/routes/preloadTabPages'
+import type { ReceivedNotification } from '@/types/notification'
+import { getLastSeenCommentId, markCommentSeen } from '@/utils/commentAlert'
 import { BottomNav } from './BottomNav'
 import { Header } from './Header'
 
@@ -16,9 +18,29 @@ export function TabLayout() {
     preloadTabPages()
   }, [])
   const isExplore = pathname.startsWith(ROUTES.explore)
-  const [incomingComment, setIncomingComment] = useState<typeof MOCK_INCOMING_COMMENT | null>(
-    MOCK_INCOMING_COMMENT,
-  )
+  const [incomingComment, setIncomingComment] = useState<ReceivedNotification | null>(null)
+
+  // 앱에 들어올 때 아직 안 본 새 코멘트가 있을 때만 알림을 띄운다
+  useEffect(() => {
+    let isStale = false
+
+    getReceivedFeedMessages()
+      .then(({ items }) => {
+        const latest = items[0]
+        if (isStale || !latest || latest.isRead || latest.id <= getLastSeenCommentId()) return
+        setIncomingComment(latest)
+      })
+      .catch(() => {})
+
+    return () => {
+      isStale = true
+    }
+  }, [])
+
+  const closeIncomingComment = () => {
+    if (incomingComment) markCommentSeen(incomingComment.id)
+    setIncomingComment(null)
+  }
 
   const toggle = (target: string, fallback: string) => {
     if (pathname !== target) {
@@ -53,10 +75,10 @@ export function TabLayout() {
           nickname={incomingComment.senderNickname}
           createdAt={incomingComment.createdAt}
           onConfirm={() => {
-            setIncomingComment(null)
+            closeIncomingComment()
             navigate(ROUTES.exploreNotifications)
           }}
-          onClose={() => setIncomingComment(null)}
+          onClose={closeIncomingComment}
         />
       )}
     </>

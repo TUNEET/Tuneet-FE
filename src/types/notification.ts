@@ -9,7 +9,7 @@ type BaseNotification = {
   createdAt: string
 }
 
-export type ReceivedNotification = BaseNotification & { senderNickname: string }
+export type ReceivedNotification = BaseNotification & { senderNickname: string; isRead: boolean }
 
 export type SentNotification = BaseNotification & { receiverNickname: string }
 

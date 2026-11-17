@@ -14,6 +14,7 @@ const toReceivedNotification = ({
   senderNickname,
   messageContent,
   music,
+  isRead,
   createdAt,
 }: NotificationResponse): ReceivedNotification => ({
   id: notificationId,
@@ -21,6 +22,7 @@ const toReceivedNotification = ({
   message: messageContent,
   song: toSearchedSong(music),
   liked: music.liked ?? false,
+  isRead,
   createdAt,
 })
 
