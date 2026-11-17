@@ -31,6 +31,7 @@ const TOGGLES: {
     key: 'pushEnabled',
     label: 'PUSH 알림 수신',
     description: '코멘트, 편지 알림을 받아요. (브라우저 알림 권한 필요)',
+    offNotice: '알림을 받을 수 없어요.',
   },
   {
     key: 'letterEnabled',
@@ -83,6 +84,7 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
       if (isPushOn) {
         await disablePush()
         setIsPushOn(false)
+        setOffNoticeKey('pushEnabled')
       } else {
         const result = await enablePush()
         if (result === 'enabled') setIsPushOn(true)
