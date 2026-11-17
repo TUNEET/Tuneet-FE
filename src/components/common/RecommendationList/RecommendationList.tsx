@@ -5,13 +5,11 @@ import * as S from './RecommendationList.styles'
 
 type RecommendationListProps = {
   state: RecommendationState
-  // 보여줄 최대 인원 (홈·매칭 탭은 2명)
   limit?: number
   onUserClick: (match: TasteMatch) => void
   onLetterClick?: (match: TasteMatch) => void
 }
 
-// 홈·매칭 탭·추천 목록에서 같이 쓰는 추천 사용자 카드 목록
 export function RecommendationList({
   state,
   limit,
