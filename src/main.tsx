@@ -7,11 +7,29 @@ import { ThemeProvider } from 'styled-components'
 import { router } from '@/routes/router'
 import { GlobalStyle } from '@/styles/GlobalStyle'
 import { theme } from '@/styles/theme'
+import { isLoggedIn } from '@/utils/auth'
 import { reloadOnceForChunkError } from '@/utils/chunkReload'
+import { syncPushToken } from '@/utils/push'
 
 window.addEventListener('vite:preloadError', (event) => {
   if (reloadOnceForChunkError()) event.preventDefault()
 })
+
+if (isLoggedIn()) void syncPushToken()
+
+// TODO(FCM 테스트용): 확인 끝나면 삭제
+if (import.meta.env.DEV) {
+  void import('@/utils/firebase').then(({ requestFcmToken, listenForegroundMessage }) => {
+    Object.assign(window, {
+      testFcm: async () => {
+        const token = await requestFcmToken()
+        console.log('FCM token:', token)
+        return token
+      },
+    })
+    void listenForegroundMessage((title, body) => console.log('[FCM 포그라운드]', title, body))
+  })
+}
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
