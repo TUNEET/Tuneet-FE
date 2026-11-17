@@ -6,6 +6,7 @@ export const ROUTES = {
   exploreWrite: '/explore/write',
   exploreEdit: '/explore/write/:feedId',
   exploreNotifications: '/explore/notifications',
+  feed: '/explore/feeds/:feedId',
   matching: '/matching',
   my: '/my',
   onboarding: '/onboarding',
@@ -31,6 +32,8 @@ export const ROUTES = {
 
 export const getExploreEditPath = (feedId: number) =>
   generatePath(ROUTES.exploreEdit, { feedId: String(feedId) })
+
+export const getFeedPath = (feedId: number) => generatePath(ROUTES.feed, { feedId: String(feedId) })
 
 export const getUserProfilePath = (userId: number) =>
   generatePath(ROUTES.userProfile, { userId: String(userId) })
