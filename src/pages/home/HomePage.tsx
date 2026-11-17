@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { getApiError } from '@/apis/error'
-import { getFeeds } from '@/apis/feed'
+import { PAGE_DATA } from '@/apis/pageData'
 import { getMyProfile } from '@/apis/user'
 import characterSleeping from '@/assets/images/character-sleeping.png'
 import { FeedCard } from '@/components/common/FeedCard/FeedCard'
@@ -15,8 +15,8 @@ import type { ExploreFeed } from '@/types/feed'
 import type { Profile } from '@/types/user'
 import { toProfileCard } from '@/utils/profile'
 import * as S from './HomePage.styles'
+import { takePrefetched } from '@/utils/prefetch'
 
-const HOME_FEED_COUNT = 2
 const HOME_RECOMMENDATION_COUNT = 2
 
 type FeedState =
@@ -48,7 +48,7 @@ export function HomePage() {
   useEffect(() => {
     let isStale = false
 
-    getFeeds(undefined, HOME_FEED_COUNT)
+    takePrefetched(PAGE_DATA.homeFeeds)
       .then(({ items }) => {
         if (!isStale) setFeeds({ status: 'done', items })
       })

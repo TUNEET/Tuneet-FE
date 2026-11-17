@@ -1,15 +1,20 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router'
 import styled from 'styled-components'
 import { CommentAlert } from '@/components/common/CommentAlert/CommentAlert'
 import { ROUTES } from '@/constants/routes'
 import { MOCK_INCOMING_COMMENT } from '@/mocks/data'
+import { preloadTabPages } from '@/routes/preloadTabPages'
 import { BottomNav } from './BottomNav'
 import { Header } from './Header'
 
 export function TabLayout() {
   const { pathname, key } = useLocation()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    preloadTabPages()
+  }, [])
   const isExplore = pathname.startsWith(ROUTES.explore)
   const [incomingComment, setIncomingComment] = useState<typeof MOCK_INCOMING_COMMENT | null>(
     MOCK_INCOMING_COMMENT,
