@@ -10,15 +10,26 @@ export function isPushEnabled() {
   return localStorage.getItem(PUSH_ENABLED_KEY) !== null
 }
 
-/** 권한을 받고 토큰을 서버에 등록한다. 권한 거부나 미지원 기기면 false */
-export async function enablePush() {
-  const { requestFcmToken } = await loadFirebase()
-  const token = await requestFcmToken()
-  if (!token) return false
+export type EnablePushResult = 'enabled' | 'denied' | 'unsupported'
+
+// 홈 화면에 추가하지 않은 iOS Safari, 인앱 브라우저 등은 웹 푸시 API 자체가 없다
+const canUseWebPush = () =>
+  'Notification' in window && 'serviceWorker' in navigator && 'PushManager' in window
+
+/** 권한을 받고 토큰을 서버에 등록한다 */
+export async function enablePush(): Promise<EnablePushResult> {
+  if (!canUseWebPush()) return 'unsupported'
+  // Safari는 탭 직후에만 권한 창을 띄워서 firebase를 불러오기 전에 먼저 묻는다
+  const permission = await Notification.requestPermission()
+  if (permission !== 'granted') return 'denied'
+
+  const { getCurrentFcmToken } = await loadFirebase()
+  const token = await getCurrentFcmToken()
+  if (!token) return 'unsupported'
 
   await registerFcmToken(token)
   localStorage.setItem(PUSH_ENABLED_KEY, 'true')
-  return true
+  return 'enabled'
 }
 
 /** 서버에서 이 기기 토큰을 지운다. 실패하면 켜진 상태를 그대로 둔다 */
@@ -33,6 +44,7 @@ export async function disablePush() {
 export async function syncPushToken() {
   if (!isPushEnabled()) return
   try {
+    if (!canUseWebPush()) throw new Error('웹 푸시 미지원')
     const { getCurrentFcmToken } = await loadFirebase()
     const token = await getCurrentFcmToken()
     // 브라우저 설정에서 알림을 막았으면 켜 둔 상태도 의미가 없다
