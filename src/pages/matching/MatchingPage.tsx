@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { getApiError } from '@/apis/error'
-import { getMyRooms } from '@/apis/room'
+import { PAGE_DATA } from '@/apis/pageData'
 import { Divider } from '@/components/common/Divider/Divider'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { RecommendationList } from '@/components/common/RecommendationList/RecommendationList'
@@ -11,6 +11,7 @@ import { useLetterQuota } from '@/hooks/useLetterQuota'
 import { useRecommendations } from '@/hooks/useRecommendations'
 import { useToast } from '@/hooks/useToast'
 import type { Room } from '@/types/room'
+import { takePrefetched } from '@/utils/prefetch'
 import { LetterSection } from './components/LetterSection/LetterSection'
 import { RoomSection } from './components/RoomSection/RoomSection'
 import * as S from './MatchingPage.styles'
@@ -27,7 +28,7 @@ export function MatchingPage() {
   useEffect(() => {
     let isStale = false
 
-    getMyRooms()
+    takePrefetched(PAGE_DATA.myRooms)
       .then((data) => {
         if (!isStale) setRooms(data)
       })
