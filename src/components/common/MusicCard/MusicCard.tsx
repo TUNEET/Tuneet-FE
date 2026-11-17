@@ -23,6 +23,7 @@ export type MusicCardProps = {
   playable?: boolean
   badge?: string
   action?: ReactNode
+  actionAlign?: 'start' | 'end'
   expanded?: boolean
   onClick?: () => void
 }
@@ -37,6 +38,7 @@ export function MusicCard({
   playable = false,
   badge,
   action,
+  actionAlign = 'end',
   expanded = false,
   onClick,
 }: MusicCardProps) {
@@ -79,7 +81,7 @@ export function MusicCard({
             </S.Description>
           </S.Texts>
         </S.Main>
-        {action && <S.Action>{action}</S.Action>}
+        {action && <S.Action $align={actionAlign}>{action}</S.Action>}
       </S.Body>
     </S.Card>
   )

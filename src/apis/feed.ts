@@ -28,6 +28,7 @@ const toExploreFeed = (
   content,
   createdAt,
   isMine: isMine ?? mine,
+  liked: music.liked ?? false,
 })
 
 export async function getFeeds(cursor?: number, size = PAGE_SIZE) {
