@@ -5,11 +5,14 @@ import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopove
 import { TermDetailModal } from '@/components/common/TermDetailModal/TermDetailModal'
 import { TERMS } from '@/constants/terms'
 import { useToast } from '@/hooks/useToast'
+import { disablePush, enablePush, isPushEnabled } from '@/utils/push'
+import type { PushBlockedReason } from '../PushPermissionModal/PushPermissionModal'
+import { PushPermissionModal } from '../PushPermissionModal/PushPermissionModal'
 import { toSettings } from './settings'
 import type { Settings } from './settings'
 import * as S from './SettingsPanel.styles'
 
-type ToggleKey = 'locationVisible' | 'letterEnabled' | 'platformLinked'
+type ToggleKey = 'locationVisible' | 'pushEnabled' | 'letterEnabled' | 'platformLinked'
 
 const TOGGLES: {
   key: ToggleKey
@@ -23,6 +26,12 @@ const TOGGLES: {
     label: '위치정보 노출',
     description: 'OFF로 설정하면 주변 사용자를 추천받을 수 없어요.',
     offNotice: '내 위치를 표시하지 않아요.',
+  },
+  {
+    key: 'pushEnabled',
+    label: 'PUSH 알림 수신',
+    description: '코멘트, 편지 알림을 받아요. (브라우저 알림 권한 필요)',
+    offNotice: '알림을 받을 수 없어요.',
   },
   {
     key: 'letterEnabled',
@@ -53,8 +62,13 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
   const [saveResult, setSaveResult] = useState<SaveResult | null>(null)
   const [openTermId, setOpenTermId] = useState<string | null>(null)
   const [offNoticeKey, setOffNoticeKey] = useState<ToggleKey | null>(null)
+  // 푸시는 서버 설정이 아니라 이 기기 설정이라 저장하기 없이 바로 켜고 끈다
+  const [isPushOn, setIsPushOn] = useState(isPushEnabled)
+  const [isPushPending, setIsPushPending] = useState(false)
+  const [pushBlockedReason, setPushBlockedReason] = useState<PushBlockedReason | null>(null)
   const toggleRefs = {
     locationVisible: useRef<HTMLButtonElement>(null),
+    pushEnabled: useRef<HTMLButtonElement>(null),
     letterEnabled: useRef<HTMLButtonElement>(null),
     platformLinked: useRef<HTMLButtonElement>(null),
   }
@@ -62,6 +76,26 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
   const saveButtonRef = useRef<HTMLButtonElement>(null)
   const closeSaveResult = useCallback(() => setSaveResult(null), [])
   const openTermDetail = TERMS.find(({ id }) => id === openTermId)?.detail
+
+  const handlePushToggle = async () => {
+    if (isPushPending) return
+    setIsPushPending(true)
+    try {
+      if (isPushOn) {
+        await disablePush()
+        setIsPushOn(false)
+        setOffNoticeKey('pushEnabled')
+      } else {
+        const result = await enablePush()
+        if (result === 'enabled') setIsPushOn(true)
+        else setPushBlockedReason(result)
+      }
+    } catch (error) {
+      showToast(getApiError(error).message)
+    } finally {
+      setIsPushPending(false)
+    }
+  }
 
   const handleSave = async () => {
     if (isSaving) return
@@ -100,7 +134,8 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
 
       <S.Options>
         {TOGGLES.map(({ key, label, description, offDescription, offNotice }) => {
-          const isOn = draft[key]
+          const isPush = key === 'pushEnabled'
+          const isOn = isPush ? isPushOn : draft[key]
 
           return (
             <S.Option key={key}>
@@ -112,8 +147,13 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
                   role="switch"
                   aria-checked={isOn}
                   aria-label={label}
+                  aria-busy={isPush && isPushPending}
                   $isOn={isOn}
                   onClick={() => {
+                    if (isPush) {
+                      void handlePushToggle()
+                      return
+                    }
                     setDraft((current) => ({ ...current, [key]: !isOn }))
                     setOffNoticeKey(isOn && offNotice ? key : null)
                   }}
@@ -196,6 +236,13 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
           tone="muted"
         />
       </S.SaveArea>
+
+      {pushBlockedReason && (
+        <PushPermissionModal
+          reason={pushBlockedReason}
+          onClose={() => setPushBlockedReason(null)}
+        />
+      )}
 
       {openTermDetail && (
         <TermDetailModal detail={openTermDetail} onClose={() => setOpenTermId(null)} />
