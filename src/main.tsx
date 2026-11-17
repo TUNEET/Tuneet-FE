@@ -19,10 +19,11 @@ if (isLoggedIn()) void syncPushToken()
 
 // TODO(FCM 테스트용): 확인 끝나면 삭제
 if (import.meta.env.DEV) {
-  void import('@/utils/firebase').then(({ requestFcmToken, listenForegroundMessage }) => {
+  void import('@/utils/firebase').then(({ getCurrentFcmToken, listenForegroundMessage }) => {
     Object.assign(window, {
       testFcm: async () => {
-        const token = await requestFcmToken()
+        await Notification.requestPermission()
+        const token = await getCurrentFcmToken()
         console.log('FCM token:', token)
         return token
       },

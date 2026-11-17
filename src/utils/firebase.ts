@@ -12,35 +12,13 @@ const firebaseConfig = {
 
 export const app = initializeApp(firebaseConfig)
 
-/** 알림 권한 요청 후 FCM 토큰 발급. 실패하거나 거부되면 null */
-export const requestFcmToken = async (): Promise<string | null> => {
-  try {
-    if (!(await isSupported())) return null
-
-    const permission = await Notification.requestPermission()
-    if (permission !== 'granted') return null
-
-    const messaging = getMessaging(app)
-    return await getToken(messaging, {
-      vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
-    })
-  } catch (e) {
-    console.error('FCM 토큰 발급 실패', e)
-    return null
-  }
-}
-
-/** 이미 알림을 허용한 기기의 현재 토큰. 권한을 새로 묻지 않는다 */
+/** 알림을 허용한 기기의 FCM 토큰. 권한은 묻지 않고, 허용 전이거나 미지원이면 null */
 export const getCurrentFcmToken = async (): Promise<string | null> => {
-  try {
-    if (!(await isSupported()) || Notification.permission !== 'granted') return null
-    return await getToken(getMessaging(app), {
-      vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
-    })
-  } catch (e) {
-    console.error('FCM 토큰 조회 실패', e)
-    return null
-  }
+  if (!('Notification' in window) || Notification.permission !== 'granted') return null
+  if (!(await isSupported())) return null
+  return getToken(getMessaging(app), {
+    vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+  })
 }
 
 /** 앱이 열려 있을 때(포그라운드) 받은 메시지 처리 */
