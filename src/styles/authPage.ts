@@ -109,3 +109,36 @@ export const Input = styled.input`
     -webkit-text-fill-color: ${({ theme }) => theme.colors.textHeading};
   }
 `
+
+export const InputBox = styled.div`
+  position: relative;
+`
+
+export const PasswordInput = styled(Input)`
+  padding-right: 5rem;
+  font-family:
+    'PasswordMask',
+    'Pretendard Variable',
+    Pretendard,
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    'Apple SD Gothic Neo',
+    'Malgun Gothic',
+    sans-serif;
+
+  &::-ms-reveal {
+    display: none;
+  }
+`
+
+export const EyeButton = styled.button`
+  position: absolute;
+  top: 0.5rem;
+  right: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+`
