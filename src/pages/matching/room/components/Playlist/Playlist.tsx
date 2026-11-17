@@ -9,7 +9,6 @@ import * as S from './Playlist.styles'
 type PlaylistProps = {
   songs: PlaylistSong[]
   onPlayClick?: (song: PlaylistSong) => void
-  // 넘기면 삭제할 수 있는 곡을 꾹 눌러 삭제할 수 있다
   onDelete?: (song: PlaylistSong) => void
 }
 

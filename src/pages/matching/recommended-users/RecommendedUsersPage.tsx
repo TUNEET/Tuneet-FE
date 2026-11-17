@@ -26,7 +26,6 @@ export function RecommendedUsersPage() {
   const goSettings = async (agreeNow: boolean) => {
     if (isSubmitting) return
 
-    // 모달에서 위치 동의를 체크했으면 먼저 저장하고 이동한다
     if (agreeNow) {
       setIsSubmitting(true)
       try {

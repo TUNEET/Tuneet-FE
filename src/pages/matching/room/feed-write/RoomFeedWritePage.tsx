@@ -16,7 +16,6 @@ import type { SearchedSong } from '@/types/music'
 
 const COMMENT_MAX_LENGTH = 100
 
-// 방 피드 글쓰기 (화면과 흐름은 탐색 글쓰기와 같다)
 export function RoomFeedWritePage() {
   const navigate = useNavigate()
   const showToast = useToast()

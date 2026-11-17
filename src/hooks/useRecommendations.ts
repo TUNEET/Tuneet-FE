@@ -10,7 +10,6 @@ import type { TasteMatch } from '@/types/match'
 import { getCurrentPosition } from '@/utils/geolocation'
 import { useToast } from './useToast'
 
-// notAgreed: 위치정보 수집·이용 미동의, hidden: 위치 노출 OFF
 export type LocationBlock = 'notAgreed' | 'hidden'
 
 export type RecommendationState =
@@ -19,7 +18,6 @@ export type RecommendationState =
   | { status: 'locationRequired'; block: LocationBlock }
   | { status: 'error' }
 
-// 앱을 켠 뒤 한 번은 현재 위치로 새로 받고, 그 뒤에는 마지막 추천을 그대로 보여준다
 let hasRefreshedThisSession = false
 
 const toErrorState = (error: unknown): RecommendationState => {
@@ -48,7 +46,6 @@ export function useRecommendations() {
         try {
           return await refreshWithCurrentPosition()
         } catch (error) {
-          // 위치 권한이 없거나 위치를 못 받으면 마지막 추천이라도 보여준다
           if (error instanceof GeolocationPositionError || !getApiError(error).code) {
             return (await getRecommendations()).users
           }
@@ -71,7 +68,6 @@ export function useRecommendations() {
     }
   }, [])
 
-  // 새로고침: 현재 위치로 다시 뽑는다
   const refresh = useCallback(async () => {
     if (isRefreshing) return
     setIsRefreshing(true)

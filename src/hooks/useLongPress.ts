@@ -2,10 +2,8 @@ import { useEffect, useRef } from 'react'
 import type { MouseEvent, PointerEvent } from 'react'
 
 const LONG_PRESS_MS = 500
-// 이만큼 움직이면 스크롤로 보고 꾹 누르기를 취소한다
 const MOVE_TOLERANCE_PX = 10
 
-// 꾹 누르기 (모바일 길게 누르기, PC 마우스 길게 누르기·우클릭)
 export function useLongPress(onLongPress: () => void, enabled = true) {
   const timerRef = useRef<number | undefined>(undefined)
   const startRef = useRef<{ x: number; y: number } | null>(null)
@@ -38,7 +36,6 @@ export function useLongPress(onLongPress: () => void, enabled = true) {
     onPointerUp: cancel,
     onPointerLeave: cancel,
     onPointerCancel: cancel,
-    // 길게 누를 때 뜨는 브라우저 메뉴 대신 같은 동작을 한다
     onContextMenu: (event: MouseEvent) => {
       event.preventDefault()
       cancel()

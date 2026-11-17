@@ -42,7 +42,6 @@ export function RoomHomePage() {
     )
   }
 
-  // 방장이 나가면 백엔드가 다른 멤버에게 방장을 넘기고, 남은 멤버가 없으면 방을 지운다
   const handleLeave = async () => {
     if (isLeaving) return
     closeLeave()
