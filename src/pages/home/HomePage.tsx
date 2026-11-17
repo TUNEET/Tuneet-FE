@@ -7,16 +7,17 @@ import characterSleeping from '@/assets/images/character-sleeping.png'
 import { FeedCard } from '@/components/common/FeedCard/FeedCard'
 import { ProfileCard } from '@/components/common/ProfileCard/ProfileCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
-import { TasteMatchCard } from '@/components/common/TasteMatchCard/TasteMatchCard'
+import { RecommendationList } from '@/components/common/RecommendationList/RecommendationList'
 import { getUserProfilePath, ROUTES } from '@/constants/routes'
+import { useRecommendations } from '@/hooks/useRecommendations'
 import { useToast } from '@/hooks/useToast'
-import { MOCK_TASTE_MATCHES } from '@/mocks/data'
 import type { ExploreFeed } from '@/types/feed'
 import type { Profile } from '@/types/user'
 import { toProfileCard } from '@/utils/profile'
 import * as S from './HomePage.styles'
 
 const HOME_FEED_COUNT = 2
+const HOME_RECOMMENDATION_COUNT = 2
 
 type FeedState =
   { status: 'loading' } | { status: 'error' } | { status: 'done'; items: ExploreFeed[] }
@@ -26,6 +27,7 @@ export function HomePage() {
   const showToast = useToast()
   const [profile, setProfile] = useState<Profile | null>(null)
   const [feeds, setFeeds] = useState<FeedState>({ status: 'loading' })
+  const { state: recommendations } = useRecommendations()
 
   useEffect(() => {
     let isStale = false
@@ -103,15 +105,11 @@ export function HomePage() {
             actionLabel="더보기"
             onActionClick={() => navigate(ROUTES.matching)}
           />
-          <S.CardList>
-            {MOCK_TASTE_MATCHES.map((match) => (
-              <TasteMatchCard
-                key={match.id}
-                match={match}
-                onClick={() => navigate(getUserProfilePath(match.id))}
-              />
-            ))}
-          </S.CardList>
+          <RecommendationList
+            state={recommendations}
+            limit={HOME_RECOMMENDATION_COUNT}
+            onUserClick={(match) => navigate(getUserProfilePath(match.id))}
+          />
         </S.Section>
       </S.Sheet>
 
