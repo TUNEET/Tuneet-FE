@@ -48,7 +48,6 @@ export function HomePage() {
   useEffect(() => {
     let isStale = false
 
-    // 실패해도 토스트 대신 섹션 안에 안내한다 (프로필 실패 토스트와 겹치지 않도록)
     getFeeds(undefined, HOME_FEED_COUNT)
       .then(({ items }) => {
         if (!isStale) setFeeds({ status: 'done', items })

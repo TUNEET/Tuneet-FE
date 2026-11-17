@@ -25,7 +25,6 @@ type FeedDetailModalProps = {
   isMine?: boolean
   onEdit?: () => void
   onDelete?: () => void | Promise<void>
-  // false면 코멘트 버튼을 숨긴다 (방 피드처럼 코멘트 기능이 없는 곳)
   commentable?: boolean
   onClose: () => void
 }

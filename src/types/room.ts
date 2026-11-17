@@ -21,10 +21,8 @@ export type RoomMember = {
   similarity: number | null
 }
 
-// deletable: 내가 추가한 곡이거나 내가 방장이면 삭제할 수 있다
 export type PlaylistSong = Song & { id: number; deletable: boolean }
 
-// 방 피드 글 (내 글이면 삭제할 수 있다)
 export type RoomPost = Feed & { isMine: boolean }
 
 export type RoomDetail = Room & {
