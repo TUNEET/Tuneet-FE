@@ -2,6 +2,7 @@ import type { ApiResponse } from '@/types/api'
 import type {
   ExploreFeed,
   FeedContentRequest,
+  FeedMusicResponse,
   FeedListResponse,
   FeedMessageRequest,
   FeedResponse,
@@ -13,21 +14,24 @@ import { instance } from './instance'
 
 const PAGE_SIZE = 20
 
+export const toSearchedSong = ({ musicId, title, artist, musicPicture }: FeedMusicResponse) => ({
+  musicId,
+  title,
+  artist,
+  albumImageUrl: musicPicture ?? '',
+})
+
 const toExploreFeed = (
   { feedId, isMine, nickname, music, content, createdAt }: FeedResponse,
   mine = false,
 ): ExploreFeed => ({
   id: feedId,
   nickname,
-  song: {
-    musicId: music.musicId,
-    title: music.title,
-    artist: music.artist,
-    albumImageUrl: music.musicPicture ?? '',
-  },
+  song: toSearchedSong(music),
   content,
   createdAt,
   isMine: isMine ?? mine,
+  liked: music.liked ?? false,
 })
 
 export async function getFeeds(cursor?: number, size = PAGE_SIZE) {
@@ -73,7 +77,8 @@ const toSentNotification = ({
   id: feedMessageId,
   receiverNickname,
   message: messageContent,
-  song: { title: music.title, artist: music.artist, albumImageUrl: music.musicPicture ?? '' },
+  song: toSearchedSong(music),
+  liked: music.liked ?? false,
   createdAt,
 })
 

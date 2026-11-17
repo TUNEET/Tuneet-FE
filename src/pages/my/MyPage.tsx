@@ -23,6 +23,7 @@ import type { ProfileArtist, ProfileMusic } from '@/types/music'
 import type { MyPageLocationState } from '@/types/user'
 import { clearTokens } from '@/utils/auth'
 import { BlockedUsers } from './components/BlockedUsers/BlockedUsers'
+import { LikedMusics } from './components/LikedMusics/LikedMusics'
 import { ProfileEditModal } from './components/ProfileEditModal/ProfileEditModal'
 import { toSettings } from './components/SettingsPanel/settings'
 import type { Settings } from './components/SettingsPanel/settings'
@@ -53,7 +54,8 @@ export function MyPage() {
   const [isTasteOpen, setIsTasteOpen] = useState(false)
   const [isSavedOpen, setIsSavedOpen] = useState(false)
   const [confirmType, setConfirmType] = useState<'delete' | 'logout' | null>(null)
-  const [subView, setSubView] = useState<'blocked' | 'settings' | null>(
+
+  const [subView, setSubView] = useState<'blocked' | 'likes' | 'settings' | null>(
     locationState?.view === 'settings' ? 'settings' : null,
   )
   const [settings, setSettings] = useState<Settings | null>(null)
@@ -280,6 +282,8 @@ export function MyPage() {
         {settingButton}
         {subView === 'blocked' ? (
           <BlockedUsers onExit={exitSubView} />
+        ) : subView === 'likes' ? (
+          <LikedMusics onExit={exitSubView} />
         ) : (
           settings && (
             <SettingsPanel settings={settings} onSave={setSettings} onExit={exitSubView} />
@@ -371,12 +375,20 @@ export function MyPage() {
             )}
           </S.Actions>
           {!isEditing && (
-            <S.BlockedHeader>
-              <S.ProfileTitle>차단한 사용자</S.ProfileTitle>
-              <S.HeaderAction type="button" onClick={() => setSubView('blocked')}>
-                더보기
-              </S.HeaderAction>
-            </S.BlockedHeader>
+            <>
+              <S.BlockedHeader>
+                <S.ProfileTitle>좋아요 기록 관리</S.ProfileTitle>
+                <S.HeaderAction type="button" onClick={() => setSubView('likes')}>
+                  더보기
+                </S.HeaderAction>
+              </S.BlockedHeader>
+              <S.BlockedHeader>
+                <S.ProfileTitle>차단한 사용자</S.ProfileTitle>
+                <S.HeaderAction type="button" onClick={() => setSubView('blocked')}>
+                  더보기
+                </S.HeaderAction>
+              </S.BlockedHeader>
+            </>
           )}
         </ProfileComplete>
       </S.ProfileArea>

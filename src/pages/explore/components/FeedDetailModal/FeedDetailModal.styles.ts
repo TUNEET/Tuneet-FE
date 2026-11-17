@@ -63,12 +63,31 @@ export const Time = styled.span`
   color: ${({ theme }) => theme.colors.blue};
 `
 
+export const AlbumWrap = styled.div`
+  position: relative;
+  margin-top: 1rem;
+`
+
 export const Album = styled.img`
+  display: block;
   width: 10rem;
   height: 10rem;
-  margin-top: 1rem;
   border-radius: 0.4rem;
   object-fit: cover;
+`
+
+export const LikeButton = styled.button`
+  position: absolute;
+  top: -1rem;
+  right: -1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background-color: ${({ theme }) => theme.colors.blueSoft};
+  color: ${({ theme }) => theme.colors.blue};
 `
 
 export const SongTitle = styled.h2`
