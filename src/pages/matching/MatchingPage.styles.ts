@@ -5,9 +5,3 @@ export const Section = styled.section`
   flex-direction: column;
   gap: 2rem;
 `
-
-export const CardList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`

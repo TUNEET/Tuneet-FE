@@ -1,6 +1,5 @@
 import type { CharacterColorId } from '@/constants/characters'
 import type { ApiResponse } from '@/types/api'
-import type { Feed } from '@/types/feed'
 import type {
   CreatedRoom,
   CreateRoomRequest,
@@ -14,6 +13,7 @@ import type {
   RoomMembersResponse,
   RoomMusicResponse,
   RoomPlaylistResponse,
+  RoomPost,
   RoomPostResponse,
   RoomRoleResponse,
   RoomSummaryResponse,
@@ -49,18 +49,30 @@ const toRoom = ({
   imageUrl: roomPicture,
 })
 
-const toFeed = ({ roomPostId, nickname, music, content, createdAt }: RoomPostResponse): Feed => ({
+const toFeed = ({
+  roomPostId,
+  nickname,
+  music,
+  content,
+  createdAt,
+  isMine,
+}: RoomPostResponse): RoomPost => ({
   id: roomPostId,
   nickname,
   song: toSong(music),
   content,
   createdAt,
+  isMine,
 })
 
 const toPlaylist = (items: RoomPlaylistResponse[]): PlaylistSong[] =>
   [...items]
     .sort((a, b) => a.position - b.position)
-    .map(({ roomPlaylistId, music }) => ({ id: roomPlaylistId, ...toSong(music) }))
+    .map(({ roomPlaylistId, music, deletable }) => ({
+      id: roomPlaylistId,
+      ...toSong(music),
+      deletable,
+    }))
 
 const toMember = (
   { userId, nickname, role, profilePicture }: RoomUserResponse,

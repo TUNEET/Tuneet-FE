@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { getApiError } from '@/apis/error'
-import { getLetterQuota } from '@/apis/letter'
+import { PAGE_DATA } from '@/apis/pageData'
 import type { LetterQuota } from '@/types/letter'
+import { takePrefetched } from '@/utils/prefetch'
 import { useToast } from './useToast'
 
 export function useLetterQuota() {
@@ -11,7 +12,7 @@ export function useLetterQuota() {
   useEffect(() => {
     let isStale = false
 
-    getLetterQuota()
+    takePrefetched(PAGE_DATA.letterQuota)
       .then((data) => {
         if (!isStale) setQuota(data)
       })

@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { getApiError } from '@/apis/error'
-import { addRoomPlaylistSong, clearRoomPlaylist, getRoomPlaylist } from '@/apis/room'
+import {
+  addRoomPlaylistSong,
+  clearRoomPlaylist,
+  deleteRoomPlaylistSong,
+  getRoomPlaylist,
+} from '@/apis/room'
 import { Button } from '@/components/common/Button/Button'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
@@ -81,6 +86,16 @@ export function RoomPlaylistPage() {
     }
   }
 
+  const handleDeleteSong = async (song: PlaylistSong) => {
+    try {
+      await deleteRoomPlaylistSong(roomId, song.id)
+      setSongs((prev) => prev?.filter(({ id }) => id !== song.id))
+      showToast('노래를 삭제했어요')
+    } catch (error) {
+      showToast(getApiError(error).message)
+    }
+  }
+
   const handleAddSong = async ({ musicId }: SearchedSong) => {
     try {
       const song = await addRoomPlaylistSong(roomId, musicId)
@@ -103,7 +118,7 @@ export function RoomPlaylistPage() {
       <S.Content>
         {songs &&
           (songs.length > 0 ? (
-            <Playlist songs={songs} />
+            <Playlist songs={songs} onDelete={handleDeleteSong} />
           ) : (
             <S.Empty>아직 담긴 노래가 없어요</S.Empty>
           ))}

@@ -1,1 +1,0 @@
-export const MAX_RECOMMENDED_USERS = 5

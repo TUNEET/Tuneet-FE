@@ -1,9 +1,19 @@
 import { createBrowserRouter } from 'react-router'
+import { PAGE_DATA, warmMyProfile } from '@/apis/pageData'
 import { MobileLayout } from '@/components/layout/MobileLayout'
 import { RouteErrorFallback } from '@/components/layout/RouteErrorFallback'
 import { TabLayout } from '@/components/layout/TabLayout'
 import { ROUTES } from '@/constants/routes'
+import { isLoggedIn } from '@/utils/auth'
+import { prefetch } from '@/utils/prefetch'
 import { RequireAuth } from './RequireAuth'
+
+// 페이지 코드를 받는 동안 데이터도 같이 출발시킨다 (기다리지 않고 바로 화면으로 넘어간다)
+// 로그인 전에는 요청하지 않는다 (토큰이 없으면 온보딩으로 보내는 처리가 먼저 돌지 않게)
+const prefetchWhenLoggedIn = (run: () => void) => () => {
+  if (isLoggedIn()) run()
+  return null
+}
 
 const pageFallback = <></>
 
@@ -36,11 +46,16 @@ export const router = createBrowserRouter([
                     children: [
                       {
                         path: ROUTES.home,
+                        loader: prefetchWhenLoggedIn(() => {
+                          warmMyProfile()
+                          prefetch(PAGE_DATA.homeFeeds)
+                        }),
                         lazy: () =>
                           import('@/pages/home/HomePage').then((m) => ({ Component: m.HomePage })),
                       },
                       {
                         path: ROUTES.explore,
+                        loader: prefetchWhenLoggedIn(() => prefetch(PAGE_DATA.exploreFeeds)),
                         lazy: () =>
                           import('@/pages/explore/ExplorePage').then((m) => ({
                             Component: m.ExplorePage,
@@ -69,6 +84,10 @@ export const router = createBrowserRouter([
                       },
                       {
                         path: ROUTES.matching,
+                        loader: prefetchWhenLoggedIn(() => {
+                          prefetch(PAGE_DATA.myRooms)
+                          prefetch(PAGE_DATA.letterQuota)
+                        }),
                         lazy: () =>
                           import('@/pages/matching/MatchingPage').then((m) => ({
                             Component: m.MatchingPage,
@@ -164,6 +183,13 @@ export const router = createBrowserRouter([
                           import('@/pages/matching/room/feeds/RoomFeedsPage').then((m) => ({
                             Component: m.RoomFeedsPage,
                           })),
+                      },
+                      {
+                        path: ROUTES.roomFeedWrite,
+                        lazy: () =>
+                          import('@/pages/matching/room/feed-write/RoomFeedWritePage').then(
+                            (m) => ({ Component: m.RoomFeedWritePage }),
+                          ),
                       },
                       {
                         path: ROUTES.roomPlaylist,

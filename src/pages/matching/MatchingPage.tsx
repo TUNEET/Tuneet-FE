@@ -1,30 +1,34 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { getApiError } from '@/apis/error'
-import { getMyRooms } from '@/apis/room'
+import { PAGE_DATA } from '@/apis/pageData'
 import { Divider } from '@/components/common/Divider/Divider'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
-import { TasteMatchCard } from '@/components/common/TasteMatchCard/TasteMatchCard'
+import { RecommendationList } from '@/components/common/RecommendationList/RecommendationList'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { getRoomPath, getUserProfilePath, ROUTES } from '@/constants/routes'
 import { useLetterQuota } from '@/hooks/useLetterQuota'
+import { useRecommendations } from '@/hooks/useRecommendations'
 import { useToast } from '@/hooks/useToast'
-import { MOCK_TASTE_MATCHES } from '@/mocks/data'
 import type { Room } from '@/types/room'
+import { takePrefetched } from '@/utils/prefetch'
 import { LetterSection } from './components/LetterSection/LetterSection'
 import { RoomSection } from './components/RoomSection/RoomSection'
 import * as S from './MatchingPage.styles'
+
+const MATCHING_RECOMMENDATION_COUNT = 2
 
 export function MatchingPage() {
   const navigate = useNavigate()
   const showToast = useToast()
   const letterQuota = useLetterQuota()
   const [rooms, setRooms] = useState<Room[]>([])
+  const { state: recommendations } = useRecommendations()
 
   useEffect(() => {
     let isStale = false
 
-    getMyRooms()
+    takePrefetched(PAGE_DATA.myRooms)
       .then((data) => {
         if (!isStale) setRooms(data)
       })
@@ -45,15 +49,11 @@ export function MatchingPage() {
           actionLabel="더보기"
           onActionClick={() => navigate(ROUTES.recommendedUsers)}
         />
-        <S.CardList>
-          {MOCK_TASTE_MATCHES.map((match) => (
-            <TasteMatchCard
-              key={match.id}
-              match={match}
-              onClick={() => navigate(getUserProfilePath(match.id))}
-            />
-          ))}
-        </S.CardList>
+        <RecommendationList
+          state={recommendations}
+          limit={MATCHING_RECOMMENDATION_COUNT}
+          onUserClick={(match) => navigate(getUserProfilePath(match.id))}
+        />
       </S.Section>
 
       <Divider />

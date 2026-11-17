@@ -25,6 +25,7 @@ export const ROUTES = {
   room: '/matching/rooms/:roomId',
   roomMembers: '/matching/rooms/:roomId/members',
   roomFeeds: '/matching/rooms/:roomId/feeds',
+  roomFeedWrite: '/matching/rooms/:roomId/feeds/write',
   roomPlaylist: '/matching/rooms/:roomId/playlist',
 } as const
 
@@ -53,6 +54,9 @@ export const getRoomMembersPath = (roomId: number) =>
 
 export const getRoomFeedsPath = (roomId: number) =>
   generatePath(ROUTES.roomFeeds, { roomId: String(roomId) })
+
+export const getRoomFeedWritePath = (roomId: number) =>
+  generatePath(ROUTES.roomFeedWrite, { roomId: String(roomId) })
 
 export const getRoomPlaylistPath = (roomId: number) =>
   generatePath(ROUTES.roomPlaylist, { roomId: String(roomId) })
