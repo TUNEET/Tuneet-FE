@@ -19,10 +19,14 @@ export function formatTimeAgo(date: string, now = Date.now()) {
 
 const pad = (value: number) => String(value).padStart(2, '0')
 
+export function formatDate(date: string) {
+  const target = new Date(date)
+  return `${target.getFullYear()}. ${pad(target.getMonth() + 1)}. ${pad(target.getDate())}`
+}
+
 export function formatDateTime(date: string) {
   const target = new Date(date)
-  const ymd = `${target.getFullYear()}. ${pad(target.getMonth() + 1)}. ${pad(target.getDate())}`
-  return `${ymd} ${pad(target.getHours())}시 ${pad(target.getMinutes())}분`
+  return `${formatDate(date)} ${pad(target.getHours())}시 ${pad(target.getMinutes())}분`
 }
 
 export function formatKoreanDateTime(date: string) {

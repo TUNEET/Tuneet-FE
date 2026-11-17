@@ -176,7 +176,7 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
         <ConfirmPopover
           open={saveResult === 'saved'}
           message="수정사항이 저장되었습니다."
-          confirmLabel="내 프로필로 이동"
+          confirmLabel="확인"
           onConfirm={onExit}
           onClose={closeSaveResult}
           anchorRef={saveButtonRef}

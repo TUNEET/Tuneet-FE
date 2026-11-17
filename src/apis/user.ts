@@ -7,7 +7,11 @@ import type {
   SignUpRequest,
   SignUpResponse,
 } from '@/types/auth'
-import type { OtherUserProfileResponse, SettingsResponse } from '@/types/user'
+import type {
+  BlockedUserListResponse,
+  OtherUserProfileResponse,
+  SettingsResponse,
+} from '@/types/user'
 import { cachedRequest, invalidateRequest } from '@/utils/requestCache'
 import { instance } from './instance'
 
@@ -79,6 +83,13 @@ export async function getUserProfile(userId: number) {
     `/api/v1/users/${userId}`,
   )
   return data.data
+}
+
+/** 최근 차단순 */
+export async function getBlockedUsers() {
+  const { data } =
+    await instance.get<ApiResponse<BlockedUserListResponse>>('/api/v1/users/me/blocks')
+  return data.data.blockedUsers
 }
 
 export async function blockUser(userId: number) {

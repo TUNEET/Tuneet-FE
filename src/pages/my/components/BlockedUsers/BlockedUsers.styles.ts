@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 import { CardList, Sheet } from '@/styles/tabPage'
 import { HeaderAction, ProfileTitle } from '../../MyPage.styles'
 
@@ -45,13 +46,22 @@ export const Avatar = styled.div`
     border-radius: 9999px;
     background-color: rgba(0, 0, 0, 0.4);
   }
+`
 
-  img {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-    z-index: 1;
-  }
+/** 프로필 사진은 어두운 덮개 아래에 깔린다 */
+export const Photo = styled(CoverImage)`
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+`
+
+export const BlockIcon = styled.img`
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1;
 `
 
 export const Info = styled.div`
@@ -88,4 +98,11 @@ export const UnblockButton = styled.button`
   text-align: center;
   white-space: nowrap;
   color: #ce8eb7;
+`
+
+export const Empty = styled.p`
+  padding: 2rem 0;
+  font-size: ${({ theme }) => theme.fontSize.xs};
+  text-align: center;
+  color: ${({ theme }) => theme.colors.textPlaceholder};
 `
