@@ -5,6 +5,7 @@ import { uploadImage } from '@/apis/image'
 import {
   addProfile,
   checkNicknameAvailability,
+  getMyProfile,
   replaceArtists,
   replaceGenres,
   replaceMusics,
@@ -18,6 +19,11 @@ import { useToast } from '@/hooks/useToast'
 import { getMusicKey } from '@/types/music'
 import type { ProfileArtist, ProfileMusic } from '@/types/music'
 import { clearProfileSetupPending, isProfileSetupPending } from '@/utils/auth'
+import {
+  clearConnectResult,
+  peekConnectResult,
+  startYoutubeMusicConnect,
+} from '@/utils/youtubeMusic'
 import { PlatformConnect } from './components/PlatformConnect/PlatformConnect'
 import { ProfileStage } from './components/ProfileStage/ProfileStage'
 import { SetupStepLayout } from './components/SetupStepLayout/SetupStepLayout'
@@ -41,7 +47,8 @@ const MIN_SONGS = 1
 export function ProfileSetupPage() {
   const navigate = useNavigate()
   const showToast = useToast()
-  const [step, setStep] = useState<SetupStep>('profile')
+  const [resumedConnect] = useState(() => peekConnectResult('profileSetup'))
+  const [step, setStep] = useState<SetupStep>(resumedConnect ? 'platform' : 'profile')
   const [nickname, setNickname] = useState('')
   const [nicknameError, setNicknameError] = useState<string | null>(null)
   const [music, setMusic] = useState<ProfileMusic | null>(null)
@@ -53,7 +60,11 @@ export function ProfileSetupPage() {
   const [isSavingProfile, setIsSavingProfile] = useState(false)
   const [selectedGenres, setSelectedGenres] = useState<string[]>([])
   const { rows: genreRows, toGenreName } = useGenres()
-  const [selectedArtists, setSelectedArtists] = useState<ProfileArtist[]>([])
+  const [selectedArtists, setSelectedArtists] = useState<ProfileArtist[]>(
+    () =>
+      resumedConnect?.artistCandidates.map(({ artistId, name }) => ({ id: artistId, name })) ?? [],
+  )
+  const [isConnecting, setIsConnecting] = useState(false)
   const [isSavingTaste, setIsSavingTaste] = useState(false)
   const [isSavingSongs, setIsSavingSongs] = useState(false)
   const [songs, setSongs] = useState<ProfileMusic[]>([])
@@ -63,6 +74,37 @@ export function ProfileSetupPage() {
 
     return () => URL.revokeObjectURL(previewUrl)
   }, [previewUrl])
+
+  useEffect(() => {
+    if (!resumedConnect) return
+    clearConnectResult()
+    let isStale = false
+
+    getMyProfile()
+      .then(({ nickname: savedNickname, profilePicture, profileMusic }) => {
+        if (isStale) return
+        const restoredNickname = savedNickname ?? ''
+        setNickname(restoredNickname)
+        setSavedProfile({ nickname: restoredNickname, imageFile: null })
+        setPreviewUrl(profilePicture)
+        if (profileMusic) {
+          setMusic({
+            musicId: profileMusic.musicId,
+            title: profileMusic.title,
+            artist: profileMusic.artist,
+            albumImage: profileMusic.musicPicture ?? '',
+          })
+          setSavedMusicId(profileMusic.musicId)
+        }
+      })
+      .catch((error) => {
+        if (!isStale) showToast(getApiError(error).message)
+      })
+
+    return () => {
+      isStale = true
+    }
+  }, [resumedConnect, showToast])
 
   if (!isProfileSetupPending()) {
     return <Navigate to={ROUTES.home} replace />
@@ -101,6 +143,17 @@ export function ProfileSetupPage() {
       showToast(getApiError(error).message)
     } finally {
       setIsSavingMusic(false)
+    }
+  }
+
+  const connectPlatform = async () => {
+    if (isConnecting) return
+    setIsConnecting(true)
+    try {
+      await startYoutubeMusicConnect('profileSetup')
+    } catch (error) {
+      showToast(getApiError(error).message)
+      setIsConnecting(false)
     }
   }
 
@@ -301,6 +354,9 @@ export function ProfileSetupPage() {
             nickname={nickname}
             previewUrl={previewUrl}
             music={music}
+            initialResult={resumedConnect?.status ?? null}
+            isConnecting={isConnecting}
+            onConnect={connectPlatform}
             onNext={() => setStep('taste')}
           />
           <S.LaterButton type="button" onClick={finishSetup}>

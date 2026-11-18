@@ -29,6 +29,13 @@ export const router = createBrowserRouter([
             element: <RequireAuth />,
             children: [
               {
+                path: ROUTES.youtubeMusicCallback,
+                lazy: () =>
+                  import('@/pages/oauth/YoutubeMusicCallbackPage').then((m) => ({
+                    Component: m.YoutubeMusicCallbackPage,
+                  })),
+              },
+              {
                 path: ROUTES.profileSetup,
                 lazy: () =>
                   import('@/pages/profile-setup/ProfileSetupPage').then((m) => ({

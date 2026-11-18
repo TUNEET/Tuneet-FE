@@ -13,6 +13,7 @@ export const ROUTES = {
   signup: '/signup',
   login: '/login',
   profileSetup: '/profile-setup',
+  youtubeMusicCallback: '/oauth/youtube-music',
   letterbox: '/matching/letters',
   letter: '/matching/letters/:letterId',
   letterReply: '/matching/letters/:letterId/reply',
