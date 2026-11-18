@@ -7,6 +7,7 @@ import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { getLetterWritePath, getUserProfilePath, ROUTES } from '@/constants/routes'
 import { useRecommendations } from '@/hooks/useRecommendations'
+import { useLetterQuota } from '@/hooks/useLetterQuota'
 import { useToast } from '@/hooks/useToast'
 import type { MyPageLocationState } from '@/types/user'
 import { LocationRequiredModal } from './components/LocationRequiredModal/LocationRequiredModal'
@@ -16,6 +17,8 @@ export function RecommendedUsersPage() {
   const { key } = useLocation()
   const showToast = useToast()
   const { state, refresh, isRefreshing } = useRecommendations()
+  const letterQuota = useLetterQuota()
+  const isLetterQuotaUsedUp = letterQuota !== null && letterQuota.remaining <= 0
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const goBack = () => {
@@ -57,6 +60,7 @@ export function RecommendedUsersPage() {
         state={state}
         onUserClick={(match) => navigate(getUserProfilePath(match.id))}
         onLetterClick={(match) => navigate(getLetterWritePath(match.id))}
+        letterDisabled={isLetterQuotaUsedUp}
       />
 
       {state.status === 'locationRequired' && (
