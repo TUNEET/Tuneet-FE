@@ -105,7 +105,8 @@ export const Sheet = styled.div<VariantProps>`
   ${({ $variant }) =>
     $variant !== 'playlist' &&
     css`
-      height: 50rem;
+      /* 페이지 버튼 아래 빈 공간만 줄여서 내용 위치는 그대로 둔다 */
+      height: 45rem;
 
       &::before {
         display: none;
@@ -198,7 +199,7 @@ export const AddButton = PlayButton
 export const Pagination = styled.div<VariantProps>`
   position: absolute;
   right: 3rem;
-  bottom: ${({ $variant }) => ($variant === 'playlist' ? '5rem' : '12.4rem')};
+  bottom: ${({ $variant }) => ($variant === 'playlist' ? '5rem' : '7.4rem')};
   left: 3rem;
   display: flex;
   align-items: center;
