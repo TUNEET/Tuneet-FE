@@ -132,6 +132,7 @@ export const Closing = styled.p`
   font-size: ${({ theme }) => theme.fontSize.xl};
   line-height: 1.3;
   text-align: center;
+  white-space: pre-line;
   color: ${({ theme }) => theme.colors.primary};
 `
 
