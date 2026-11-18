@@ -13,7 +13,9 @@ import {
   withdraw,
 } from '@/apis/user'
 import settingIcon from '@/assets/icons/setting.svg'
+import { ChevronIcon } from '@/components/common/ChevronIcon/ChevronIcon'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
+import { HeartIcon } from '@/components/common/HeartIcon/HeartIcon'
 import { ProfileComplete } from '@/components/common/ProfileComplete/ProfileComplete'
 import { getCharacterColorId } from '@/constants/characters'
 import { ROUTES } from '@/constants/routes'
@@ -31,6 +33,16 @@ import { toSettings } from './components/SettingsPanel/settings'
 import type { Settings } from './components/SettingsPanel/settings'
 import { SettingsPanel } from './components/SettingsPanel/SettingsPanel'
 import * as S from './MyPage.styles'
+
+/** 차단 아이콘. 메뉴 카드의 하트와 같은 선 두께·색으로 맞춘다 */
+function BlockIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <circle cx="8" cy="8" r="6.4" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M3.5 12.5 12.5 3.5" stroke="currentColor" strokeWidth="1.4" />
+    </svg>
+  )
+}
 
 const NICKNAME_DUPLICATED_MESSAGE = '중복된 닉네임입니다. 다른 닉네임을 입력해 주세요.'
 const ARTIST_MIN = 3
@@ -315,6 +327,32 @@ export function MyPage() {
           onNicknameChange={setDraftNickname}
           onTagsClick={isEditing ? () => setIsTasteOpen(true) : undefined}
         >
+          {!isEditing && (
+            <S.MenuCard>
+              <li>
+                <S.MenuItem type="button" onClick={() => setSubView('likes')}>
+                  <S.MenuIcon>
+                    <HeartIcon filled={false} size={16} />
+                  </S.MenuIcon>
+                  <S.MenuLabel>좋아요 기록 관리</S.MenuLabel>
+                  <S.MenuChevron>
+                    <ChevronIcon direction="right" />
+                  </S.MenuChevron>
+                </S.MenuItem>
+              </li>
+              <li>
+                <S.MenuItem type="button" onClick={() => setSubView('blocked')}>
+                  <S.MenuIcon>
+                    <BlockIcon />
+                  </S.MenuIcon>
+                  <S.MenuLabel>차단한 사용자</S.MenuLabel>
+                  <S.MenuChevron>
+                    <ChevronIcon direction="right" />
+                  </S.MenuChevron>
+                </S.MenuItem>
+              </li>
+            </S.MenuCard>
+          )}
           <S.Actions>
             {isEditing ? (
               <>
@@ -380,22 +418,6 @@ export function MyPage() {
               </>
             )}
           </S.Actions>
-          {!isEditing && (
-            <>
-              <S.BlockedHeader>
-                <S.ProfileTitle>좋아요 기록 관리</S.ProfileTitle>
-                <S.HeaderAction type="button" onClick={() => setSubView('likes')}>
-                  더보기
-                </S.HeaderAction>
-              </S.BlockedHeader>
-              <S.BlockedHeader>
-                <S.ProfileTitle>차단한 사용자</S.ProfileTitle>
-                <S.HeaderAction type="button" onClick={() => setSubView('blocked')}>
-                  더보기
-                </S.HeaderAction>
-              </S.BlockedHeader>
-            </>
-          )}
         </ProfileComplete>
       </S.ProfileArea>
 

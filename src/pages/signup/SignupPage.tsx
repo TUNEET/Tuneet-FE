@@ -8,6 +8,7 @@ import eyeIcon from '@/assets/icons/eye.svg'
 import logo from '@/assets/images/logo.svg'
 import { ROUTES } from '@/constants/routes'
 import { markProfileSetupPending } from '@/utils/auth'
+import { markHomeScreenGuidePending } from '@/utils/homeScreenGuide'
 import { TermDetailModal } from '@/components/common/TermDetailModal/TermDetailModal'
 import * as S from './SignupPage.styles'
 import { TERMS } from '@/constants/terms'
@@ -145,6 +146,7 @@ export function SignupPage() {
       })
 
       markProfileSetupPending()
+      markHomeScreenGuidePending()
       navigate(ROUTES.login)
     } catch (error) {
       handleSignupError(error)

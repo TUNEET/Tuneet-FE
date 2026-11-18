@@ -76,17 +76,54 @@ export const Actions = styled.div`
   pointer-events: auto;
 `
 
-export const BlockedHeader = styled.div`
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
+/** 좋아요 기록·차단한 사용자로 들어가는 메뉴를 한 카드에 묶는다 */
+export const MenuCard = styled.ul`
   margin-top: 2rem;
+  overflow: hidden;
+  border-radius: 1rem;
+  background-color: ${({ theme }) => theme.colors.surfacePink};
   pointer-events: auto;
 
-  /* 좋아요 기록 관리와 차단한 사용자 줄 사이는 더 좁다 */
-  & + & {
-    margin-top: 1rem;
+  li + li {
+    border-top: 1px solid ${({ theme }) => theme.colors.border};
+  }
+`
+
+export const MenuItem = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  height: 4.8rem;
+  padding: 0 1.6rem;
+  text-align: left;
+`
+
+export const MenuIcon = styled.span`
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  color: ${({ theme }) => theme.colors.primary};
+`
+
+export const MenuLabel = styled.span`
+  flex: 1;
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-weight: 500;
+  letter-spacing: 0.028rem;
+  color: ${({ theme }) => theme.colors.textProfile};
+`
+
+export const MenuChevron = styled.span`
+  display: flex;
+  color: ${({ theme }) => theme.colors.textPlaceholder};
+
+  svg {
+    width: 0.6rem;
+    height: 1rem;
   }
 `
 

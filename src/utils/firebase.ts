@@ -13,7 +13,6 @@ const firebaseConfig = {
 
 export const app = initializeApp(firebaseConfig)
 
-/** 알림을 허용한 기기의 FCM 토큰. 권한은 묻지 않고, 허용 전이거나 미지원이면 null */
 export const getCurrentFcmToken = async (): Promise<string | null> => {
   if (!('Notification' in window) || Notification.permission !== 'granted') return null
   if (!(await isSupported())) return null
@@ -22,7 +21,6 @@ export const getCurrentFcmToken = async (): Promise<string | null> => {
   })
 }
 
-/** 앱이 열려 있을 때(포그라운드) 받은 메시지 처리. 구독을 끊는 함수를 돌려준다 */
 export const listenForegroundMessage = async (cb: (payload: MessagePayload) => void) => {
   if (!(await isSupported())) return () => {}
   return onMessage(getMessaging(app), cb)

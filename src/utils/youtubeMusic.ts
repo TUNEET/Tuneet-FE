@@ -51,3 +51,11 @@ export function peekConnectResult(origin: PlatformConnectOrigin) {
 export function clearConnectResult() {
   writeSession(RESULT_KEY, null)
 }
+
+/**
+ * 곡 id가 유튜브 영상 id가 아니라서 제목·아티스트로 검색한 화면을 연다.
+ * 휴대폰에 유튜브 뮤직 앱이 있으면 앱으로 열린다
+ */
+export function getYoutubeMusicSearchUrl(title: string, artist: string) {
+  return `https://music.youtube.com/search?q=${encodeURIComponent(`${title} ${artist}`)}`
+}
