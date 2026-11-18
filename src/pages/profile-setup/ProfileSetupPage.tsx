@@ -359,8 +359,8 @@ export function ProfileSetupPage() {
             onConnect={connectPlatform}
             onNext={() => setStep('taste')}
           />
-          <S.LaterButton type="button" onClick={finishSetup}>
-            나중에 설정하기
+          <S.LaterButton type="button" onClick={() => setStep('taste')}>
+            연동 없이 계속하기
           </S.LaterButton>
         </SetupStepLayout>
       )
