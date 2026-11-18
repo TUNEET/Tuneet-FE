@@ -16,6 +16,8 @@ import type { Profile } from '@/types/user'
 import { toProfileCard } from '@/utils/profile'
 import * as S from './HomePage.styles'
 import { takePrefetched } from '@/utils/prefetch'
+import { markHomeScreenGuideSeen, shouldShowHomeScreenGuide } from '@/utils/homeScreenGuide'
+import { HomeScreenGuideModal } from './components/HomeScreenGuideModal/HomeScreenGuideModal'
 
 const HOME_RECOMMENDATION_COUNT = 2
 
@@ -23,6 +25,13 @@ type FeedState =
   { status: 'loading' } | { status: 'error' } | { status: 'done'; items: ExploreFeed[] }
 
 export function HomePage() {
+  const [isHomeScreenGuideOpen, setIsHomeScreenGuideOpen] = useState(shouldShowHomeScreenGuide)
+
+  // 닫지 않고 다른 탭으로 가도 다시 뜨지 않게 처음 띄울 때 본 것으로 남긴다
+  useEffect(() => {
+    if (isHomeScreenGuideOpen) markHomeScreenGuideSeen()
+  }, [isHomeScreenGuideOpen])
+
   const navigate = useNavigate()
   const showToast = useToast()
   const [profile, setProfile] = useState<Profile | null>(null)
@@ -113,6 +122,9 @@ export function HomePage() {
       </S.Sheet>
 
       <S.BottomFade />
+      {isHomeScreenGuideOpen && (
+        <HomeScreenGuideModal onClose={() => setIsHomeScreenGuideOpen(false)} />
+      )}
     </S.Page>
   )
 }
