@@ -51,7 +51,7 @@ export function LikedMusics({ onExit }: LikedMusicsProps) {
                 </S.Info>
                 <LikeButton
                   liked={item.liked}
-                  tone="rose"
+                  tone="roseBadge"
                   onToggle={() => handleLikeToggle(item)}
                 />
               </S.Row>

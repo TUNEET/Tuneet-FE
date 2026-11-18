@@ -1,4 +1,6 @@
 import type { MouseEvent } from 'react'
+import likedBadgeHeart from '@/assets/icons/likepage-heart.svg'
+import unlikedBadgeHeart from '@/assets/icons/likepage-del-heart.svg'
 import { HeartIcon } from '@/components/common/HeartIcon/HeartIcon'
 import * as S from './LikeButton.styles'
 import type { LikeButtonTone } from './LikeButton.styles'
@@ -23,7 +25,15 @@ export function LikeButton({ liked, tone = 'blue', onToggle }: LikeButtonProps) 
       aria-pressed={liked}
       onClick={handleClick}
     >
-      <HeartIcon filled={liked} size={14} />
+      {tone === 'roseBadge' ? (
+        liked ? (
+          <img src={likedBadgeHeart} alt="" width={13} height={11} />
+        ) : (
+          <img src={unlikedBadgeHeart} alt="" width={14} height={12} />
+        )
+      ) : (
+        <HeartIcon filled={liked} size={14} />
+      )}
     </S.Button>
   )
 }

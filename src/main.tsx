@@ -27,7 +27,8 @@ if (import.meta.env.DEV) {
         return token
       },
     })
-    void listenForegroundMessage((title, body) => console.log('[FCM 포그라운드]', title, body))
+    // data에 어떤 키가 오는지 확인용
+    void listenForegroundMessage((payload) => console.log('[FCM 포그라운드]', payload))
   })
 }
 
