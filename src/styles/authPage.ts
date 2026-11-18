@@ -99,6 +99,11 @@ export const Input = styled.input`
     color: ${({ theme }) => theme.colors.textPlaceholder};
   }
 
+  &:focus {
+    outline: none;
+  }
+
+  // 포커스보다 뒤에 둬서 입력 중에도 에러 테두리는 보이게 한다
   &[aria-invalid='true'] {
     outline: 1px solid ${({ theme }) => theme.colors.danger};
     outline-offset: -1px;
