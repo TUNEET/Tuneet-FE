@@ -14,6 +14,7 @@ import { QrJoinSection } from './components/QrJoinSection/QrJoinSection'
 import { RoomPasswordModal } from './components/RoomPasswordModal/RoomPasswordModal'
 
 const PASSWORD_REQUIRED_CODE = 'R4002'
+const PASSWORD_MISMATCH_CODE = 'R4003'
 
 export function JoinRoomPage() {
   const navigate = useNavigate()
@@ -22,6 +23,7 @@ export function JoinRoomPage() {
   const [qrInviteCode, setQrInviteCode] = useState<string | null>(null)
   const [lockedInviteCode, setLockedInviteCode] = useState<string | null>(null)
   const [isEntering, setIsEntering] = useState(false)
+  const [mismatchCount, setMismatchCount] = useState(0)
 
   const handleQrImageSelect = async (file: File) => {
     const text = await decodeQrFromImage(file).catch(() => null)
@@ -44,8 +46,10 @@ export function JoinRoomPage() {
       goToRoom(roomId, alreadyJoined)
     } catch (error) {
       const { code, message } = getApiError(error)
-      if (code === PASSWORD_REQUIRED_CODE) setLockedInviteCode(inviteCode)
-      else showToast(message)
+      if (code === PASSWORD_REQUIRED_CODE) {
+        setMismatchCount(0)
+        setLockedInviteCode(inviteCode)
+      } else showToast(message)
     } finally {
       setIsEntering(false)
     }
@@ -59,7 +63,13 @@ export function JoinRoomPage() {
       setLockedInviteCode(null)
       goToRoom(roomId, alreadyJoined)
     } catch (error) {
-      showToast(getApiError(error).message)
+      const { code, message } = getApiError(error)
+      if (code === PASSWORD_MISMATCH_CODE) {
+        setMismatchCount((count) => count + 1)
+        return
+      }
+      setLockedInviteCode(null)
+      showToast(message)
     } finally {
       setIsEntering(false)
     }
@@ -77,6 +87,8 @@ export function JoinRoomPage() {
       />
       {lockedInviteCode && (
         <RoomPasswordModal
+          mismatchCount={mismatchCount}
+          isSubmitting={isEntering}
           onClose={() => setLockedInviteCode(null)}
           onSubmit={handlePasswordSubmit}
         />
