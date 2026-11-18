@@ -4,6 +4,7 @@ import { getApiError } from '@/apis/error'
 import { deleteFeed, getFeed, getFeeds } from '@/apis/feed'
 import { PAGE_DATA } from '@/apis/pageData'
 import { FeedCard } from '@/components/common/FeedCard/FeedCard'
+import { NoticeModal } from '@/components/common/NoticeModal/NoticeModal'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { getExploreEditPath, getFeedPath, ROUTES } from '@/constants/routes'
 import { useCursorList } from '@/hooks/useCursorList'
@@ -16,6 +17,8 @@ import { FeedDetailModal } from './components/FeedDetailModal/FeedDetailModal'
 import * as S from './ExplorePage.styles'
 
 const getFeedId = ({ id }: ExploreFeed) => id
+
+const FEED_NOT_FOUND_CODE = 'F4001'
 
 type FeedLocationState = { fromList?: boolean }
 
@@ -30,6 +33,7 @@ export function ExplorePage() {
   const selectedFeedId = feedMatch ? Number(feedMatch.params.feedId) : null
   const [fetchedFeed, setFetchedFeed] = useState<ExploreFeed | null>(null)
   const [deletedFeedId, setDeletedFeedId] = useState<number | null>(null)
+  const [missingFeedId, setMissingFeedId] = useState<number | null>(null)
 
   const handleLoadError = useCallback(
     (error: unknown) => showToast(getApiError(error).message),
@@ -38,7 +42,16 @@ export function ExplorePage() {
   const feeds = useCursorList(fetchFeedPage, getFeedId, handleLoadError)
   const listedFeed = feeds.items.find((feed) => feed.id === selectedFeedId)
   const selectedFeed = listedFeed ?? (fetchedFeed?.id === selectedFeedId ? fetchedFeed : null)
-  const needsFetch = selectedFeedId !== null && !listedFeed && selectedFeedId !== deletedFeedId
+  const isInvalidFeedId =
+    selectedFeedId !== null && (!Number.isInteger(selectedFeedId) || selectedFeedId <= 0)
+  const needsFetch =
+    selectedFeedId !== null &&
+    !isInvalidFeedId &&
+    !listedFeed &&
+    selectedFeedId !== deletedFeedId &&
+    selectedFeedId !== missingFeedId
+  const isFeedMissing =
+    isInvalidFeedId || (selectedFeedId !== null && selectedFeedId === missingFeedId)
   const sentinelRef = useInfiniteScroll<HTMLDivElement>(
     feeds.loadMore,
     feeds.hasNext && !feeds.isLoading,
@@ -56,19 +69,18 @@ export function ExplorePage() {
     if (!needsFetch) return
     let isStale = false
 
-    if (!Number.isInteger(selectedFeedId) || selectedFeedId <= 0) {
-      showToast('피드를 찾을 수 없어요')
-      navigate(ROUTES.explore, { replace: true })
-      return
-    }
-
     getFeed(selectedFeedId)
       .then((feed) => {
         if (!isStale) setFetchedFeed(feed)
       })
       .catch((error) => {
         if (isStale) return
-        showToast(getApiError(error).message)
+        const { code, message } = getApiError(error)
+        if (code === FEED_NOT_FOUND_CODE) {
+          setMissingFeedId(selectedFeedId)
+          return
+        }
+        showToast(message)
         navigate(ROUTES.explore, { replace: true })
       })
 
@@ -129,6 +141,16 @@ export function ExplorePage() {
       </S.ExploreSheet>
 
       <S.BottomFade />
+
+      {isFeedMissing && (
+        <NoticeModal
+          title="삭제된 피드입니다."
+          description="해당 게시글을 열 수 없습니다."
+          secondaryAction={{ label: '홈으로', onClick: () => navigate(ROUTES.home) }}
+          primaryAction={{ label: '이전 화면으로', onClick: closeFeed }}
+          onClose={closeFeed}
+        />
+      )}
 
       {selectedFeed && (
         <FeedDetailModal
