@@ -29,19 +29,14 @@ export const PanelLabel = styled.span`
 `
 
 export const GenreRows = styled.div`
-  position: absolute;
-  top: 4.9rem;
-  left: 5.5rem;
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 1rem;
-  width: 25rem;
+  margin: 0.1rem 1.5rem 2.6rem 5.5rem;
 `
 
 export const GenreRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+  display: contents;
 `
 
 export const GenreChip = styled.button<{ $isSelected: boolean }>`
@@ -69,10 +64,9 @@ export const GenreChip = styled.button<{ $isSelected: boolean }>`
 `
 
 export const ArtistSearch = styled.input`
-  position: absolute;
-  top: 4.9rem;
-  left: 5.5rem;
-  width: 25rem;
+  display: block;
+  width: calc(100% - 7rem);
+  margin: 0.1rem 1.5rem 2rem 5.5rem;
   padding: 0.8rem 1.5rem;
   border: none;
   border-radius: 2.4rem;
@@ -92,8 +86,7 @@ export const SelectedArtists = styled.ul`
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
-  width: 25rem;
-  margin: 3.9rem 0 2.2rem 5.5rem;
+  margin: -1rem 1.5rem 2.2rem 5.5rem;
 `
 
 export const SelectedArtist = styled.li`

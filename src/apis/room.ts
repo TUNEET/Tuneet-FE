@@ -1,4 +1,4 @@
-import type { CharacterColorId } from '@/constants/characters'
+import { getCharacterColorId } from '@/constants/characters'
 import type { ApiResponse } from '@/types/api'
 import type {
   CreatedRoom,
@@ -24,12 +24,7 @@ import type { Song } from '@/types/song'
 import { getInviteUrl } from '@/utils/invite'
 import { instance } from './instance'
 
-const CHARACTER_COLOR_COUNT = 6
-
 const toRole = (role: RoomRoleResponse) => (role === 'OWNER' ? 'owner' : 'member')
-
-const toCharacterColorId = (userId: number) =>
-  ((userId % CHARACTER_COLOR_COUNT) + 1) as CharacterColorId
 
 const toSong = ({ title, artist, musicPicture }: RoomMusicResponse): Song => ({
   title,
@@ -81,7 +76,7 @@ const toMember = (
   id: userId,
   nickname,
   role: toRole(role),
-  characterColorId: toCharacterColorId(userId),
+  characterColorId: getCharacterColorId(userId),
   profilePicture,
   ...extra,
 })

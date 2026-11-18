@@ -5,6 +5,7 @@ import genrePurpleIcon from '@/assets/icons/genre-purple.svg'
 import genreIcon from '@/assets/icons/genre.svg'
 import musicNotePurpleIcon from '@/assets/icons/music-note-purple.svg'
 import musicNoteIcon from '@/assets/icons/music-note.svg'
+import { CharacterAvatar } from '@/components/common/CharacterAvatar/CharacterAvatar'
 import { Chip } from '@/components/common/Chip/Chip'
 import type { Profile } from '@/types/user'
 import * as S from './ProfileCard.styles'
@@ -23,20 +24,24 @@ type ProfileCardProps = {
 }
 
 export function ProfileCard({ profile, tone = 'pink', meta, onEditClick }: ProfileCardProps) {
-  const { nickname, characterImageUrl, photoUrl, song, genres, artists } = profile
+  const { nickname, characterImageUrl, characterColorId, photoUrl, song, genres, artists } = profile
   const icons = ICONS[tone]
 
   return (
     <S.Card $tone={tone}>
       <S.Content>
         <S.Profile>
-          <S.Avatar $tone={tone}>
-            {photoUrl ? (
-              <S.AvatarPhoto src={photoUrl} alt="" />
-            ) : (
-              <S.AvatarCharacter src={characterImageUrl} alt="" />
-            )}
-          </S.Avatar>
+          {!photoUrl && characterColorId ? (
+            <CharacterAvatar colorId={characterColorId} size="6rem" />
+          ) : (
+            <S.Avatar $tone={tone}>
+              {photoUrl ? (
+                <S.AvatarPhoto src={photoUrl} alt="" />
+              ) : (
+                <S.AvatarCharacter src={characterImageUrl} alt="" />
+              )}
+            </S.Avatar>
+          )}
           <S.Info>
             <S.Nickname>{nickname}</S.Nickname>
             {song && (

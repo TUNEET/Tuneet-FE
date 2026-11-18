@@ -23,7 +23,7 @@ export const Stage = styled.div`
 export const Card = styled.div`
   position: relative;
   min-height: 37.4rem;
-  padding: 24.4rem 0 2.4rem 4.1rem;
+  padding: 24.4rem 4.1rem 2.4rem;
 `
 
 export const Frame = styled.div`
@@ -49,7 +49,7 @@ export const Tags = styled.div<{ $clickable: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  width: 25.1rem;
+  width: min(25.1rem, 100%);
   cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
   pointer-events: ${({ $clickable }) => ($clickable ? 'auto' : 'none')};
 `
@@ -104,6 +104,23 @@ export const GenreTag = styled.span`
   font-weight: 500;
   letter-spacing: 0.02rem;
   color: ${({ theme }) => theme.colors.surfaceWhite};
+`
+
+export const Aura = styled.div<{ $front?: boolean }>`
+  position: absolute;
+  inset: 0;
+  z-index: ${({ $front }) => ($front ? 1 : 'auto')};
+  overflow: hidden;
+  border-radius: 2.4rem;
+  pointer-events: none;
+`
+
+export const AuraLayer = styled.div`
+  position: absolute;
+  top: -26.6rem;
+  left: calc(50% - 19.65rem);
+  width: 39.3rem;
+  height: calc(100% + 26.6rem);
 `
 
 export const Glow = styled.div`
@@ -216,6 +233,14 @@ export const AvatarCharacter = styled.img`
   width: 6.7rem;
   height: 8.6rem;
   object-fit: contain;
+`
+
+export const AvatarMember = styled.img`
+  position: absolute;
+  top: 17.5%;
+  left: 0;
+  width: 92.5%;
+  height: 82.5%;
 `
 
 export const AvatarPreview = styled.img`

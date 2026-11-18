@@ -1,7 +1,12 @@
 import styled from 'styled-components'
 import { Blob as BaseBlob } from '@/styles/authPage'
+import { Greeting as BaseGreeting } from '@/styles/tabPage'
 
-export { Glow, Glows, Greeting, Page } from '@/styles/tabPage'
+export { Glow, Glows, Page } from '@/styles/tabPage'
+
+export const Greeting = styled(BaseGreeting)`
+  padding-right: 3.3rem;
+`
 
 export const Blob = styled(BaseBlob)`
   top: calc(100% + 3.6rem);

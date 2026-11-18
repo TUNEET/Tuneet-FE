@@ -1,22 +1,20 @@
-const LAST_SEEN_COMMENT_KEY = 'lastSeenCommentId'
+const LAST_SEEN_COMMENT_KEY_PREFIX = 'lastSeenCommentId:'
+const LEGACY_LAST_SEEN_COMMENT_KEY = 'lastSeenCommentId'
 
-export function getLastSeenCommentId() {
+const getKey = (userId: number) => `${LAST_SEEN_COMMENT_KEY_PREFIX}${userId}`
+
+export function getLastSeenCommentId(userId: number) {
   try {
-    return Number(localStorage.getItem(LAST_SEEN_COMMENT_KEY)) || 0
+    return Number(localStorage.getItem(getKey(userId))) || 0
   } catch {
     return 0
   }
 }
 
-export function markCommentSeen(id: number) {
-  if (id <= getLastSeenCommentId()) return
+export function markCommentSeen(userId: number, id: number) {
+  if (id <= getLastSeenCommentId(userId)) return
   try {
-    localStorage.setItem(LAST_SEEN_COMMENT_KEY, String(id))
-  } catch {}
-}
-
-export function clearLastSeenComment() {
-  try {
-    localStorage.removeItem(LAST_SEEN_COMMENT_KEY)
+    localStorage.setItem(getKey(userId), String(id))
+    localStorage.removeItem(LEGACY_LAST_SEEN_COMMENT_KEY)
   } catch {}
 }
