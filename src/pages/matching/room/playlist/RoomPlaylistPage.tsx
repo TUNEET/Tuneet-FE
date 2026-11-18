@@ -13,6 +13,7 @@ import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SongSearchSheet } from '@/components/common/SongSearchSheet/SongSearchSheet'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { getRoomPath, ROUTES } from '@/constants/routes'
+import { useMusicLike } from '@/hooks/useMusicLike'
 import { useToast } from '@/hooks/useToast'
 import type { SearchedSong } from '@/types/music'
 import type { PlaylistSong } from '@/types/room'
@@ -33,6 +34,7 @@ export function RoomPlaylistPage() {
   const closeClear = useCallback(() => setIsClearOpen(false), [])
   const [isSongSearchOpen, setIsSongSearchOpen] = useState(false)
   const closeSongSearch = useCallback(() => setIsSongSearchOpen(false), [])
+  const handleLikeToggle = useMusicLike((update) => setSongs((prev) => prev && update(prev)))
 
   useEffect(() => {
     if (!room) return
@@ -118,7 +120,7 @@ export function RoomPlaylistPage() {
       <S.Content>
         {songs &&
           (songs.length > 0 ? (
-            <Playlist songs={songs} onDelete={handleDeleteSong} />
+            <Playlist songs={songs} onLikeToggle={handleLikeToggle} onDelete={handleDeleteSong} />
           ) : (
             <S.Empty>아직 담긴 노래가 없어요</S.Empty>
           ))}

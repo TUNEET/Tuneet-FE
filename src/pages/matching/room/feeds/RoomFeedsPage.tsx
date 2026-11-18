@@ -8,6 +8,7 @@ import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { getRoomFeedWritePath, getRoomPath, ROUTES } from '@/constants/routes'
 import { useCursorList } from '@/hooks/useCursorList'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
+import { useMusicLike } from '@/hooks/useMusicLike'
 import { useToast } from '@/hooks/useToast'
 import { FeedDetailModal } from '@/pages/explore/components/FeedDetailModal/FeedDetailModal'
 import type { RoomPost } from '@/types/room'
@@ -37,6 +38,11 @@ export function RoomFeedsPage() {
     posts.loadMore,
     posts.hasNext && !posts.isLoading,
   )
+
+  const handleLikeToggle = useMusicLike((update) => {
+    posts.setItems(update)
+    setSelectedPost((prev) => (prev ? update([prev])[0] : prev))
+  })
 
   const handleDelete = async (postId: number) => {
     try {
@@ -84,6 +90,8 @@ export function RoomFeedsPage() {
               feed={feed}
               tone="purple"
               expanded
+              liked={feed.liked}
+              onLikeToggle={() => handleLikeToggle(feed)}
               onClick={() => setSelectedPost(feed)}
             />
           ))}
@@ -97,6 +105,8 @@ export function RoomFeedsPage() {
         <FeedDetailModal
           feed={selectedPost}
           isMine={selectedPost.isMine}
+          liked={selectedPost.liked}
+          onLikeToggle={() => handleLikeToggle(selectedPost)}
           commentable={false}
           onDelete={() => handleDelete(selectedPost.id)}
           onClose={() => setSelectedPost(null)}

@@ -5,10 +5,11 @@ import { blockUser, getUserProfile, unblockUser } from '@/apis/user'
 import { Button } from '@/components/common/Button/Button'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { Divider } from '@/components/common/Divider/Divider'
+import { NoticeModal } from '@/components/common/NoticeModal/NoticeModal'
 import { ProfileCard } from '@/components/common/ProfileCard/ProfileCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
-import { getLetterWritePath } from '@/constants/routes'
+import { getLetterWritePath, ROUTES } from '@/constants/routes'
 import { useLetterQuota } from '@/hooks/useLetterQuota'
 import { useToast } from '@/hooks/useToast'
 import type { CommonTaste, OtherUserProfileResponse } from '@/types/user'
@@ -16,6 +17,8 @@ import { formatDistanceRange } from '@/utils/format'
 import { toProfileCard } from '@/utils/profile'
 import { CommonTasteSection } from './components/CommonTasteSection/CommonTasteSection'
 import * as S from './UserProfilePage.styles'
+
+const WITHDRAWN_USER_CODE = 'U4002'
 
 const toCommonTaste = ({
   artists,
@@ -38,6 +41,7 @@ export function UserProfilePage() {
   const letterQuota = useLetterQuota()
 
   const [user, setUser] = useState<OtherUserProfileResponse | null | undefined>(undefined)
+  const [isWithdrawn, setIsWithdrawn] = useState(false)
   const [isBlockOpen, setIsBlockOpen] = useState(false)
   const [isBlocking, setIsBlocking] = useState(false)
   const blockButtonRef = useRef<HTMLButtonElement>(null)
@@ -55,7 +59,9 @@ export function UserProfilePage() {
       .catch((error) => {
         if (isStale) return
         setUser(null)
-        showToast(getApiError(error).message)
+        const { code, message } = getApiError(error)
+        if (code === WITHDRAWN_USER_CODE) setIsWithdrawn(true)
+        else showToast(message)
       })
 
     return () => {
@@ -64,6 +70,21 @@ export function UserProfilePage() {
   }, [id, isValidId, showToast])
 
   if (isValidId && user === undefined) return <SheetPage>{null}</SheetPage>
+
+  if (isWithdrawn) {
+    return (
+      <SheetPage>
+        <SectionHeader title="프로필" actionLabel="나가기" onActionClick={goBack} />
+        <NoticeModal
+          title="프로필에 접근할 수 없습니다."
+          description="탈퇴한 사용자입니다."
+          secondaryAction={{ label: '홈으로', onClick: () => navigate(ROUTES.home) }}
+          primaryAction={{ label: '이전 화면으로', onClick: goBack }}
+          onClose={goBack}
+        />
+      </SheetPage>
+    )
+  }
 
   if (!user) {
     return (

@@ -10,6 +10,7 @@ import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopove
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { getLetterReplyPath, ROUTES } from '@/constants/routes'
+import { useMusicLike } from '@/hooks/useMusicLike'
 import { useToast } from '@/hooks/useToast'
 import type { ReceivedLetter } from '@/types/letter'
 import { formatDateTime } from '@/utils/format'
@@ -29,6 +30,9 @@ export function LetterDetailPage() {
   const closeDelete = useCallback(() => setIsDeleteOpen(false), [])
   const goToLetterbox = () => navigate(ROUTES.letterbox)
   const id = Number(letterId)
+  const handleLikeToggle = useMusicLike((update) =>
+    setLetter((prev) => (prev ? update([prev])[0] : prev)),
+  )
   const isValidId = Number.isInteger(id) && id > 0
 
   useEffect(() => {
@@ -101,7 +105,13 @@ export function LetterDetailPage() {
         </S.Intro>
 
         <S.Received>
-          <LetterCards content={letterContent} from={senderNickname} music={music} />
+          <LetterCards
+            content={letterContent}
+            from={senderNickname}
+            music={music}
+            liked={letter.liked}
+            onLikeToggle={() => handleLikeToggle(letter)}
+          />
         </S.Received>
 
         <S.Actions>

@@ -17,29 +17,29 @@ export const Character = styled.img`
 `
 
 export const Title = styled.h1`
-  margin-top: 3rem;
-  font-size: ${({ theme }) => theme.fontSize.xl};
-  font-weight: 700;
-  line-height: 1.3;
+  margin-top: 2rem;
+  font-size: ${({ theme }) => theme.fontSize.lg};
+  font-weight: 600;
+  line-height: 2rem;
   letter-spacing: 0.02em;
   color: ${({ theme }) => theme.colors.textHeading};
 `
 
 export const Description = styled.p`
-  margin-top: 1.2rem;
-  font-size: ${({ theme }) => theme.fontSize.md};
-  font-weight: 500;
-  line-height: 1.4;
+  margin-top: 1.4rem;
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-weight: 400;
+  line-height: normal;
   letter-spacing: 0.02em;
   white-space: pre-line;
-  color: ${({ theme }) => theme.colors.textPrimary};
+  color: ${({ theme }) => theme.colors.textPlaceholder};
 `
 
 export const Actions = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
-  margin-top: 1.2rem;
+  margin-top: 2.6rem;
 `
 
 export const ActionButton = styled.button<{ $variant: 'filled' | 'outline' }>`

@@ -1,6 +1,7 @@
 import type { ApiResponse } from '@/types/api'
 import type {
   LetterContentRequest,
+  LetterMusic,
   LetterPage,
   LetterQuota,
   LetterSendResponse,
@@ -11,23 +12,37 @@ import { instance } from './instance'
 
 const PAGE_SIZE = 20
 
+const withLiked = <T extends { music: LetterMusic }>(letter: T) => ({
+  ...letter,
+  liked: letter.music.liked ?? false,
+})
+
+const withLikedPage = <T extends { music: LetterMusic }>(page: LetterPage<T>) => ({
+  ...page,
+  letters: page.letters.map(withLiked),
+})
+
 export async function getReceivedLetters(cursor?: number, size = PAGE_SIZE) {
-  const { data } = await instance.get<ApiResponse<LetterPage<ReceivedLetter>>>('/api/v1/letters', {
-    params: { cursor, size },
-  })
-  return data.data
+  const { data } = await instance.get<ApiResponse<LetterPage<Omit<ReceivedLetter, 'liked'>>>>(
+    '/api/v1/letters',
+    { params: { cursor, size } },
+  )
+  return withLikedPage(data.data)
 }
 
 export async function getSentLetters(cursor?: number, size = PAGE_SIZE) {
-  const { data } = await instance.get<ApiResponse<LetterPage<SentLetter>>>('/api/v1/letters/sent', {
-    params: { cursor, size },
-  })
-  return data.data
+  const { data } = await instance.get<ApiResponse<LetterPage<Omit<SentLetter, 'liked'>>>>(
+    '/api/v1/letters/sent',
+    { params: { cursor, size } },
+  )
+  return withLikedPage(data.data)
 }
 
 export async function getReceivedLetter(letterId: number) {
-  const { data } = await instance.get<ApiResponse<ReceivedLetter>>(`/api/v1/letters/${letterId}`)
-  return data.data
+  const { data } = await instance.get<ApiResponse<Omit<ReceivedLetter, 'liked'>>>(
+    `/api/v1/letters/${letterId}`,
+  )
+  return withLiked(data.data)
 }
 
 export async function deleteReceivedLetter(letterId: number) {
