@@ -55,7 +55,7 @@ export default defineConfig({
           },
         ],
         navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api/],
+        navigateFallbackDenylist: [/^\/api/, /^\/privacy/, /^\/terms/],
         cleanupOutdatedCaches: true,
       },
       devOptions: {
