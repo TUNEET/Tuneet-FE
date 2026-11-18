@@ -50,7 +50,6 @@ export function NotificationsPage() {
   const current = tab === 'received' ? received : sent
   const latestReceivedId = received.items[0]?.id
 
-  // 받은 코멘트 목록을 봤으면 그 코멘트로는 알림을 다시 띄우지 않는다
   useEffect(() => {
     if (latestReceivedId) markCommentSeen(latestReceivedId)
   }, [latestReceivedId])
@@ -58,7 +57,6 @@ export function NotificationsPage() {
     current.loadMore,
     current.hasNext && !current.isLoading,
   )
-  // 두 탭에 같은 곡이 있으면 하트를 함께 맞춘다
   const handleLikeToggle = useMusicLike((update) => {
     received.setItems(update)
     sent.setItems(update)

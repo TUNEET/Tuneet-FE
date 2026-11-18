@@ -19,7 +19,6 @@ const getFeedId = ({ id }: ExploreFeed) => id
 
 type FeedLocationState = { fromList?: boolean }
 
-// 첫 페이지는 탭에 들어올 때 미리 받아 둔 요청을 이어받는다
 const fetchFeedPage = (cursor?: number) =>
   cursor === undefined ? takePrefetched(PAGE_DATA.exploreFeeds) : getFeeds(cursor)
 
@@ -29,9 +28,7 @@ export function ExplorePage() {
   const { state } = useLocation() as { state: FeedLocationState | null }
   const feedMatch = useMatch(ROUTES.feed)
   const selectedFeedId = feedMatch ? Number(feedMatch.params.feedId) : null
-  // 알림 등으로 바로 들어와 목록에 아직 없는 피드는 따로 받아 둔다
   const [fetchedFeed, setFetchedFeed] = useState<ExploreFeed | null>(null)
-  // 삭제 후 화면을 닫는 사이에 목록에서 빠졌다고 다시 받아 오지 않게 한다
   const [deletedFeedId, setDeletedFeedId] = useState<number | null>(null)
 
   const handleLoadError = useCallback(
@@ -39,7 +36,6 @@ export function ExplorePage() {
     [showToast],
   )
   const feeds = useCursorList(fetchFeedPage, getFeedId, handleLoadError)
-  // 목록에서 꺼내 써야 상세에서 누른 좋아요가 카드에도 바로 반영된다
   const listedFeed = feeds.items.find((feed) => feed.id === selectedFeedId)
   const selectedFeed = listedFeed ?? (fetchedFeed?.id === selectedFeedId ? fetchedFeed : null)
   const needsFetch = selectedFeedId !== null && !listedFeed && selectedFeedId !== deletedFeedId
@@ -51,7 +47,6 @@ export function ExplorePage() {
   const openFeed = (feedId: number) =>
     navigate(getFeedPath(feedId), { state: { fromList: true } satisfies FeedLocationState })
 
-  // 목록에서 열었으면 뒤로 가서 닫고, 바로 들어왔으면 뒤로 갈 곳이 없으니 목록으로 바꾼다
   const closeFeed = useCallback(() => {
     if (state?.fromList) navigate(-1)
     else navigate(ROUTES.explore, { replace: true })

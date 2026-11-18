@@ -1,9 +1,7 @@
 import type { GenreResponse } from '@/types/genre'
 
-/** 한 줄에 놓는 장르 칩 수 */
 export const GENRE_ROW_SIZE = 4
 
-// 장르 API를 받기 전이나 실패했을 때 보여줄 목록 (서버 목록과 같은 순서)
 export const DEFAULT_GENRES: GenreResponse[] = [
   { genreId: 1, genreName: 'K_POP', displayName: 'K-POP' },
   { genreId: 2, genreName: 'POP', displayName: 'POP' },
