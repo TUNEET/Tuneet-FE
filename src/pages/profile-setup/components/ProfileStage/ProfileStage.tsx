@@ -18,6 +18,7 @@ import { ChevronIcon } from '@/components/common/ChevronIcon/ChevronIcon'
 import { SongSearchSheet } from '@/components/common/SongSearchSheet/SongSearchSheet'
 import type { ProfileMusic } from '@/types/music'
 import * as S from './ProfileStage.styles'
+import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 const DECORATIONS = [
   { src: musicSmallIcon, width: '3.18rem', height: '3.18rem', left: '28.088rem', top: '36.7rem' },
@@ -84,7 +85,7 @@ export function ProfileStage({
             {music ? (
               <>
                 <S.SelectedMusicButton type="button">
-                  <img src={music.albumImage} alt="" width={17} height={17} />
+                  <CoverImage src={music.albumImage} width={17} height={17} />
                   <span>
                     {music.title} - {music.artist}
                   </span>

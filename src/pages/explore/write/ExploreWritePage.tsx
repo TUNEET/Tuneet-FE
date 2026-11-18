@@ -12,6 +12,7 @@ import { ROUTES } from '@/constants/routes'
 import { useToast } from '@/hooks/useToast'
 import type { SearchedSong } from '@/types/music'
 import * as S from './ExploreWritePage.styles'
+import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 const COMMENT_MAX_LENGTH = 100
 
@@ -92,7 +93,7 @@ export function ExploreWritePage() {
             />
             {song && (
               <S.SelectedSong>
-                <img src={song.albumImageUrl} alt="" width={12} height={12} />
+                <CoverImage src={song.albumImageUrl} width={12} height={12} />
                 <span>
                   {song.title} - {song.artist}
                 </span>
