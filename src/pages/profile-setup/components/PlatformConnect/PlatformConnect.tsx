@@ -5,6 +5,7 @@ import characterFailure from '@/assets/images/character-failure.webp'
 import characterImage from '@/assets/images/character-profile.png'
 import { ChevronIcon } from '@/components/common/ChevronIcon/ChevronIcon'
 import * as S from './PlatformConnect.styles'
+import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 type PlatformConnectProps = {
   nickname: string
@@ -30,7 +31,7 @@ export function PlatformConnect({ nickname, previewUrl, music, onNext }: Platfor
           <S.Nickname>{nickname}</S.Nickname>
           {music && (
             <S.MusicChip>
-              <img src={music.albumImage} alt="" width={14} height={14} />
+              <CoverImage src={music.albumImage} width={14} height={14} />
               <span>
                 {music.title} - {music.artist}
               </span>
