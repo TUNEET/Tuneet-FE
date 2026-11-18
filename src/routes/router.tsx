@@ -7,6 +7,7 @@ import { ROUTES } from '@/constants/routes'
 import { isLoggedIn } from '@/utils/auth'
 import { prefetch } from '@/utils/prefetch'
 import { RequireAuth } from './RequireAuth'
+import { RequireProfileSetupDone } from './RequireProfileSetupDone'
 
 const prefetchWhenLoggedIn = (run: () => void) => () => {
   if (isLoggedIn()) run()
@@ -43,7 +44,11 @@ export const router = createBrowserRouter([
                   })),
               },
               {
-                element: <TabLayout />,
+                element: (
+                  <RequireProfileSetupDone>
+                    <TabLayout />
+                  </RequireProfileSetupDone>
+                ),
                 children: [
                   {
                     errorElement: <RouteErrorFallback />,

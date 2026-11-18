@@ -2,8 +2,6 @@ import styled from 'styled-components'
 import { SETUP_SHIFT } from '@/pages/profile-setup/ProfileSetupPage.styles'
 import { shiftTop } from '@/styles/authPage'
 
-export { LaterButton } from '@/pages/profile-setup/ProfileSetupPage.styles'
-
 export const Stage = styled.div`
   position: absolute;
   top: ${shiftTop('0rem', SETUP_SHIFT.stage)};

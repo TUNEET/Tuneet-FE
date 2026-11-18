@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { Sheet } from '@/styles/tabPage'
-import { FilledButton, HeaderAction, ProfileTitle } from '../../MyPage.styles'
+import { HeaderAction, ProfileTitle } from '../../MyPage.styles'
 
 export { Checkbox, Term, TermDetail, TermLabel } from '@/styles/term'
 
@@ -77,12 +77,3 @@ export const Terms = styled.div`
   flex-direction: column;
   gap: 2rem;
 `
-
-export const SaveArea = styled.div`
-  position: relative;
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 8.4rem;
-`
-
-export const SaveButton = FilledButton

@@ -10,6 +10,7 @@ import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopove
 import { Modal } from '@/components/common/Modal/Modal'
 import type { Feed } from '@/types/feed'
 import { formatTimeAgo } from '@/utils/format'
+import { getYoutubeMusicSearchUrl } from '@/utils/youtubeMusic'
 import { FeedCommentCard } from '../FeedCommentCard/FeedCommentCard'
 import * as S from './FeedDetailModal.styles'
 
@@ -94,7 +95,13 @@ export function FeedDetailModal({
 
         <S.Listen>
           <S.ListenLabel>지금 들어보기</S.ListenLabel>
-          <S.PlatformButton type="button" aria-label="유튜브 뮤직에서 듣기">
+          <S.PlatformButton
+            as="a"
+            href={getYoutubeMusicSearchUrl(song.title, song.artist)}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="유튜브 뮤직에서 듣기"
+          >
             <img src={youtubeMusicIcon} alt="" />
           </S.PlatformButton>
         </S.Listen>

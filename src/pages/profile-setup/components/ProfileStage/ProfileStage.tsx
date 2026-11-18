@@ -44,7 +44,6 @@ type ProfileStageProps = {
   onMusicChange: (music: ProfileMusic) => void
   onPrev: () => void
   onNext: () => void
-  onLater: () => void
 }
 
 export function ProfileStage({
@@ -58,7 +57,6 @@ export function ProfileStage({
   onMusicChange,
   onPrev,
   onNext,
-  onLater,
 }: ProfileStageProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isMusicSearchOpen, setIsMusicSearchOpen] = useState(false)
@@ -165,10 +163,6 @@ export function ProfileStage({
           <ChevronIcon direction="right" />
         </S.NextButton>
       </S.StepButtons>
-
-      <S.LaterButton type="button" onClick={onLater}>
-        나중에 설정하기
-      </S.LaterButton>
 
       {isMusicSearchOpen && (
         <SongSearchSheet
