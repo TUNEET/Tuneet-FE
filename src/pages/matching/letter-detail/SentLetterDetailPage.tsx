@@ -7,6 +7,7 @@ import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { LETTER_ERROR_MESSAGES } from '@/constants/letterErrors'
 import { ROUTES } from '@/constants/routes'
+import { useMusicLike } from '@/hooks/useMusicLike'
 import { useToast } from '@/hooks/useToast'
 import type { SentLetter, SentLetterLocationState } from '@/types/letter'
 import { formatDateTime } from '@/utils/format'
@@ -24,7 +25,12 @@ export function SentLetterDetailPage() {
 
   const [fetchedLetter, setFetchedLetter] = useState<SentLetter | null | undefined>(undefined)
   const [myNickname, setMyNickname] = useState('')
-  const letter = passedLetter ?? fetchedLetter
+  const [likedOverride, setLikedOverride] = useState<boolean | undefined>(undefined)
+  const baseLetter = passedLetter ?? fetchedLetter
+  const letter = baseLetter && { ...baseLetter, liked: likedOverride ?? baseLetter.liked }
+  const handleLikeToggle = useMusicLike((update) => {
+    if (letter) setLikedOverride(update([letter])[0].liked)
+  })
   const goToLetterbox = () => navigate(ROUTES.letterbox)
 
   useEffect(() => {
@@ -83,7 +89,13 @@ export function SentLetterDetailPage() {
         </S.Intro>
 
         <S.Received>
-          <LetterCards content={letterContent} from={myNickname} music={music} />
+          <LetterCards
+            content={letterContent}
+            from={myNickname}
+            music={music}
+            liked={letter.liked}
+            onLikeToggle={() => handleLikeToggle(letter)}
+          />
         </S.Received>
       </div>
     </SheetPage>

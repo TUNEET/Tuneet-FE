@@ -31,10 +31,11 @@ export async function getReceivedLetters(cursor?: number, size = PAGE_SIZE) {
 }
 
 export async function getSentLetters(cursor?: number, size = PAGE_SIZE) {
-  const { data } = await instance.get<ApiResponse<LetterPage<SentLetter>>>('/api/v1/letters/sent', {
-    params: { cursor, size },
-  })
-  return data.data
+  const { data } = await instance.get<ApiResponse<LetterPage<Omit<SentLetter, 'liked'>>>>(
+    '/api/v1/letters/sent',
+    { params: { cursor, size } },
+  )
+  return withLikedPage(data.data)
 }
 
 export async function getReceivedLetter(letterId: number) {

@@ -86,7 +86,10 @@ export function LetterboxPage() {
   const sent = useCursorList(fetchSent, getLetterId, handleLoadError)
   const isReceived = tab === 'received'
   const current = isReceived ? received : sent
-  const handleLikeToggle = useMusicLike((update) => received.setItems(update))
+  const handleLikeToggle = useMusicLike((update) => {
+    received.setItems(update)
+    sent.setItems(update)
+  })
 
   const cards: LetterCard[] = isReceived
     ? received.items.map((letter) => ({
@@ -103,6 +106,7 @@ export function LetterboxPage() {
           navigate(getSentLetterPath(letter.letterId), {
             state: { letter } satisfies SentLetterLocationState,
           }),
+        onLikeToggle: () => handleLikeToggle(letter),
       }))
   const isEmpty = cards.length === 0
   const sentinelRef = useInfiniteScroll<HTMLDivElement>(
