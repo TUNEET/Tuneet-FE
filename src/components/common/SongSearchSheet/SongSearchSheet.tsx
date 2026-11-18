@@ -10,8 +10,8 @@ import type { MusicSearchItem, SearchedSong } from '@/types/music'
 import * as S from './SongSearchSheet.styles'
 import type { SongSearchSheetVariant } from './SongSearchSheet.styles'
 import { CoverImage } from '@/components/common/CoverImage/CoverImage'
+import { usePagedSearch } from '@/hooks/usePagedSearch'
 
-const SEARCH_DEBOUNCE_MS = 200
 const PAGE_SIZE = 5
 
 const ADD_ICONS = {
@@ -28,12 +28,7 @@ export function PageArrow() {
   )
 }
 
-type SearchResult = {
-  keyword: string
-  page: number
-  items: MusicSearchItem[]
-  totalPages: number
-}
+const getCoverUrl = ({ coverUrl }: MusicSearchItem) => coverUrl
 
 const toSearchedSong = ({ id, title, artist, coverUrl }: MusicSearchItem): SearchedSong => ({
   musicId: id,
@@ -59,12 +54,17 @@ export function SongSearchSheet({
 }: SongSearchSheetProps) {
   const titleId = useId()
   const [query, setQuery] = useState('')
-  const [result, setResult] = useState<SearchResult | null>(null)
-  const [isError, setIsError] = useState(false)
   const [page, setPage] = useState(1)
   const [addedSongId, setAddedSongId] = useState<string | null>(null)
   const closeAddedPopover = useCallback(() => setAddedSongId(null), [])
   const keyword = query.trim()
+  const { result, isError } = usePagedSearch({
+    search: searchMusics,
+    keyword,
+    page,
+    pageSize: PAGE_SIZE,
+    getImage: getCoverUrl,
+  })
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -73,29 +73,6 @@ export function SongSearchSheet({
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [onClose])
-
-  useEffect(() => {
-    if (!keyword) return
-
-    let isStale = false
-    const timer = setTimeout(async () => {
-      try {
-        const { items, totalPages } = await searchMusics(keyword, page, PAGE_SIZE)
-        if (isStale) return
-        setResult({ keyword, page, items, totalPages })
-        setIsError(false)
-      } catch {
-        if (isStale) return
-        setResult({ keyword, page, items: [], totalPages: 0 })
-        setIsError(true)
-      }
-    }, SEARCH_DEBOUNCE_MS)
-
-    return () => {
-      isStale = true
-      clearTimeout(timer)
-    }
-  }, [keyword, page])
 
   const handleAdd = async (item: MusicSearchItem) => {
     const isAdded = await onAdd(toSearchedSong(item))
