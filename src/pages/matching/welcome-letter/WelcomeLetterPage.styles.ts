@@ -56,6 +56,11 @@ export const Paragraphs = styled.div`
   color: ${({ theme }) => theme.colors.textPrimary};
 `
 
+export const Highlight = styled.strong`
+  font-weight: 700;
+  color: ${({ theme }) => theme.colors.textHeading};
+`
+
 export const Question = styled.p`
   padding: 1.4rem 1.2rem;
   border-radius: 1.2rem;
