@@ -11,11 +11,22 @@ type PlatformConnectProps = {
   nickname: string
   previewUrl: string | null
   music: { title: string; artist: string; albumImage: string } | null
+  initialResult: 'success' | 'failure' | null
+  isConnecting: boolean
+  onConnect: () => void
   onNext: () => void
 }
 
-export function PlatformConnect({ nickname, previewUrl, music, onNext }: PlatformConnectProps) {
-  const [connectResult, setConnectResult] = useState<'success' | 'failure' | null>(null)
+export function PlatformConnect({
+  nickname,
+  previewUrl,
+  music,
+  initialResult,
+  isConnecting,
+  onConnect,
+  onNext,
+}: PlatformConnectProps) {
+  const [connectResult, setConnectResult] = useState(initialResult)
 
   return (
     <>
@@ -40,7 +51,7 @@ export function PlatformConnect({ nickname, previewUrl, music, onNext }: Platfor
         </S.Info>
       </S.Card>
 
-      <S.PlatformButton type="button" onClick={() => setConnectResult('success')}>
+      <S.PlatformButton type="button" disabled={isConnecting} onClick={onConnect}>
         <S.PlatformIcon>
           <img src={youtubeMusicIcon} alt="" width={20} height={20} />
         </S.PlatformIcon>
@@ -63,7 +74,14 @@ export function PlatformConnect({ nickname, previewUrl, music, onNext }: Platfor
               </S.PopupDescription>
             </S.PopupTexts>
             <S.FailureButtons>
-              <S.RetryButton type="button" onClick={() => setConnectResult('success')}>
+              <S.RetryButton
+                type="button"
+                disabled={isConnecting}
+                onClick={() => {
+                  setConnectResult(null)
+                  onConnect()
+                }}
+              >
                 다시 연결하기
               </S.RetryButton>
               <S.ManualButton type="button" onClick={onNext} autoFocus>

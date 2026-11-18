@@ -108,6 +108,11 @@ export const PlatformButton = styled.button`
   padding: 0 1rem;
   border-radius: 10000px;
   ${glassSurface}
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
 `
 
 export const PlatformIcon = styled.span`
