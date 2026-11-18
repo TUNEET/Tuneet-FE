@@ -10,7 +10,6 @@ const COPY: Record<PushBlockedReason, { title: string; description: string }> = 
     title: '브라우저 알림 권한이 꺼져 있어요.',
     description: 'PUSH 알림 수신을 위해,\n브라우저 설정에서 알림 권한을 허용해 주세요.',
   },
-  // 권한을 허용해도 켤 수 없는 환경이라 홈 화면 앱으로 여는 방법을 안내한다
   unsupported: {
     title: '지금 브라우저에서는 알림을 받을 수 없어요.',
     description: 'TUNEET를 홈 화면에 추가한 뒤,\n추가한 앱에서 PUSH 알림을 켜 주세요.',

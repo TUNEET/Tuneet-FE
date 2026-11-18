@@ -157,7 +157,6 @@ export function ProfileSetupPage() {
     setPreviewUrl(URL.createObjectURL(file))
   }
 
-  // 닉네임과 사진을 저장하고 저장됐는지 돌려준다 (닉네임은 꼭 있어야 해서 건너뛸 때도 먼저 저장한다)
   const saveProfile = async () => {
     if (isSavingProfile) return false
 

@@ -62,7 +62,6 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
   const [saveResult, setSaveResult] = useState<SaveResult | null>(null)
   const [openTermId, setOpenTermId] = useState<string | null>(null)
   const [offNoticeKey, setOffNoticeKey] = useState<ToggleKey | null>(null)
-  // 푸시는 서버 설정이 아니라 이 기기 설정이라 저장하기 없이 바로 켜고 끈다
   const [isPushOn, setIsPushOn] = useState(isPushEnabled)
   const [isPushPending, setIsPushPending] = useState(false)
   const [pushBlockedReason, setPushBlockedReason] = useState<PushBlockedReason | null>(null)
