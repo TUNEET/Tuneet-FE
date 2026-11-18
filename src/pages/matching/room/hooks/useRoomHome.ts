@@ -4,7 +4,8 @@ import { getApiError } from '@/apis/error'
 import { getRoomHome } from '@/apis/room'
 import type { LikeUpdater } from '@/hooks/useMusicLike'
 import { useToast } from '@/hooks/useToast'
-import type { RoomDetail } from '@/types/room'
+import { getAuthorPath } from '@/constants/routes'
+import type { RoomDetail, RoomPost } from '@/types/room'
 
 export function useRoomHome() {
   const showToast = useToast()
@@ -40,8 +41,15 @@ export function useRoomHome() {
     [],
   )
 
+  const getPostAuthorPath = (post: RoomPost) =>
+    getAuthorPath({
+      isMine: post.isMine,
+      userId: room?.members.find(({ nickname }) => nickname === post.nickname)?.id ?? null,
+    })
+
   return {
     roomId: id,
+    getPostAuthorPath,
     updateLikes,
     room: isValidId ? room : null,
     isLoading: isValidId && room === undefined,
