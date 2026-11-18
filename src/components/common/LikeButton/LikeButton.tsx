@@ -28,11 +28,7 @@ export function LikeButton({ liked, tone = 'blue', size = 14, onToggle }: LikeBu
       onClick={handleClick}
     >
       {tone === 'roseBadge' ? (
-        liked ? (
-          <img src={likedBadgeHeart} alt="" width={13} height={11} />
-        ) : (
-          <img src={unlikedBadgeHeart} alt="" width={14} height={12} />
-        )
+        <img src={liked ? likedBadgeHeart : unlikedBadgeHeart} alt="" width={14} height={14} />
       ) : (
         <HeartIcon filled={liked} size={size} />
       )}
