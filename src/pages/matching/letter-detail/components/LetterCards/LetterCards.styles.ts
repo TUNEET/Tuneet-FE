@@ -1,12 +1,20 @@
 import styled from 'styled-components'
 
 export const Cards = styled.div`
+  position: relative;
   isolation: isolate;
   display: flex;
   flex-direction: column;
   width: min(33.3rem, 100%);
   margin: 0 auto;
   padding: 1.9rem 0 2rem;
+`
+
+export const Like = styled.div`
+  position: absolute;
+  top: -0.3rem;
+  right: 0;
+  z-index: 2;
 `
 
 const Card = styled.div`

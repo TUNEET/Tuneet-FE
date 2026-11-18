@@ -52,9 +52,9 @@ type LetterCard = {
   letterContent: string
   createdAt: string
   badge?: string
-  liked: boolean
+  liked?: boolean
   onClick?: () => void
-  onLikeToggle: () => void
+  onLikeToggle?: () => void
 }
 
 const fetchReceived = async (cursor?: number) => {
@@ -86,10 +86,7 @@ export function LetterboxPage() {
   const sent = useCursorList(fetchSent, getLetterId, handleLoadError)
   const isReceived = tab === 'received'
   const current = isReceived ? received : sent
-  const handleLikeToggle = useMusicLike((update) => {
-    received.setItems(update)
-    sent.setItems(update)
-  })
+  const handleLikeToggle = useMusicLike((update) => received.setItems(update))
 
   const cards: LetterCard[] = isReceived
     ? received.items.map((letter) => ({
@@ -106,7 +103,6 @@ export function LetterboxPage() {
           navigate(getSentLetterPath(letter.letterId), {
             state: { letter } satisfies SentLetterLocationState,
           }),
-        onLikeToggle: () => handleLikeToggle(letter),
       }))
   const isEmpty = cards.length === 0
   const sentinelRef = useInfiniteScroll<HTMLDivElement>(
@@ -193,7 +189,11 @@ export function LetterboxPage() {
                     description={letterContent}
                     playable
                     badge={badge}
-                    action={<LikeButton liked={liked} tone="rose" onToggle={onLikeToggle} />}
+                    action={
+                      onLikeToggle && (
+                        <LikeButton liked={liked ?? false} tone="rose" onToggle={onLikeToggle} />
+                      )
+                    }
                     actionAlign="start"
                     onClick={onClick}
                   />
