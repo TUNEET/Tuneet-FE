@@ -163,6 +163,14 @@ export const ResultList = styled(List)`
   margin-top: 2rem;
 `
 
+/** 곡·아티스트 이름 영역. 플러스 버튼뿐 아니라 이 부분을 눌러도 추가된다 */
+export const ResultSong = styled(Song).attrs({ as: 'button', type: 'button' })`
+  flex: 1;
+  align-self: stretch;
+  text-align: left;
+  cursor: pointer;
+`
+
 export const ResultItem = styled(Item)<VariantProps>`
   position: relative;
   background-color: ${({ theme, $variant }) => theme.colors[VARIANT_COLORS[$variant].field]};
@@ -170,14 +178,12 @@ export const ResultItem = styled(Item)<VariantProps>`
   ${({ $variant, theme }) =>
     $variant !== 'playlist' &&
     css`
-      p {
+      ${ResultSong} {
         letter-spacing: 0.02rem;
         color: ${theme.colors[VARIANT_COLORS[$variant].text]};
       }
     `}
 `
-
-export const ResultSong = Song
 
 export const CoverFallback = styled.i`
   flex-shrink: 0;

@@ -58,6 +58,15 @@ export function RoomCreatedModal({ room, onClose, onEdit, onDelete }: RoomCreate
     }
   }
 
+  const copyInviteLink = async () => {
+    try {
+      await navigator.clipboard.writeText(room.inviteUrl)
+      showToast('초대 링크가 복사되었어요')
+    } catch {
+      showToast('초대 링크를 복사하지 못했어요')
+    }
+  }
+
   const handleShare = async () => {
     if (navigator.share) {
       try {
@@ -70,8 +79,7 @@ export function RoomCreatedModal({ room, onClose, onEdit, onDelete }: RoomCreate
       return
     }
 
-    await navigator.clipboard.writeText(room.inviteUrl)
-    showToast('초대 링크가 복사되었어요')
+    await copyInviteLink()
   }
 
   const handleDelete = () => {
@@ -111,7 +119,7 @@ export function RoomCreatedModal({ room, onClose, onEdit, onDelete }: RoomCreate
               <S.Description>{room.description}</S.Description>
             </S.Texts>
           </S.RoomInfo>
-          <S.InviteLink href={room.inviteUrl} target="_blank" rel="noreferrer">
+          <S.InviteLink type="button" aria-label="초대 링크 복사" onClick={copyInviteLink}>
             {room.inviteUrl.replace(/^https?:\/\//, '')}
           </S.InviteLink>
           <S.ShareButton type="button" onClick={handleShare}>
