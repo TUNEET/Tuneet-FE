@@ -23,6 +23,7 @@ export const Card = styled.div`
   height: 15.2rem;
   padding: 1.5rem 1rem 0;
   overflow: hidden;
+  border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 2.4rem;
   background: rgba(250, 250, 250, 0.7);
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.08);
