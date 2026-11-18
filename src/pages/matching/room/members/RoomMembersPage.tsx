@@ -5,6 +5,7 @@ import { getRoomMembers } from '@/apis/room'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { getLetterWritePath, getRoomPath, getUserProfilePath, ROUTES } from '@/constants/routes'
+import { useLetterQuota } from '@/hooks/useLetterQuota'
 import { useToast } from '@/hooks/useToast'
 import type { RoomMembers } from '@/types/room'
 import { RoomHeader } from '../components/RoomHeader/RoomHeader'
@@ -14,6 +15,8 @@ import * as S from './RoomMembersPage.styles'
 export function RoomMembersPage() {
   const navigate = useNavigate()
   const showToast = useToast()
+  const letterQuota = useLetterQuota()
+  const isLetterQuotaUsedUp = letterQuota !== null && letterQuota.remaining <= 0
   const { roomId } = useParams()
   const id = Number(roomId)
   const isValidId = Number.isInteger(id) && id > 0
@@ -69,6 +72,7 @@ export function RoomMembersPage() {
               member={member}
               onClick={() => navigate(getUserProfilePath(member.id))}
               onLetterClick={() => navigate(getLetterWritePath(member.id))}
+              letterDisabled={isLetterQuotaUsedUp}
             />
           ))}
         </S.List>

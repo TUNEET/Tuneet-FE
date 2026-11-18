@@ -81,4 +81,8 @@ export const Meta = styled.span`
 
 export const LetterButton = styled.button`
   display: flex;
+
+  &:disabled {
+    cursor: default;
+  }
 `

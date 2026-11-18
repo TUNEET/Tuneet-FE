@@ -1,4 +1,5 @@
 import type { KeyboardEvent } from 'react'
+import letterBlockIcon from '@/assets/icons/letter-block.svg'
 import messageIcon from '@/assets/icons/message.svg'
 import { CharacterAvatar } from '@/components/common/CharacterAvatar/CharacterAvatar'
 import { ROOM_ROLE_LABELS } from '@/constants/room'
@@ -10,9 +11,15 @@ type MemberRowProps = {
   member: RoomMember
   onClick: (member: RoomMember) => void
   onLetterClick?: (member: RoomMember) => void
+  letterDisabled?: boolean
 }
 
-export function MemberRow({ member, onClick, onLetterClick }: MemberRowProps) {
+export function MemberRow({
+  member,
+  onClick,
+  onLetterClick,
+  letterDisabled = false,
+}: MemberRowProps) {
   const { nickname, role, characterColorId, profilePicture, song, similarity } = member
   const isOwner = role === 'owner'
 
@@ -52,12 +59,13 @@ export function MemberRow({ member, onClick, onLetterClick }: MemberRowProps) {
         <S.LetterButton
           type="button"
           aria-label={`${nickname}에게 편지 보내기`}
+          disabled={letterDisabled}
           onClick={(event) => {
             event.stopPropagation()
             onLetterClick?.(member)
           }}
         >
-          <img src={messageIcon} alt="" width={28} height={30} />
+          <img src={letterDisabled ? letterBlockIcon : messageIcon} alt="" width={28} height={30} />
         </S.LetterButton>
       </S.Aside>
     </S.Row>

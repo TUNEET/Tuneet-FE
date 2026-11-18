@@ -8,6 +8,7 @@ type RecommendationListProps = {
   limit?: number
   onUserClick: (match: TasteMatch) => void
   onLetterClick?: (match: TasteMatch) => void
+  letterDisabled?: boolean
 }
 
 export function RecommendationList({
@@ -15,6 +16,7 @@ export function RecommendationList({
   limit,
   onUserClick,
   onLetterClick,
+  letterDisabled,
 }: RecommendationListProps) {
   if (state.status === 'loading') return null
   if (state.status === 'error') return <S.Message>추천 사용자를 불러오지 못했어요</S.Message>
@@ -31,6 +33,7 @@ export function RecommendationList({
           match={match}
           onClick={onUserClick}
           onLetterClick={onLetterClick}
+          letterDisabled={letterDisabled}
         />
       ))}
     </S.CardList>
