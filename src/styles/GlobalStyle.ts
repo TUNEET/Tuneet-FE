@@ -61,6 +61,12 @@ export const GlobalStyle = createGlobalStyle`
     font: inherit;
   }
 
+  /* 입력창 기본 포커스 테두리를 없앤다. :where로 우선순위를 0으로 둬서
+     에러 테두리처럼 컴포넌트가 직접 넣은 outline은 그대로 보인다 */
+  :where(input:focus, textarea:focus, select:focus) {
+    outline: none;
+  }
+
   ul,
   ol {
     list-style: none;
