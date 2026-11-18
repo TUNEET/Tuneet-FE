@@ -7,6 +7,7 @@ import { Panel, PanelHeader, PanelIcon, PanelLabel } from '../TasteSelect/TasteS
 import { getMusicKey } from '@/types/music'
 import type { ProfileMusic as Song } from '@/types/music'
 import * as S from './SongSelect.styles'
+import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 type SongSelectProps = {
   songs: Song[]
@@ -47,7 +48,7 @@ export function SongSelect({ songs, onAddSong, onRemoveSong }: SongSelectProps) 
               {songs.map((song) => (
                 <S.Song key={getMusicKey(song)}>
                   {song.albumImage ? (
-                    <img src={song.albumImage} alt="" width={12} height={12} />
+                    <CoverImage src={song.albumImage} width={12} height={12} />
                   ) : (
                     <S.CoverFallback />
                   )}

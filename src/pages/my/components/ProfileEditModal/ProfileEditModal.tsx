@@ -72,7 +72,7 @@ export function ProfileEditModal({
               <S.SelectedArtists>
                 <S.SelectedArtist>
                   {selectedSong.albumImage ? (
-                    <img src={selectedSong.albumImage} alt="" width={12} height={12} />
+                    <CoverImage src={selectedSong.albumImage} width={12} height={12} />
                   ) : (
                     <S.ArtistFallback />
                   )}

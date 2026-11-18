@@ -3,11 +3,9 @@ import youtubeMusicIcon from '@/assets/icons/youtube_Music.svg'
 import characterSleeping from '@/assets/images/character-sleeping.webp'
 import characterFailure from '@/assets/images/character-failure.webp'
 import characterImage from '@/assets/images/character-profile.png'
-import { MOCK_FAILING_PLATFORM_ID } from '@/mocks/profile'
 import { ChevronIcon } from '@/components/common/ChevronIcon/ChevronIcon'
 import * as S from './PlatformConnect.styles'
-
-const PLATFORM_ID: string = 'youtubeMusic'
+import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 type PlatformConnectProps = {
   nickname: string
@@ -33,7 +31,7 @@ export function PlatformConnect({ nickname, previewUrl, music, onNext }: Platfor
           <S.Nickname>{nickname}</S.Nickname>
           {music && (
             <S.MusicChip>
-              <img src={music.albumImage} alt="" width={14} height={14} />
+              <CoverImage src={music.albumImage} width={14} height={14} />
               <span>
                 {music.title} - {music.artist}
               </span>
@@ -42,12 +40,7 @@ export function PlatformConnect({ nickname, previewUrl, music, onNext }: Platfor
         </S.Info>
       </S.Card>
 
-      <S.PlatformButton
-        type="button"
-        onClick={() =>
-          setConnectResult(PLATFORM_ID === MOCK_FAILING_PLATFORM_ID ? 'failure' : 'success')
-        }
-      >
+      <S.PlatformButton type="button" onClick={() => setConnectResult('success')}>
         <S.PlatformIcon>
           <img src={youtubeMusicIcon} alt="" width={20} height={20} />
         </S.PlatformIcon>

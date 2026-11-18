@@ -25,6 +25,7 @@ export type ArtistSearchItem = {
   name: string
   disambiguation: string | null
   songCount: number
+  artistImage: string | null
 }
 
 export type ProfileArtist = {

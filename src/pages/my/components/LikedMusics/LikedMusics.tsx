@@ -27,7 +27,6 @@ export function LikedMusics({ onExit }: LikedMusicsProps) {
     likes.loadMore,
     likes.hasNext && !likes.isLoading,
   )
-  // 하트를 꺼도 목록에서 바로 빼지 않아 실수로 눌렀을 때 다시 켤 수 있다
   const handleLikeToggle = useMusicLike((update) => likes.setItems(update))
 
   return (

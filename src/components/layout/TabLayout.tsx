@@ -20,7 +20,6 @@ export function TabLayout() {
   const isExplore = pathname.startsWith(ROUTES.explore)
   const [incomingComment, setIncomingComment] = useState<ReceivedNotification | null>(null)
 
-  // 앱에 들어올 때 아직 안 본 새 코멘트가 있을 때만 알림을 띄운다
   useEffect(() => {
     let isStale = false
 
