@@ -135,6 +135,13 @@ export const router = createBrowserRouter([
                           })),
                       },
                       {
+                        path: ROUTES.welcomeLetter,
+                        lazy: () =>
+                          import('@/pages/matching/welcome-letter/WelcomeLetterPage').then((m) => ({
+                            Component: m.WelcomeLetterPage,
+                          })),
+                      },
+                      {
                         path: ROUTES.letter,
                         lazy: () =>
                           import('@/pages/matching/letter-detail/LetterDetailPage').then((m) => ({

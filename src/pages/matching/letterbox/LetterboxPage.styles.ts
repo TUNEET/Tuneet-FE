@@ -23,3 +23,11 @@ export const Empty = styled.p`
   text-align: center;
   color: ${({ theme }) => theme.colors.textPlaceholder};
 `
+
+export const WelcomeThumbnail = styled.img`
+  && {
+    padding: 0.6rem;
+    background-color: ${({ theme }) => theme.colors.surfaceWhite};
+    object-fit: contain;
+  }
+`

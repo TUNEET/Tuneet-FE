@@ -15,6 +15,7 @@ export const ROUTES = {
   profileSetup: '/profile-setup',
   youtubeMusicCallback: '/oauth/youtube-music',
   letterbox: '/matching/letters',
+  welcomeLetter: '/matching/letters/welcome',
   letter: '/matching/letters/:letterId',
   letterReply: '/matching/letters/:letterId/reply',
   sentLetter: '/matching/letters/sent/:letterId',

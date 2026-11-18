@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { getApiError } from '@/apis/error'
+import welcomeCharacter from '@/assets/images/character-letter.png'
 import { LETTER_ERROR_MESSAGES } from '@/constants/letterErrors'
 import {
   deleteAllReceivedLetters,
@@ -13,7 +14,8 @@ import { MusicCard } from '@/components/common/MusicCard/MusicCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SegmentTabs } from '@/components/common/SegmentTabs/SegmentTabs'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
-import { getLetterPath, getSentLetterPath } from '@/constants/routes'
+import { getLetterPath, getSentLetterPath, ROUTES } from '@/constants/routes'
+import { WELCOME_LETTER } from '@/constants/welcomeLetter'
 import { useCursorList } from '@/hooks/useCursorList'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import { useToast } from '@/hooks/useToast'
@@ -144,8 +146,22 @@ export function LetterboxPage() {
           />
         </S.Header>
         <SegmentTabs items={TABS} value={tab} onChange={handleTabChange} ariaLabel="편지함 구분" />
-        {!isEmpty ? (
+        {(isReceived || !isEmpty) && (
           <S.List>
+            {isReceived && (
+              <li>
+                <MusicCard
+                  tone="rose"
+                  nickname={`발신자 | ${WELCOME_LETTER.sender}`}
+                  meta="고정됨"
+                  thumbnail={<S.WelcomeThumbnail src={welcomeCharacter} alt="" />}
+                  title={WELCOME_LETTER.title}
+                  description={WELCOME_LETTER.preview}
+                  badge="환영"
+                  onClick={() => navigate(ROUTES.welcomeLetter)}
+                />
+              </li>
+            )}
             {cards.map(
               ({ letterId, nickname, letterContent, music, createdAt, badge, onClick }) => (
                 <li key={letterId}>
@@ -164,9 +180,8 @@ export function LetterboxPage() {
               ),
             )}
           </S.List>
-        ) : (
-          !current.isLoading && <S.Empty>{TAB_TEXT[tab].empty}</S.Empty>
         )}
+        {isEmpty && !current.isLoading && <S.Empty>{TAB_TEXT[tab].empty}</S.Empty>}
         <div ref={sentinelRef} aria-hidden />
       </S.Section>
     </SheetPage>
