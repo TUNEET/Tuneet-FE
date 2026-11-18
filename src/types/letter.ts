@@ -3,6 +3,7 @@ export type LetterMusic = {
   title: string
   artist: string
   musicPicture: string | null
+  liked?: boolean | null
 }
 
 export type LetterQuota = {
@@ -28,6 +29,7 @@ export type ReceivedLetter = {
   isReply: boolean
   isReplied: boolean | null
   parentLetter: ParentLetter | null
+  liked: boolean
 }
 
 export type SentLetter = {
@@ -39,6 +41,7 @@ export type SentLetter = {
   isRandom: boolean
   isReply: boolean
   createdAt: string
+  liked: boolean
 }
 
 export type LetterPage<T> = {
