@@ -22,7 +22,7 @@ export type RoomMember = {
   similarity: number | null
 }
 
-export type PlaylistSong = Song & { id: number; deletable: boolean }
+export type PlaylistSong = { id: number; song: SearchedSong; deletable: boolean; liked: boolean }
 
 export type RoomPost = Feed & { song: SearchedSong; isMine: boolean; liked: boolean }
 

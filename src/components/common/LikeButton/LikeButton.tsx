@@ -8,10 +8,11 @@ import type { LikeButtonTone } from './LikeButton.styles'
 type LikeButtonProps = {
   liked: boolean
   tone?: LikeButtonTone
+  size?: number
   onToggle: () => void
 }
 
-export function LikeButton({ liked, tone = 'blue', onToggle }: LikeButtonProps) {
+export function LikeButton({ liked, tone = 'blue', size = 14, onToggle }: LikeButtonProps) {
   const handleClick = (event: MouseEvent) => {
     event.stopPropagation()
     onToggle()
@@ -21,6 +22,7 @@ export function LikeButton({ liked, tone = 'blue', onToggle }: LikeButtonProps) 
     <S.Button
       type="button"
       $tone={tone}
+      $size={size}
       aria-label={liked ? '좋아요 취소' : '좋아요'}
       aria-pressed={liked}
       onClick={handleClick}
@@ -32,7 +34,7 @@ export function LikeButton({ liked, tone = 'blue', onToggle }: LikeButtonProps) 
           <img src={unlikedBadgeHeart} alt="" width={14} height={12} />
         )
       ) : (
-        <HeartIcon filled={liked} size={14} />
+        <HeartIcon filled={liked} size={size} />
       )}
     </S.Button>
   )
