@@ -1,3 +1,4 @@
+import letterBlockIcon from '@/assets/icons/letter-block.svg'
 import messageIcon from '@/assets/icons/message.svg'
 import { CharacterAvatar } from '@/components/common/CharacterAvatar/CharacterAvatar'
 import { MusicCard } from '@/components/common/MusicCard/MusicCard'
@@ -16,9 +17,15 @@ type TasteMatchCardProps = {
   match: TasteMatch
   onClick?: (match: TasteMatch) => void
   onLetterClick?: (match: TasteMatch) => void
+  letterDisabled?: boolean
 }
 
-export function TasteMatchCard({ match, onClick, onLetterClick }: TasteMatchCardProps) {
+export function TasteMatchCard({
+  match,
+  onClick,
+  onLetterClick,
+  letterDisabled = false,
+}: TasteMatchCardProps) {
   const {
     nickname,
     profilePicture,
@@ -60,12 +67,18 @@ export function TasteMatchCard({ match, onClick, onLetterClick }: TasteMatchCard
           <S.LetterButton
             type="button"
             aria-label={`${nickname}에게 편지 보내기`}
+            disabled={letterDisabled}
             onClick={(event) => {
               event.stopPropagation()
               onLetterClick(match)
             }}
           >
-            <img src={messageIcon} alt="" width={28} height={30} />
+            <img
+              src={letterDisabled ? letterBlockIcon : messageIcon}
+              alt=""
+              width={28}
+              height={30}
+            />
           </S.LetterButton>
         )
       }
