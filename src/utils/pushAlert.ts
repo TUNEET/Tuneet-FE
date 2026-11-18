@@ -15,7 +15,7 @@ export type PushAlert = {
 }
 
 const COPY: Record<PushAlertKind, { title: string; confirmLabel: string }> = {
-  comment: { title: '내 피드에 코멘트가 도착했어요!', confirmLabel: '코멘트 확인하기' },
+  comment: { title: '내 피드에 코멘트가 도착했어요!', confirmLabel: '편지함에서 확인하기' },
   letter: { title: '편지가 도착했어요!', confirmLabel: '편지함에서 확인하기' },
   reply: { title: '내 편지에 답장이 도착했어요!', confirmLabel: '편지함에서 확인하기' },
 }
