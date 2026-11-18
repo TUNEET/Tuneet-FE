@@ -2,16 +2,26 @@ import { useId, useRef } from 'react'
 import characterImage from '@/assets/images/character-onboarding.webp'
 import { useClickOutside } from '@/hooks/useClickOutside'
 import { formatKoreanDateTime } from '@/utils/format'
-import * as S from './CommentAlert.styles'
+import * as S from './NotificationAlert.styles'
 
-type CommentAlertProps = {
-  nickname: string
+type NotificationAlertProps = {
+  title: string
+  nickname?: string
   createdAt: string
+  confirmLabel: string
   onConfirm: () => void
   onClose: () => void
 }
 
-export function CommentAlert({ nickname, createdAt, onConfirm, onClose }: CommentAlertProps) {
+/** 코멘트·편지·답장이 도착했을 때 하단에 띄우는 카드 */
+export function NotificationAlert({
+  title,
+  nickname,
+  createdAt,
+  confirmLabel,
+  onConfirm,
+  onClose,
+}: NotificationAlertProps) {
   const cardRef = useRef<HTMLDivElement>(null)
   const titleId = useId()
 
@@ -21,13 +31,13 @@ export function CommentAlert({ nickname, createdAt, onConfirm, onClose }: Commen
     <S.Wrapper>
       <S.Character src={characterImage} alt="" />
       <S.Card ref={cardRef} role="dialog" aria-labelledby={titleId}>
-        <S.Title id={titleId}>내 피드에 코멘트가 도착했어요!</S.Title>
+        <S.Title id={titleId}>{title}</S.Title>
         <S.Info>
-          <S.Nickname>{nickname}</S.Nickname>
+          {nickname && <S.Nickname>{nickname}</S.Nickname>}
           <time dateTime={createdAt}>{formatKoreanDateTime(createdAt)}</time>
         </S.Info>
         <S.ConfirmButton type="button" onClick={onConfirm}>
-          코멘트 확인하기
+          {confirmLabel}
         </S.ConfirmButton>
       </S.Card>
     </S.Wrapper>
