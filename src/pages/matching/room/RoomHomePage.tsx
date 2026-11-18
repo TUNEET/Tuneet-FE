@@ -20,18 +20,24 @@ import { MemberCarousel } from './components/MemberCarousel/MemberCarousel'
 import { Playlist } from './components/Playlist/Playlist'
 import { RoomHeader } from './components/RoomHeader/RoomHeader'
 import { useRoomHome } from './hooks/useRoomHome'
+import type { RoomPost } from '@/types/room'
 import * as S from './RoomHomePage.styles'
 
 export function RoomHomePage() {
   const navigate = useNavigate()
   const showToast = useToast()
-  const { room, isLoading, updateLikes } = useRoomHome()
+  const { room, isLoading, updateLikes, getPostAuthorPath } = useRoomHome()
   const handleLikeToggle = useMusicLike(updateLikes)
   const goToMatching = () => navigate(ROUTES.matching)
   const [isLeaveOpen, setIsLeaveOpen] = useState(false)
   const [isLeaving, setIsLeaving] = useState(false)
   const leaveButtonRef = useRef<HTMLButtonElement>(null)
   const closeLeave = useCallback(() => setIsLeaveOpen(false), [])
+
+  const getAuthorClick = (feed: RoomPost) => {
+    const path = getPostAuthorPath(feed)
+    return path ? () => navigate(path) : undefined
+  }
 
   if (isLoading) return <SheetPage>{null}</SheetPage>
 
@@ -88,6 +94,7 @@ export function RoomHomePage() {
                 tone="purple"
                 liked={feed.liked}
                 onLikeToggle={() => handleLikeToggle(feed)}
+                onAuthorClick={getAuthorClick(feed)}
               />
             ))}
           </S.CardList>

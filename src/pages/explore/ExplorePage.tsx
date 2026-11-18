@@ -6,7 +6,7 @@ import { PAGE_DATA } from '@/apis/pageData'
 import { FeedCard } from '@/components/common/FeedCard/FeedCard'
 import { NoticeModal } from '@/components/common/NoticeModal/NoticeModal'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
-import { getExploreEditPath, getFeedPath, ROUTES } from '@/constants/routes'
+import { getAuthorPath, getExploreEditPath, getFeedPath, ROUTES } from '@/constants/routes'
 import { useCursorList } from '@/hooks/useCursorList'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import { useMusicLike } from '@/hooks/useMusicLike'
@@ -94,6 +94,11 @@ export function ExplorePage() {
     setFetchedFeed((prev) => (prev ? update([prev])[0] : prev))
   })
 
+  const getAuthorClick = (feed: ExploreFeed) => {
+    const path = getAuthorPath(feed)
+    return path ? () => navigate(path) : undefined
+  }
+
   const handleDelete = async (feedId: number) => {
     try {
       await deleteFeed(feedId)
@@ -129,6 +134,7 @@ export function ExplorePage() {
                   feed={feed}
                   liked={feed.liked}
                   onClick={() => openFeed(feed.id)}
+                  onAuthorClick={getAuthorClick(feed)}
                   onLikeToggle={() => handleLikeToggle(feed)}
                 />
               ))}
@@ -160,6 +166,7 @@ export function ExplorePage() {
           onLikeToggle={() => handleLikeToggle(selectedFeed)}
           onEdit={() => navigate(getExploreEditPath(selectedFeed.id))}
           onDelete={() => handleDelete(selectedFeed.id)}
+          onAuthorClick={getAuthorClick(selectedFeed)}
           onClose={closeFeed}
         />
       )}

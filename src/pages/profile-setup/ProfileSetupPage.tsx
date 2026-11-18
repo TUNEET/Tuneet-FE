@@ -84,6 +84,10 @@ export function ProfileSetupPage() {
       .then(({ nickname: savedNickname, profilePicture, profileMusic }) => {
         if (isStale) return
         const restoredNickname = savedNickname ?? ''
+        if (!restoredNickname) {
+          setStep('profile')
+          return
+        }
         setNickname(restoredNickname)
         setSavedProfile({ nickname: restoredNickname, imageFile: null })
         setPreviewUrl(profilePicture)
