@@ -21,7 +21,7 @@ export const Panels = styled.div`
   flex-direction: column;
   gap: 2rem;
   min-height: 39.5rem;
-  margin: 26.6rem 3rem 0;
+  margin: calc(26.6rem + var(--setup-note-space, 0rem)) 3rem 0;
   padding-bottom: 2rem;
 `
 

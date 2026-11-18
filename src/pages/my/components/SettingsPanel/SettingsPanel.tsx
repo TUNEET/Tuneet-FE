@@ -53,8 +53,6 @@ const TOGGLES: {
   },
 ]
 
-type SaveResult = 'saved' | 'termsRequired'
-
 type SettingsPanelProps = {
   settings: Settings
   onSave: (settings: Settings) => void
@@ -64,10 +62,16 @@ type SettingsPanelProps = {
 export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) {
   const showToast = useToast()
   const [draft, setDraft] = useState(settings)
-  const [isSaving, setIsSaving] = useState(false)
-  const [saveResult, setSaveResult] = useState<SaveResult | null>(null)
+  // 서버에 저장이 확인된 값. 저장이 실패하면 여기로 되돌린다
+  const savedRef = useRef(settings)
+  // 빠르게 여러 번 바꿔도 마지막 요청의 응답만 반영한다
+  const latestRequestRef = useRef(0)
+  const appliedRequestRef = useRef(0)
   const [openTermId, setOpenTermId] = useState<string | null>(null)
   const [offNoticeKey, setOffNoticeKey] = useState<ToggleKey | null>(null)
+  // 위치 동의 없이 위치 노출을 켜면 서버가 받아 주지 않아서 동의부터 안내한다
+  const [isConsentNoticeOpen, setIsConsentNoticeOpen] = useState(false)
+  const closeConsentNotice = useCallback(() => setIsConsentNoticeOpen(false), [])
   const [isPushOn, setIsPushOn] = useState(isPushEnabled)
   const [isPushPending, setIsPushPending] = useState(false)
   const [pushBlockedReason, setPushBlockedReason] = useState<PushBlockedReason | null>(null)
@@ -81,8 +85,6 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
     platformLinked: useRef<HTMLButtonElement>(null),
   }
   const closeOffNotice = useCallback(() => setOffNoticeKey(null), [])
-  const saveButtonRef = useRef<HTMLButtonElement>(null)
-  const closeSaveResult = useCallback(() => setSaveResult(null), [])
   const openTermDetail = TERMS.find(({ id }) => id === openTermId)?.detail
 
   useEffect(() => {
@@ -112,6 +114,8 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
     try {
       await unlinkYoutubeMusic()
       setDraft((current) => ({ ...current, platformLinked: false }))
+      savedRef.current = { ...savedRef.current, platformLinked: false }
+      onSave(savedRef.current)
       showToast('유튜브 뮤직 연동을 해제했어요')
     } catch (error) {
       showToast(getApiError(error).message)
@@ -140,29 +144,30 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
     }
   }
 
-  const handleSave = async () => {
-    if (isSaving) return
-    if (TERMS.some(({ id, required }) => required && !draft.terms[id])) {
-      setSaveResult('termsRequired')
-      return
-    }
+  /** 바꾼 값을 화면에 먼저 보여 주고 바로 서버에 저장한다 */
+  const applySettings = async (next: Settings) => {
+    setDraft(next)
+    const requestId = ++latestRequestRef.current
 
-    setIsSaving(true)
     try {
       const saved = toSettings(
         await updateSettings({
-          locationVisible: draft.locationVisible,
-          letterReceivable: draft.letterEnabled,
-          locationAgreed: draft.terms.locationConsent,
+          locationVisible: next.locationVisible,
+          letterReceivable: next.letterEnabled,
+          locationAgreed: next.terms.locationConsent,
         }),
       )
-      setDraft(saved)
+      // 늦게 도착한 예전 응답이 더 새로운 저장값을 덮지 않게 한다
+      if (requestId < appliedRequestRef.current) return
+      appliedRequestRef.current = requestId
+      savedRef.current = saved
       onSave(saved)
-      setSaveResult('saved')
+      if (requestId === latestRequestRef.current) setDraft(saved)
     } catch (error) {
+      if (requestId !== latestRequestRef.current) return
+      setDraft(savedRef.current)
+      setOffNoticeKey(null)
       showToast(getApiError(error).message)
-    } finally {
-      setIsSaving(false)
     }
   }
 
@@ -203,7 +208,13 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
                       else void handlePlatformConnect()
                       return
                     }
-                    setDraft((current) => ({ ...current, [key]: !isOn }))
+                    if (key === 'locationVisible' && !isOn && !draft.terms.locationConsent) {
+                      setOffNoticeKey(null)
+                      setIsConsentNoticeOpen(true)
+                      return
+                    }
+                    setIsConsentNoticeOpen(false)
+                    void applySettings({ ...draft, [key]: !isOn })
                     setOffNoticeKey(isOn && offNotice ? key : null)
                   }}
                 >
@@ -223,6 +234,18 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
                   onClose={closeUnlink}
                   anchorRef={toggleRefs.platformLinked}
                   surface="sheet"
+                />
+              )}
+              {key === 'locationVisible' && (
+                <ConfirmPopover
+                  open={isConsentNoticeOpen}
+                  message="아래 위치정보 수집 및 이용 동의를 먼저 확인해 주세요."
+                  confirmLabel="닫기"
+                  onConfirm={closeConsentNotice}
+                  onClose={closeConsentNotice}
+                  anchorRef={toggleRefs.locationVisible}
+                  surface="sheet"
+                  tone="muted"
                 />
               )}
               {offNotice && (
@@ -253,10 +276,14 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
                     const { checked } = event.target
                     if (required && !checked) return
 
-                    setDraft((current) => ({
-                      ...current,
-                      terms: { ...current.terms, [id]: checked },
-                    }))
+                    // 위치 동의를 풀면 위치 노출도 함께 끈다
+                    const isLocationRevoked = id === 'locationConsent' && !checked
+                    if (isLocationRevoked) setIsConsentNoticeOpen(false)
+                    void applySettings({
+                      ...draft,
+                      locationVisible: isLocationRevoked ? false : draft.locationVisible,
+                      terms: { ...draft.terms, [id]: checked },
+                    })
                   }}
                 />
                 {label}
@@ -268,34 +295,6 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
           ))}
         </S.Terms>
       </S.Options>
-
-      <S.SaveArea>
-        <S.SaveButton ref={saveButtonRef} type="button" onClick={handleSave}>
-          저장하기
-        </S.SaveButton>
-        <ConfirmPopover
-          open={saveResult === 'saved'}
-          message="수정사항이 저장되었습니다."
-          confirmLabel="확인"
-          onConfirm={onExit}
-          onClose={closeSaveResult}
-          anchorRef={saveButtonRef}
-          surface="sheet"
-          placement="top"
-          tone="default"
-        />
-        <ConfirmPopover
-          open={saveResult === 'termsRequired'}
-          message="필수 약관에 동의해 주세요."
-          confirmLabel="닫기"
-          onConfirm={closeSaveResult}
-          onClose={closeSaveResult}
-          anchorRef={saveButtonRef}
-          surface="sheet"
-          placement="top"
-          tone="muted"
-        />
-      </S.SaveArea>
 
       {pushBlockedReason && (
         <PushPermissionModal

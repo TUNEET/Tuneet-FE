@@ -249,10 +249,6 @@ export function ProfileSetupPage() {
     if (await saveProfile()) setStep('music')
   }
 
-  const skipAfterNickname = async () => {
-    if (await saveProfile()) finishSetup()
-  }
-
   const removeSong = (song: ProfileMusic) => {
     setSongs((prevSongs) =>
       prevSongs.filter((prevSong) => getMusicKey(prevSong) !== getMusicKey(song)),
@@ -288,6 +284,7 @@ export function ProfileSetupPage() {
         <SetupStepLayout
           title="좋아하는 노래를 들려주세요!"
           description="나를 표현하는 노래를 1개 이상 선택해 주세요."
+          note="취향은 나중에 마이페이지에서 언제든 수정할 수 있어요."
           onBack={() => setStep('taste')}
         >
           <SongSelect songs={songs} onAddSong={addSong} onRemoveSong={removeSong} />
@@ -313,6 +310,7 @@ export function ProfileSetupPage() {
               아티스트 3팀 이상을 선택해 주세요.
             </>
           }
+          note="취향은 나중에 마이페이지에서 언제든 수정할 수 있어요."
           onBack={() => setStep('platform')}
         >
           <TasteSelect
@@ -390,7 +388,6 @@ export function ProfileSetupPage() {
             onMusicChange={setMusic}
             onPrev={() => setStep('profile')}
             onNext={isMusicStep ? submitMusic : submitNickname}
-            onLater={isMusicStep ? finishSetup : skipAfterNickname}
           />
         </SetupStepLayout>
       )

@@ -7,6 +7,8 @@ type SetupStepLayoutProps = {
   title: string
   description: ReactNode
   singleLineDescription?: boolean
+  /** 설명 아래에 붙는 작은 안내 문구 */
+  note?: string
   onBack?: () => void
   children: ReactNode
 }
@@ -15,13 +17,14 @@ export function SetupStepLayout({
   title,
   description,
   singleLineDescription = false,
+  note,
   onBack,
   children,
 }: SetupStepLayoutProps) {
   const Description = singleLineDescription ? S.SetupDescription : S.PlatformDescription
 
   return (
-    <S.Page>
+    <S.Page $hasNote={note !== undefined}>
       <S.Blob aria-hidden />
       {onBack && (
         <S.BackButton type="button" aria-label="뒤로가기" onClick={onBack}>
@@ -30,7 +33,10 @@ export function SetupStepLayout({
       )}
       <S.Logo src={logo} alt="TUNEET" />
       <S.Heading>{title}</S.Heading>
-      <Description>{description}</Description>
+      <Description>
+        {description}
+        {note && <S.StepNote>{note}</S.StepNote>}
+      </Description>
       {children}
     </S.Page>
   )

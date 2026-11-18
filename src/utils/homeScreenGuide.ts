@@ -1,15 +1,18 @@
-// 홈 화면 추가는 기기 단위라 계정이 아니라 이 기기에서 한 번만 안내한다
-const HOME_SCREEN_GUIDE_KEY = 'homeScreenGuideSeen'
+// 회원가입을 마치면 남겨 두고, 그 뒤 처음 홈에 들어왔을 때 안내를 띄우고 지운다.
+// 취향 설정을 끝내고 오든 건너뛰고 오든 홈에 처음 들어온 순간 뜬다
+const HOME_SCREEN_GUIDE_PENDING_KEY = 'homeScreenGuidePending'
 
-// 이미 홈 화면 앱으로 열었으면 안내할 필요가 없다
-const isStandalone = () =>
-  window.matchMedia('(display-mode: standalone)').matches ||
-  (navigator as Navigator & { standalone?: boolean }).standalone === true
+export function markHomeScreenGuidePending() {
+  try {
+    localStorage.setItem(HOME_SCREEN_GUIDE_PENDING_KEY, 'true')
+  } catch {
+    // 저장이 막힌 환경이면 안내만 건너뛴다
+  }
+}
 
 export function shouldShowHomeScreenGuide() {
-  if (isStandalone()) return false
   try {
-    return localStorage.getItem(HOME_SCREEN_GUIDE_KEY) === null
+    return localStorage.getItem(HOME_SCREEN_GUIDE_PENDING_KEY) !== null
   } catch {
     return false
   }
@@ -17,8 +20,8 @@ export function shouldShowHomeScreenGuide() {
 
 export function markHomeScreenGuideSeen() {
   try {
-    localStorage.setItem(HOME_SCREEN_GUIDE_KEY, 'true')
+    localStorage.removeItem(HOME_SCREEN_GUIDE_PENDING_KEY)
   } catch {
-    // 저장이 막힌 환경이면 다음 접속 때 다시 뜰 뿐이다
+    // 지울 수 없으면 다음 홈 진입 때 한 번 더 뜰 뿐이다
   }
 }
