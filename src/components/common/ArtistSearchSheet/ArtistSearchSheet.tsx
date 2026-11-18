@@ -5,17 +5,13 @@ import characterImage from '@/assets/images/character-search.webp'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { PageArrow } from '@/components/common/SongSearchSheet/SongSearchSheet'
 import { CoverImage } from '@/components/common/CoverImage/CoverImage'
+import { usePagedSearch } from '@/hooks/usePagedSearch'
 import type { ArtistSearchItem, ProfileArtist } from '@/types/music'
 import * as S from './ArtistSearchSheet.styles'
 
-const SEARCH_DEBOUNCE_MS = 200
 const PAGE_SIZE = 5
 
-type SearchResult = {
-  keyword: string
-  items: ArtistSearchItem[]
-  totalPages: number
-}
+const getArtistImage = ({ artistImage }: ArtistSearchItem) => artistImage
 
 type ArtistSearchSheetProps = {
   onAdd: (artist: ProfileArtist) => void
@@ -24,12 +20,17 @@ type ArtistSearchSheetProps = {
 
 export function ArtistSearchSheet({ onAdd, onClose }: ArtistSearchSheetProps) {
   const [query, setQuery] = useState('')
-  const [result, setResult] = useState<SearchResult | null>(null)
-  const [isError, setIsError] = useState(false)
   const [page, setPage] = useState(1)
   const [addedArtistId, setAddedArtistId] = useState<string | null>(null)
   const closeAddedPopover = useCallback(() => setAddedArtistId(null), [])
   const keyword = query.trim()
+  const { result, isError } = usePagedSearch({
+    search: searchArtists,
+    keyword,
+    page,
+    pageSize: PAGE_SIZE,
+    getImage: getArtistImage,
+  })
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -38,29 +39,6 @@ export function ArtistSearchSheet({ onAdd, onClose }: ArtistSearchSheetProps) {
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [onClose])
-
-  useEffect(() => {
-    if (!keyword) return
-
-    let isStale = false
-    const timer = setTimeout(async () => {
-      try {
-        const { items, totalPages } = await searchArtists(keyword, page, PAGE_SIZE)
-        if (isStale) return
-        setResult({ keyword, items, totalPages })
-        setIsError(false)
-      } catch {
-        if (isStale) return
-        setResult({ keyword, items: [], totalPages: 0 })
-        setIsError(true)
-      }
-    }, SEARCH_DEBOUNCE_MS)
-
-    return () => {
-      isStale = true
-      clearTimeout(timer)
-    }
-  }, [keyword, page])
 
   const results = keyword !== '' && result?.keyword === keyword ? result.items : null
   const hasResults = results !== null && results.length > 0
