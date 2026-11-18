@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 export const shiftTop = (top: string, ratio: number) => `calc(${top} + var(--diff) * ${ratio})`
 
@@ -82,6 +82,15 @@ export const Label = styled.label`
   color: ${({ theme }) => theme.colors.textHeading};
 `
 
+const autofillCover = css`
+  -webkit-box-shadow: inset 0 0 0 5rem ${({ theme }) => theme.colors.border};
+  box-shadow: inset 0 0 0 5rem ${({ theme }) => theme.colors.border};
+  -webkit-text-fill-color: ${({ theme }) => theme.colors.textHeading};
+  caret-color: ${({ theme }) => theme.colors.textHeading};
+  /* 그림자가 늦게 덮일 때 노란색이 잠깐 비치지 않게 배경 전환을 사실상 멈춘다 */
+  transition: background-color 600000s 0s;
+`
+
 export const Input = styled.input`
   width: 100%;
   height: 5rem;
@@ -103,15 +112,24 @@ export const Input = styled.input`
     outline: none;
   }
 
-  // 포커스보다 뒤에 둬서 입력 중에도 에러 테두리는 보이게 한다
+  /* 포커스보다 뒤에 둬서 입력 중에도 에러 테두리는 보이게 한다 */
   &[aria-invalid='true'] {
     outline: 1px solid ${({ theme }) => theme.colors.danger};
     outline-offset: -1px;
   }
 
-  &:-webkit-autofill {
-    box-shadow: inset 0 0 0 5rem ${({ theme }) => theme.colors.border};
-    -webkit-text-fill-color: ${({ theme }) => theme.colors.textHeading};
+  /* 자동완성 노란 배경은 브라우저가 칠해서 직접 못 바꾸니 안쪽 그림자로 덮는다.
+     모바일은 포커스·표준 :autofill 상태에서 따로 칠해서 그 경우까지 함께 덮는다 */
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus,
+  &:-webkit-autofill:active {
+    ${autofillCover}
+  }
+
+  /* :autofill을 모르는 브라우저가 위 규칙까지 버리지 않게 따로 둔다 */
+  &:autofill {
+    ${autofillCover}
   }
 `
 
