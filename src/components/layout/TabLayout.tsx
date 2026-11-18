@@ -54,16 +54,13 @@ export function TabLayout() {
 
     // firebase는 무거워서 화면이 뜬 뒤에 불러온다
     void import('@/utils/firebase')
-      .then(({ listenForegroundMessage }) =>
-        listenForegroundMessage((payload) => {
+      .then(({ listenForegroundMessage }) => {
+        if (isStale) return
+        unsubscribe = listenForegroundMessage((payload) => {
           void toPushAlert(payload).then((alert) => {
             if (!isStale) setPushAlert(alert)
           })
-        }),
-      )
-      .then((stop) => {
-        if (isStale) stop()
-        else unsubscribe = stop
+        })
       })
       .catch(() => {})
 

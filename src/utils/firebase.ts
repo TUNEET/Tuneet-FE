@@ -21,7 +21,25 @@ export const getCurrentFcmToken = async (): Promise<string | null> => {
   })
 }
 
-export const listenForegroundMessage = async (cb: (payload: MessagePayload) => void) => {
-  if (!(await isSupported())) return () => {}
-  return onMessage(getMessaging(app), cb)
+type ForegroundListener = (payload: MessagePayload) => void
+
+const foregroundListeners = new Set<ForegroundListener>()
+let foregroundSubscription: Promise<void> | null = null
+
+const subscribeForeground = () => {
+  foregroundSubscription ??= isSupported().then((supported) => {
+    if (!supported) return
+    onMessage(getMessaging(app), (payload) => {
+      foregroundListeners.forEach((listener) => listener(payload))
+    })
+  })
+  return foregroundSubscription
+}
+
+export const listenForegroundMessage = (listener: ForegroundListener) => {
+  foregroundListeners.add(listener)
+  void subscribeForeground()
+  return () => {
+    foregroundListeners.delete(listener)
+  }
 }
