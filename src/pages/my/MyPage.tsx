@@ -128,7 +128,6 @@ export function MyPage() {
     if (isLoggingOut) return
     setIsLoggingOut(true)
 
-    // 토큰 삭제는 로그인 상태에서만 되니 로그아웃 요청보다 먼저 보낸다
     await clearPushOnLogout()
     try {
       await logout()
@@ -144,7 +143,6 @@ export function MyPage() {
     setIsWithdrawing(true)
 
     try {
-      // 탈퇴하면 인증이 사라져 토큰을 지울 수 없으니 먼저 지운다
       await clearPushOnLogout()
       await withdraw()
       clearTokens()

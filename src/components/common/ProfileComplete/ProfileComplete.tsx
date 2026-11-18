@@ -99,7 +99,7 @@ export function ProfileComplete({
         <S.Tags $clickable={!!onTagsClick} {...tagsButtonProps}>
           {songs.map(({ title, artist, albumImage }) => (
             <Song as="div" key={`${title}-${artist}`}>
-              <img src={albumImage} alt="" width={12} height={12} />
+              <CoverImage src={albumImage} width={12} height={12} />
               <span>
                 {title} - {artist}
               </span>

@@ -4,6 +4,7 @@ import plusCircleRoseIcon from '@/assets/icons/plus-circle-rose.svg'
 import characterImage from '@/assets/images/character-search.webp'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { PageArrow } from '@/components/common/SongSearchSheet/SongSearchSheet'
+import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 import type { ArtistSearchItem, ProfileArtist } from '@/types/music'
 import * as S from './ArtistSearchSheet.styles'
 
@@ -90,7 +91,7 @@ export function ArtistSearchSheet({ onAdd, onClose }: ArtistSearchSheetProps) {
               {results.map((artist) => (
                 <S.ResultItem key={artist.id} $variant="profile">
                   <S.ResultSong>
-                    <S.CoverFallback />
+                    <CoverImage src={artist.artistImage} />
                     <span>
                       {artist.name}
                       {artist.disambiguation && ` (${artist.disambiguation})`}
@@ -100,7 +101,7 @@ export function ArtistSearchSheet({ onAdd, onClose }: ArtistSearchSheetProps) {
                     type="button"
                     aria-label={`${artist.name} 추가`}
                     onClick={() => {
-                      onAdd({ id: artist.id, name: artist.name })
+                      onAdd({ id: artist.id, name: artist.name, image: artist.artistImage })
                       setAddedArtistId(artist.id)
                     }}
                   >

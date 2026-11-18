@@ -16,7 +16,6 @@ import { cachedRequest, invalidateRequest } from '@/utils/requestCache'
 import { instance } from './instance'
 
 const MY_PROFILE_KEY = 'myProfile'
-// 내 정보는 여러 화면에서 쓰므로 잠깐 저장해 두고 같이 쓴다 (프로필을 바꾸면 바로 지운다)
 const MY_PROFILE_TTL_MS = 60_000
 const invalidateMyProfile = () => invalidateRequest(MY_PROFILE_KEY)
 

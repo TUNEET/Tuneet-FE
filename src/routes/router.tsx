@@ -8,8 +8,6 @@ import { isLoggedIn } from '@/utils/auth'
 import { prefetch } from '@/utils/prefetch'
 import { RequireAuth } from './RequireAuth'
 
-// 페이지 코드를 받는 동안 데이터도 같이 출발시킨다 (기다리지 않고 바로 화면으로 넘어간다)
-// 로그인 전에는 요청하지 않는다 (토큰이 없으면 온보딩으로 보내는 처리가 먼저 돌지 않게)
 const prefetchWhenLoggedIn = (run: () => void) => () => {
   if (isLoggedIn()) run()
   return null
@@ -60,7 +58,6 @@ export const router = createBrowserRouter([
                           import('@/pages/explore/ExplorePage').then((m) => ({
                             Component: m.ExplorePage,
                           })),
-                        // 상세 모달은 ExplorePage가 URL을 보고 직접 띄워서 목록 스크롤·상태가 유지된다
                         children: [{ path: ROUTES.feed }],
                       },
                       {

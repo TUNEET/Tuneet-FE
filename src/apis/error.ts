@@ -13,7 +13,6 @@ function isFieldErrorMap(data: unknown): data is FieldErrorMap {
   )
 }
 
-// messages: 에러 코드별로 화면에 보여줄 문구 (없는 코드는 서버 메시지를 쓴다)
 export function getApiError(error: unknown, messages: Record<string, string> = {}) {
   if (axios.isAxiosError<ApiResponse<unknown>>(error) && error.response?.data) {
     const { code, message, data } = error.response.data

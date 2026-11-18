@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 export const Card = styled.div`
   position: relative;
@@ -68,7 +69,7 @@ export const AlbumWrap = styled.div`
   margin-top: 1rem;
 `
 
-export const Album = styled.img`
+export const Album = styled(CoverImage)`
   display: block;
   width: 10rem;
   height: 10rem;

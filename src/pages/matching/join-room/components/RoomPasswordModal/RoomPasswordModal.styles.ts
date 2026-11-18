@@ -59,6 +59,14 @@ export const PasswordInput = styled.input`
   }
 `
 
+export const ErrorMessage = styled.p`
+  margin-top: 0.6rem;
+  font-size: ${({ theme }) => theme.fontSize.xxs};
+  font-weight: 500;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.danger};
+`
+
 export const SubmitButton = styled.button`
   display: flex;
   align-items: center;
