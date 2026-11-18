@@ -51,6 +51,15 @@ export const Author = styled.div`
   gap: 0.6rem;
 `
 
+export const AuthorButton = styled(Author).attrs({ as: 'button' })`
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+`
+
 export const Meta = styled.div`
   display: flex;
   align-items: center;

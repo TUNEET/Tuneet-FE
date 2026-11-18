@@ -40,6 +40,9 @@ export const getFeedPath = (feedId: number) => generatePath(ROUTES.feed, { feedI
 export const getUserProfilePath = (userId: number) =>
   generatePath(ROUTES.userProfile, { userId: String(userId) })
 
+export const getAuthorPath = ({ userId, isMine }: { userId: number | null; isMine: boolean }) =>
+  isMine ? ROUTES.my : userId ? getUserProfilePath(userId) : null
+
 export const getLetterWritePath = (userId: number) =>
   generatePath(ROUTES.letterWrite, { userId: String(userId) })
 

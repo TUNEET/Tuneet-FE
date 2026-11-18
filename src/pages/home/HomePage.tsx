@@ -8,7 +8,7 @@ import { FeedCard } from '@/components/common/FeedCard/FeedCard'
 import { ProfileCard } from '@/components/common/ProfileCard/ProfileCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { RecommendationList } from '@/components/common/RecommendationList/RecommendationList'
-import { getUserProfilePath, ROUTES } from '@/constants/routes'
+import { getAuthorPath, getUserProfilePath, ROUTES } from '@/constants/routes'
 import { useRecommendations } from '@/hooks/useRecommendations'
 import { useToast } from '@/hooks/useToast'
 import type { ExploreFeed } from '@/types/feed'
@@ -33,6 +33,10 @@ export function HomePage() {
   }, [isHomeScreenGuideOpen])
 
   const navigate = useNavigate()
+  const getAuthorClick = (feed: ExploreFeed) => {
+    const path = getAuthorPath(feed)
+    return path ? () => navigate(path) : undefined
+  }
   const showToast = useToast()
   const [profile, setProfile] = useState<Profile | null>(null)
   const [feeds, setFeeds] = useState<FeedState>({ status: 'loading' })
@@ -97,7 +101,12 @@ export function HomePage() {
           {feeds.status === 'done' && feeds.items.length > 0 && (
             <S.CardList>
               {feeds.items.map((feed) => (
-                <FeedCard key={feed.id} feed={feed} onClick={() => navigate(ROUTES.explore)} />
+                <FeedCard
+                  key={feed.id}
+                  feed={feed}
+                  onClick={() => navigate(ROUTES.explore)}
+                  onAuthorClick={getAuthorClick(feed)}
+                />
               ))}
             </S.CardList>
           )}
