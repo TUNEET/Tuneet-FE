@@ -4,13 +4,13 @@ export const Cards = styled.div`
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  width: 33.3rem;
+  width: min(33.3rem, 100%);
   margin: 0 auto;
   padding: 1.9rem 0 2rem;
 `
 
 const Card = styled.div`
-  width: 28rem;
+  width: calc(100% - 5.3rem);
   border-radius: 1rem;
   font-family: ${({ theme }) => theme.fontFamily.handwriting};
   font-size: ${({ theme }) => theme.fontSize.lg};
@@ -61,7 +61,7 @@ export const SongCard = styled(Card)`
 export const Character = styled.img`
   position: absolute;
   top: -4.6rem;
-  left: 24.3rem;
+  right: 0.2rem;
   width: 3.5rem;
   height: 4.5rem;
   object-fit: contain;

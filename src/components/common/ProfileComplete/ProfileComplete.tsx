@@ -96,6 +96,30 @@ export function ProfileComplete({
     <S.Stage>
       <S.Card>
         {frame === 'plain' ? <S.PlainFrame aria-hidden /> : <S.Frame aria-hidden />}
+        <S.Aura aria-hidden>
+          <S.AuraLayer>
+            <S.Glow />
+            {RAYS.map(({ angle, spread }) => (
+              <S.Ray key={angle} $angle={angle} $spread={spread} />
+            ))}
+          </S.AuraLayer>
+        </S.Aura>
+        <S.Aura aria-hidden $front>
+          <S.AuraLayer>
+            {DECORATIONS.map(({ src, width, height, left, top, rotate }) => (
+              <S.Decoration
+                key={`${left}-${top}`}
+                src={src}
+                alt=""
+                $width={width}
+                $height={height}
+                $left={left}
+                $top={top}
+                $rotate={rotate}
+              />
+            ))}
+          </S.AuraLayer>
+        </S.Aura>
         <S.Tags $clickable={!!onTagsClick} {...tagsButtonProps}>
           {songs.map(({ title, artist, albumImage }) => (
             <Song as="div" key={`${title}-${artist}`}>
@@ -128,10 +152,6 @@ export function ProfileComplete({
         </S.StartButton>
       )}
       {children}
-      <S.Glow aria-hidden />
-      {RAYS.map(({ angle, spread }) => (
-        <S.Ray key={angle} aria-hidden $angle={angle} $spread={spread} />
-      ))}
       {isEditing ? (
         <>
           <S.NicknameInput
@@ -152,18 +172,6 @@ export function ProfileComplete({
           <S.Avatar>{avatarImage}</S.Avatar>
         </>
       )}
-      {DECORATIONS.map(({ src, width, height, left, top, rotate }) => (
-        <S.Decoration
-          key={`${left}-${top}`}
-          src={src}
-          alt=""
-          $width={width}
-          $height={height}
-          $left={left}
-          $top={top}
-          $rotate={rotate}
-        />
-      ))}
     </S.Stage>
   )
 }
