@@ -15,6 +15,7 @@ import {
 import settingIcon from '@/assets/icons/setting.svg'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { ProfileComplete } from '@/components/common/ProfileComplete/ProfileComplete'
+import { getCharacterColorId } from '@/constants/characters'
 import { ROUTES } from '@/constants/routes'
 import { useGenres } from '@/hooks/useGenres'
 import { useToast } from '@/hooks/useToast'
@@ -309,6 +310,7 @@ export function MyPage() {
           genres={isEditing ? draftGenres : genres}
           artists={isEditing ? draftArtists : artists}
           frame="plain"
+          characterColorId={profile ? getCharacterColorId(profile.userId) : undefined}
           isEditing={isEditing}
           onNicknameChange={setDraftNickname}
           onTagsClick={isEditing ? () => setIsTasteOpen(true) : undefined}

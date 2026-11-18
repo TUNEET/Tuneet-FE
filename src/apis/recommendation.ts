@@ -1,3 +1,4 @@
+import { getCharacterColorId } from '@/constants/characters'
 import type { ApiResponse } from '@/types/api'
 import type {
   RecommendationListResponse,
@@ -12,6 +13,7 @@ export const LOCATION_HIDDEN_CODE = 'U4013'
 const toTasteMatch = ({
   userId,
   nickname,
+  profilePicture,
   matchPercent,
   distanceRange,
   reason,
@@ -19,6 +21,8 @@ const toTasteMatch = ({
 }: RecommendationUserResponse): TasteMatch => ({
   id: userId,
   nickname,
+  profilePicture,
+  characterColorId: getCharacterColorId(userId),
   similarity: matchPercent,
   distanceRange,
   reason,

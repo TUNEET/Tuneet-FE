@@ -1,3 +1,4 @@
+import type { CharacterColorId } from '@/constants/characters'
 import type { DistanceRange } from './user'
 
 export type TasteReasonType = 'MUSIC' | 'ARTIST' | 'GENRE'
@@ -26,6 +27,8 @@ export type RecommendationListResponse = {
 export type TasteMatch = {
   id: number
   nickname: string
+  profilePicture: string | null
+  characterColorId: CharacterColorId
   similarity: number | null
   distanceRange: DistanceRange | null
   reason: TasteReason | null

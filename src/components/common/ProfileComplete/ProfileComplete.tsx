@@ -16,6 +16,8 @@ import { SongChip as Song, SongNote } from '@/styles/song'
 import { ChevronIcon } from '@/components/common/ChevronIcon/ChevronIcon'
 import * as S from './ProfileComplete.styles'
 import { CoverImage } from '@/components/common/CoverImage/CoverImage'
+import { CHARACTER_BACKGROUNDS, CHARACTER_IMAGE } from '@/constants/characters'
+import type { CharacterColorId } from '@/constants/characters'
 
 const RAYS = [
   { angle: 0.5, spread: 25 },
@@ -53,6 +55,7 @@ type ProfileCompleteProps = {
   genres: string[]
   artists?: { name: string; image?: string | null }[]
   frame?: 'image' | 'plain'
+  characterColorId?: CharacterColorId
   isEditing?: boolean
   onNicknameChange?: (nickname: string) => void
   onTagsClick?: () => void
@@ -67,6 +70,7 @@ export function ProfileComplete({
   genres,
   artists = [],
   frame = 'image',
+  characterColorId,
   isEditing = false,
   onNicknameChange,
   onTagsClick,
@@ -88,9 +92,15 @@ export function ProfileComplete({
 
   const avatarImage = previewUrl ? (
     <S.AvatarPreview src={previewUrl} alt="" />
+  ) : characterColorId ? (
+    <S.AvatarMember src={CHARACTER_IMAGE} alt="" />
   ) : (
     <S.AvatarCharacter src={characterImage} alt="" />
   )
+  const avatarStyle =
+    !previewUrl && characterColorId
+      ? { background: CHARACTER_BACKGROUNDS[characterColorId] }
+      : undefined
 
   return (
     <S.Stage>
@@ -160,7 +170,7 @@ export function ProfileComplete({
             value={nickname}
             onChange={(event) => onNicknameChange?.(event.target.value)}
           />
-          <S.AvatarButton type="button" aria-label="프로필 사진 변경">
+          <S.AvatarButton type="button" aria-label="프로필 사진 변경" style={avatarStyle}>
             {avatarImage}
             <S.AvatarOverlay />
             <S.AvatarIcon src={editIcon} alt="" />
@@ -169,7 +179,7 @@ export function ProfileComplete({
       ) : (
         <>
           <S.Nickname>{nickname}</S.Nickname>
-          <S.Avatar>{avatarImage}</S.Avatar>
+          <S.Avatar style={avatarStyle}>{avatarImage}</S.Avatar>
         </>
       )}
     </S.Stage>

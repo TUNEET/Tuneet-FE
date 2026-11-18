@@ -1,8 +1,10 @@
+import type { CharacterColorId } from '@/constants/characters'
 import type { Song } from './song'
 
 export type Profile = {
   nickname: string
   characterImageUrl: string
+  characterColorId?: CharacterColorId
   photoUrl?: string | null
   song: Pick<Song, 'title' | 'artist'> | null
   genres: string[]

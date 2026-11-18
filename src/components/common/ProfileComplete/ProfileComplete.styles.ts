@@ -235,6 +235,14 @@ export const AvatarCharacter = styled.img`
   object-fit: contain;
 `
 
+export const AvatarMember = styled.img`
+  position: absolute;
+  top: 17.5%;
+  left: 0;
+  width: 92.5%;
+  height: 82.5%;
+`
+
 export const AvatarPreview = styled.img`
   position: absolute;
   inset: 0;
