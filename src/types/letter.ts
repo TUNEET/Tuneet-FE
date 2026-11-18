@@ -41,6 +41,7 @@ export type SentLetter = {
   isRandom: boolean
   isReply: boolean
   createdAt: string
+  liked: boolean
 }
 
 export type LetterPage<T> = {
