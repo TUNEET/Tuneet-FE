@@ -31,6 +31,41 @@ export const Heading = styled.h1`
   color: ${({ theme }) => theme.colors.textHeading};
 `
 
+export const Intro = styled.p`
+  position: absolute;
+  top: 25.2rem;
+  right: 3rem;
+  left: 3rem;
+  font-size: ${({ theme }) => theme.fontSize.xs};
+  font-weight: 400;
+  line-height: 1.8rem;
+  letter-spacing: 0.02em;
+  word-break: keep-all;
+  color: ${({ theme }) => theme.colors.textPlaceholder};
+`
+
+export const Links = styled.nav`
+  position: absolute;
+  right: 3rem;
+  bottom: 3.6rem;
+  left: 3rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-size: ${({ theme }) => theme.fontSize.xxs};
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: ${({ theme }) => theme.colors.textPlaceholder};
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.2rem;
+  }
+`
+
 export const Logo = styled.img`
   position: absolute;
   top: 12rem;
