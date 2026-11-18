@@ -1,5 +1,4 @@
 import { invalidateRequest } from './requestCache'
-import { clearLastSeenComment } from './commentAlert'
 
 const ACCESS_TOKEN_KEY = 'accessToken'
 const REFRESH_TOKEN_KEY = 'refreshToken'
@@ -30,7 +29,6 @@ export function setTokens({
 
 export function clearTokens() {
   invalidateRequest()
-  clearLastSeenComment()
   localStorage.removeItem(ACCESS_TOKEN_KEY)
   localStorage.removeItem(REFRESH_TOKEN_KEY)
 }

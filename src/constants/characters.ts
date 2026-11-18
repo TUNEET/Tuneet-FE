@@ -12,3 +12,8 @@ export const CHARACTER_BACKGROUNDS = {
 } as const
 
 export type CharacterColorId = keyof typeof CHARACTER_BACKGROUNDS
+
+const CHARACTER_COLOR_COUNT = Object.keys(CHARACTER_BACKGROUNDS).length
+
+export const getCharacterColorId = (userId: number) =>
+  ((userId % CHARACTER_COLOR_COUNT) + 1) as CharacterColorId

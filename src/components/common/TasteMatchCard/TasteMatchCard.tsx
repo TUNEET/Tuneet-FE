@@ -1,4 +1,5 @@
 import messageIcon from '@/assets/icons/message.svg'
+import { CharacterAvatar } from '@/components/common/CharacterAvatar/CharacterAvatar'
 import { MusicCard } from '@/components/common/MusicCard/MusicCard'
 import type { TasteMatch, TasteReasonType } from '@/types/match'
 import { formatDistanceRange } from '@/utils/format'
@@ -18,7 +19,15 @@ type TasteMatchCardProps = {
 }
 
 export function TasteMatchCard({ match, onClick, onLetterClick }: TasteMatchCardProps) {
-  const { nickname, similarity, distanceRange, reason, letterReceivable } = match
+  const {
+    nickname,
+    profilePicture,
+    characterColorId,
+    similarity,
+    distanceRange,
+    reason,
+    letterReceivable,
+  } = match
   const meta = [
     similarity !== null && `${similarity}%`,
     distanceRange && formatDistanceRange(distanceRange),
@@ -31,7 +40,12 @@ export function TasteMatchCard({ match, onClick, onLetterClick }: TasteMatchCard
       tone="purple"
       nickname={nickname}
       meta={meta}
-      image={reason?.imageUrl ?? ''}
+      image={reason?.imageUrl}
+      thumbnail={
+        reason?.imageUrl ? undefined : (
+          <CharacterAvatar colorId={characterColorId} imageUrl={profilePicture} />
+        )
+      }
       title={
         reason
           ? `[${reason.name}]${getObjectParticle(reason.name)} 좋아해요`

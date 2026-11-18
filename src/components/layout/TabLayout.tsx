@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { CommentAlert } from '@/components/common/CommentAlert/CommentAlert'
 import { ROUTES } from '@/constants/routes'
 import { getReceivedFeedMessages } from '@/apis/notification'
+import { getMyProfile } from '@/apis/user'
 import { preloadTabPages } from '@/routes/preloadTabPages'
 import type { ReceivedNotification } from '@/types/notification'
 import { getLastSeenCommentId, markCommentSeen } from '@/utils/commentAlert'
@@ -18,16 +19,20 @@ export function TabLayout() {
     preloadTabPages()
   }, [])
   const isExplore = pathname.startsWith(ROUTES.explore)
-  const [incomingComment, setIncomingComment] = useState<ReceivedNotification | null>(null)
+  const [incomingComment, setIncomingComment] = useState<{
+    userId: number
+    comment: ReceivedNotification
+  } | null>(null)
 
   useEffect(() => {
     let isStale = false
 
-    getReceivedFeedMessages()
-      .then(({ items }) => {
+    Promise.all([getMyProfile(), getReceivedFeedMessages()])
+      .then(([{ userId }, { items }]) => {
         const latest = items[0]
-        if (isStale || !latest || latest.isRead || latest.id <= getLastSeenCommentId()) return
-        setIncomingComment(latest)
+        if (isStale || !latest || latest.isRead) return
+        if (latest.id <= getLastSeenCommentId(userId)) return
+        setIncomingComment({ userId, comment: latest })
       })
       .catch(() => {})
 
@@ -37,7 +42,7 @@ export function TabLayout() {
   }, [])
 
   const closeIncomingComment = () => {
-    if (incomingComment) markCommentSeen(incomingComment.id)
+    if (incomingComment) markCommentSeen(incomingComment.userId, incomingComment.comment.id)
     setIncomingComment(null)
   }
 
@@ -71,8 +76,8 @@ export function TabLayout() {
       <BottomNav />
       {incomingComment && (
         <CommentAlert
-          nickname={incomingComment.senderNickname}
-          createdAt={incomingComment.createdAt}
+          nickname={incomingComment.comment.senderNickname}
+          createdAt={incomingComment.comment.createdAt}
           onConfirm={() => {
             closeIncomingComment()
             navigate(ROUTES.exploreNotifications)
