@@ -83,6 +83,11 @@ export const BlockedHeader = styled.div`
   justify-content: space-between;
   margin-top: 2rem;
   pointer-events: auto;
+
+  /* 좋아요 기록 관리와 차단한 사용자 줄 사이는 더 좁다 */
+  & + & {
+    margin-top: 1rem;
+  }
 `
 
 const ActionButton = styled.button`
