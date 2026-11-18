@@ -27,8 +27,19 @@ export function WelcomeLetterPage() {
     }
   }, [])
 
-  const { title, greeting, intro, question, story, guideTitle, guides, outro, closing, from } =
-    WELCOME_LETTER
+  const {
+    title,
+    greeting,
+    intro,
+    question,
+    story,
+    storyEnding,
+    guideTitle,
+    guides,
+    outro,
+    closing,
+    from,
+  } = WELCOME_LETTER
 
   return (
     <SheetPage>
@@ -58,6 +69,9 @@ export function WelcomeLetterPage() {
           {story.map((text) => (
             <p key={text}>{text}</p>
           ))}
+          <p>
+            {storyEnding.lead} <S.Highlight>{storyEnding.highlight}</S.Highlight>
+          </p>
         </S.Paragraphs>
 
         <S.GuideTitle>{guideTitle}</S.GuideTitle>
