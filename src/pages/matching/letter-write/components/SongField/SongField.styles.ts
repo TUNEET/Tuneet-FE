@@ -31,6 +31,12 @@ export const SearchInput = styled.input`
     transition: opacity 0.2s;
   }
 
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
+
   &:focus {
     outline: none;
   }
