@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components'
 
-export type LikeButtonTone = 'blue' | 'rose' | 'roseBadge'
+export type LikeButtonTone = 'blue' | 'lavender' | 'rose' | 'roseBadge'
 
-const TONE_COLORS = { blue: 'blue', rose: 'primary' } as const
+const TONE_COLORS = { blue: 'blue', lavender: 'lavender', rose: 'primary' } as const
 
 export const Button = styled.button<{ $tone: LikeButtonTone }>`
   display: flex;

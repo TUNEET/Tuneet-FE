@@ -54,10 +54,11 @@ const toFeed = ({
 }: RoomPostResponse): RoomPost => ({
   id: roomPostId,
   nickname,
-  song: toSong(music),
+  song: { musicId: music.musicId, ...toSong(music) },
   content,
   createdAt,
   isMine,
+  liked: music.liked ?? false,
 })
 
 const toPlaylist = (items: RoomPlaylistResponse[]): PlaylistSong[] =>

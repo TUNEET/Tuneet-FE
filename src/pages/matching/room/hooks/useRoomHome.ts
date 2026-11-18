@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { getApiError } from '@/apis/error'
 import { getRoomHome } from '@/apis/room'
+import type { LikeUpdater } from '@/hooks/useMusicLike'
 import { useToast } from '@/hooks/useToast'
 import type { RoomDetail } from '@/types/room'
 
@@ -31,5 +32,16 @@ export function useRoomHome() {
     }
   }, [id, isValidId, showToast])
 
-  return { roomId: id, room: isValidId ? room : null, isLoading: isValidId && room === undefined }
+  const updateFeeds = useCallback(
+    (update: LikeUpdater) =>
+      setRoom((prev) => (prev ? { ...prev, feeds: update(prev.feeds) } : prev)),
+    [],
+  )
+
+  return {
+    roomId: id,
+    updateFeeds,
+    room: isValidId ? room : null,
+    isLoading: isValidId && room === undefined,
+  }
 }
