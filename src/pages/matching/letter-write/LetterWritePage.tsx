@@ -5,10 +5,10 @@ import sendActiveIcon from '@/assets/icons/send-active.svg'
 import sendIcon from '@/assets/icons/send.svg'
 import characterLetter from '@/assets/images/character-letter.png'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
+import { SongSearchSheet } from '@/components/common/SongSearchSheet/SongSearchSheet'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { getApiError } from '@/apis/error'
 import { getReceivedLetter, replyLetter, sendLetter, sendRandomLetter } from '@/apis/letter'
-import { searchMusics } from '@/apis/music'
 import { getMyProfile, getUserProfile } from '@/apis/user'
 import { LETTER_ERROR_MESSAGES } from '@/constants/letterErrors'
 import { ROUTES } from '@/constants/routes'
@@ -42,6 +42,8 @@ export function LetterWritePage() {
   const [isSending, setIsSending] = useState(false)
   const [isSent, setIsSent] = useState(false)
   const [isSentPopoverOpen, setIsSentPopoverOpen] = useState(false)
+  const [isSongSearchOpen, setIsSongSearchOpen] = useState(false)
+  const closeSongSearch = useCallback(() => setIsSongSearchOpen(false), [])
   const sendButtonRef = useRef<HTMLButtonElement>(null)
   const closeSentPopover = useCallback(() => setIsSentPopoverOpen(false), [])
   const isRandom = !letterId && !userId
@@ -72,26 +74,6 @@ export function LetterWritePage() {
   }, [letterId, userId, showToast])
 
   const canSend = content.trim() !== '' && song !== null && !isSent && !isSending
-
-  const handleSongSearch = async (query: string) => {
-    try {
-      const {
-        items: [first],
-      } = await searchMusics(query, 1, 1)
-      if (!first) {
-        showToast('검색 결과가 없어요')
-        return
-      }
-      setSong({
-        musicId: first.id,
-        title: first.title,
-        artist: first.artist,
-        albumImageUrl: first.coverUrl ?? '',
-      })
-    } catch (error) {
-      showToast(getApiError(error, LETTER_ERROR_MESSAGES).message)
-    }
-  }
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
@@ -153,7 +135,12 @@ export function LetterWritePage() {
 
         <S.Field>
           <S.Label htmlFor={`${fieldId}-song`}>함께 보낼 노래</S.Label>
-          <SongField id={`${fieldId}-song`} song={song} onSearch={handleSongSearch} />
+          <SongField
+            id={`${fieldId}-song`}
+            song={song}
+            disabled={isSent}
+            onOpenSearch={() => setIsSongSearchOpen(true)}
+          />
         </S.Field>
 
         <S.Field>
@@ -183,6 +170,15 @@ export function LetterWritePage() {
           />
         </S.SendRow>
       </S.Form>
+
+      {isSongSearchOpen && (
+        <SongSearchSheet
+          variant="profile"
+          title="함께 보낼 노래"
+          onAdd={setSong}
+          onClose={closeSongSearch}
+        />
+      )}
     </SheetPage>
   )
 }

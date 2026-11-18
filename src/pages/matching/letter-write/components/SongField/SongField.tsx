@@ -1,38 +1,32 @@
-import { useState } from 'react'
-import type { KeyboardEvent } from 'react'
 import musicNoteRoseIcon from '@/assets/icons/music-note-rose.svg'
+import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 import type { Song } from '@/types/song'
 import * as S from './SongField.styles'
-import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 type SongFieldProps = {
   id: string
   song: Song | null
-  onSearch: (query: string) => void
+  disabled?: boolean
+  onOpenSearch: () => void
 }
 
-export function SongField({ id, song, onSearch }: SongFieldProps) {
-  const [query, setQuery] = useState('')
-
-  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key !== 'Enter' || event.nativeEvent.isComposing) return
-    event.preventDefault()
-    if (!query.trim()) return
-    onSearch(query)
-    setQuery('')
-  }
-
+export function SongField({ id, song, disabled = false, onOpenSearch }: SongFieldProps) {
   return (
     <S.Wrapper>
       <S.SearchBox>
         <S.SearchInput
           id={id}
           type="search"
-          enterKeyHint="search"
-          value={query}
+          readOnly
+          disabled={disabled}
           placeholder="노래 검색하기"
-          onChange={(event) => setQuery(event.target.value)}
-          onKeyDown={handleKeyDown}
+          onClick={onOpenSearch}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault()
+              onOpenSearch()
+            }
+          }}
         />
       </S.SearchBox>
       {song && (
