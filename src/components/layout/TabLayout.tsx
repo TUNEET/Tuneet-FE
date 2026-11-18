@@ -157,7 +157,7 @@ export function TabLayout() {
         incomingComment && (
           <NotificationAlert
             title="내 피드에 코멘트가 도착했어요!"
-            confirmLabel="코멘트 확인하기"
+            confirmLabel="편지함에서 확인하기"
             nickname={incomingComment.comment.senderNickname}
             createdAt={incomingComment.comment.createdAt}
             onConfirm={() => {
