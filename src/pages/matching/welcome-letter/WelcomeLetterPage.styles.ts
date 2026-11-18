@@ -24,6 +24,9 @@ export const Character = styled.img`
 `
 
 export const Title = styled.h1`
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
   padding-right: 5rem;
   font-size: ${({ theme }) => theme.fontSize.md};
   font-weight: 700;
@@ -87,7 +90,7 @@ export const Guide = styled.li`
   background-color: ${({ theme }) => theme.colors.surfaceWhite};
 `
 
-export const GuideEmoji = styled.span`
+export const GuideIcon = styled.span`
   display: flex;
   flex-shrink: 0;
   align-items: center;
@@ -96,7 +99,6 @@ export const GuideEmoji = styled.span`
   height: 3.2rem;
   border-radius: 50%;
   background-color: ${({ theme }) => theme.colors.surfacePink};
-  font-size: ${({ theme }) => theme.fontSize.md};
 `
 
 export const GuideTexts = styled.div`
@@ -122,8 +124,7 @@ export const GuideDescription = styled.p`
 export const Closing = styled.p`
   margin-top: 0.8rem;
   font-family: ${({ theme }) => theme.fontFamily.handwriting};
-  font-size: ${({ theme }) => theme.fontSize.lg};
-  font-weight: 700;
+  font-size: ${({ theme }) => theme.fontSize.xl};
   line-height: 1.3;
   text-align: center;
   color: ${({ theme }) => theme.colors.primary};

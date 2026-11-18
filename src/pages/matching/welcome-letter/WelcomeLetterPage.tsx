@@ -1,4 +1,7 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
+import { getMyProfile } from '@/apis/user'
+import welcomeLetterIcon from '@/assets/icons/welcome-letter.svg'
 import characterLetter from '@/assets/images/character-letter.png'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
@@ -8,6 +11,22 @@ import * as S from './WelcomeLetterPage.styles'
 
 export function WelcomeLetterPage() {
   const navigate = useNavigate()
+  const [nickname, setNickname] = useState<string>(WELCOME_LETTER.defaultNickname)
+
+  useEffect(() => {
+    let isStale = false
+
+    getMyProfile()
+      .then((profile) => {
+        if (!isStale && profile.nickname) setNickname(profile.nickname)
+      })
+      .catch(() => {})
+
+    return () => {
+      isStale = true
+    }
+  }, [])
+
   const { title, greeting, intro, question, story, guideTitle, guides, outro, closing, from } =
     WELCOME_LETTER
 
@@ -20,10 +39,13 @@ export function WelcomeLetterPage() {
       />
       <S.Paper>
         <S.Character src={characterLetter} alt="" />
-        <S.Title>{title}</S.Title>
+        <S.Title>
+          <img src={welcomeLetterIcon} alt="" width={24} height={18} />
+          {title}
+        </S.Title>
         <S.Divider />
 
-        <S.Greeting>{greeting}</S.Greeting>
+        <S.Greeting>{greeting(nickname)}</S.Greeting>
         <S.Paragraphs>
           {intro.map((text) => (
             <p key={text}>{text}</p>
@@ -40,9 +62,11 @@ export function WelcomeLetterPage() {
 
         <S.GuideTitle>{guideTitle}</S.GuideTitle>
         <S.Guides>
-          {guides.map(({ emoji, title: guide, description }) => (
+          {guides.map(({ icon, title: guide, description }) => (
             <S.Guide key={guide}>
-              <S.GuideEmoji aria-hidden>{emoji}</S.GuideEmoji>
+              <S.GuideIcon>
+                <img src={icon} alt="" width={20} height={20} />
+              </S.GuideIcon>
               <S.GuideTexts>
                 <S.GuideName>{guide}</S.GuideName>
                 <S.GuideDescription>{description}</S.GuideDescription>
