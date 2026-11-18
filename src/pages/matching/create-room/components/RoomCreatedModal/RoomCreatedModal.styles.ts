@@ -82,7 +82,8 @@ export const Description = styled.p`
   color: ${({ theme }) => theme.colors.textBody};
 `
 
-export const InviteLink = styled.a`
+/** 눌러서 초대 링크를 복사한다 */
+export const InviteLink = styled.button`
   align-self: center;
   margin-top: 1.7rem;
   font-size: ${({ theme }) => theme.fontSize.xxs};

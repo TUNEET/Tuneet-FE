@@ -112,7 +112,7 @@ export function SongSearchSheet({
             <S.ResultList>
               {results.map((song) => (
                 <S.ResultItem key={song.id} $variant={variant}>
-                  <S.ResultSong>
+                  <S.ResultSong onClick={() => handleAdd(song)}>
                     <CoverImage src={song.coverUrl} />
                     <span>
                       {song.title} - {song.artist}
