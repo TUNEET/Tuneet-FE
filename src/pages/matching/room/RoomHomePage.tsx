@@ -14,6 +14,7 @@ import {
   getRoomPlaylistPath,
   ROUTES,
 } from '@/constants/routes'
+import { useMusicLike } from '@/hooks/useMusicLike'
 import { useToast } from '@/hooks/useToast'
 import { MemberCarousel } from './components/MemberCarousel/MemberCarousel'
 import { Playlist } from './components/Playlist/Playlist'
@@ -24,7 +25,8 @@ import * as S from './RoomHomePage.styles'
 export function RoomHomePage() {
   const navigate = useNavigate()
   const showToast = useToast()
-  const { room, isLoading } = useRoomHome()
+  const { room, isLoading, updateFeeds } = useRoomHome()
+  const handleLikeToggle = useMusicLike(updateFeeds)
   const goToMatching = () => navigate(ROUTES.matching)
   const [isLeaveOpen, setIsLeaveOpen] = useState(false)
   const [isLeaving, setIsLeaving] = useState(false)
@@ -80,7 +82,13 @@ export function RoomHomePage() {
         {room.feeds.length > 0 ? (
           <S.CardList>
             {room.feeds.slice(0, ROOM_HOME_PREVIEW_COUNT).map((feed) => (
-              <FeedCard key={feed.id} feed={feed} tone="purple" />
+              <FeedCard
+                key={feed.id}
+                feed={feed}
+                tone="purple"
+                liked={feed.liked}
+                onLikeToggle={() => handleLikeToggle(feed)}
+              />
             ))}
           </S.CardList>
         ) : (
