@@ -51,7 +51,7 @@ export function ProfileEditModal({
     <>
       <Modal open onClose={isSheetOpen ? noop : onClose} labelledBy="profile-edit-song">
         <S.Panels>
-          <S.Panel $height={selectedSong ? 'auto' : '9.7rem'}>
+          <S.Panel $height="auto">
             <S.PanelHeader as="div">
               <S.PanelIcon $isOpen={false}>
                 <img src={heartOutlineIcon} alt="" width={12} height={11} />
@@ -84,7 +84,7 @@ export function ProfileEditModal({
             )}
           </S.Panel>
 
-          <S.Panel $height="17.9rem">
+          <S.Panel $height="auto">
             <S.PanelHeader as="div">
               <Chevron />
               <S.PanelLabel>장르 선택</S.PanelLabel>
@@ -112,7 +112,7 @@ export function ProfileEditModal({
             </S.GenreRows>
           </S.Panel>
 
-          <S.Panel $height={selectedArtists.length > 0 ? 'auto' : '9.7rem'}>
+          <S.Panel $height="auto">
             <S.PanelHeader as="div">
               <Chevron />
               <S.PanelLabel>아티스트 선택</S.PanelLabel>

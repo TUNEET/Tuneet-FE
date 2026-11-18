@@ -1,11 +1,17 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { getApiError } from '@/apis/error'
+import { unlinkYoutubeMusic } from '@/apis/platform'
 import { updateSettings } from '@/apis/user'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { TermDetailModal } from '@/components/common/TermDetailModal/TermDetailModal'
 import { TERMS } from '@/constants/terms'
 import { useToast } from '@/hooks/useToast'
 import { disablePush, enablePush, isPushEnabled } from '@/utils/push'
+import {
+  clearConnectResult,
+  peekConnectResult,
+  startYoutubeMusicConnect,
+} from '@/utils/youtubeMusic'
 import type { PushBlockedReason } from '../PushPermissionModal/PushPermissionModal'
 import { PushPermissionModal } from '../PushPermissionModal/PushPermissionModal'
 import { toSettings } from './settings'
@@ -65,6 +71,9 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
   const [isPushOn, setIsPushOn] = useState(isPushEnabled)
   const [isPushPending, setIsPushPending] = useState(false)
   const [pushBlockedReason, setPushBlockedReason] = useState<PushBlockedReason | null>(null)
+  const [isPlatformPending, setIsPlatformPending] = useState(false)
+  const [isUnlinkOpen, setIsUnlinkOpen] = useState(false)
+  const closeUnlink = useCallback(() => setIsUnlinkOpen(false), [])
   const toggleRefs = {
     locationVisible: useRef<HTMLButtonElement>(null),
     pushEnabled: useRef<HTMLButtonElement>(null),
@@ -75,6 +84,41 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
   const saveButtonRef = useRef<HTMLButtonElement>(null)
   const closeSaveResult = useCallback(() => setSaveResult(null), [])
   const openTermDetail = TERMS.find(({ id }) => id === openTermId)?.detail
+
+  useEffect(() => {
+    const result = peekConnectResult('settings')
+    if (!result) return
+    clearConnectResult()
+    showToast(
+      result.status === 'success' ? '유튜브 뮤직을 연결했어요' : '유튜브 뮤직 연결에 실패했어요',
+    )
+  }, [showToast])
+
+  const handlePlatformConnect = async () => {
+    if (isPlatformPending) return
+    setIsPlatformPending(true)
+    try {
+      await startYoutubeMusicConnect('settings')
+    } catch (error) {
+      showToast(getApiError(error).message)
+      setIsPlatformPending(false)
+    }
+  }
+
+  const handlePlatformUnlink = async () => {
+    if (isPlatformPending) return
+    closeUnlink()
+    setIsPlatformPending(true)
+    try {
+      await unlinkYoutubeMusic()
+      setDraft((current) => ({ ...current, platformLinked: false }))
+      showToast('유튜브 뮤직 연동을 해제했어요')
+    } catch (error) {
+      showToast(getApiError(error).message)
+    } finally {
+      setIsPlatformPending(false)
+    }
+  }
 
   const handlePushToggle = async () => {
     if (isPushPending) return
@@ -134,6 +178,7 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
       <S.Options>
         {TOGGLES.map(({ key, label, description, offDescription, offNotice }) => {
           const isPush = key === 'pushEnabled'
+          const isPlatform = key === 'platformLinked'
           const isOn = isPush ? isPushOn : draft[key]
 
           return (
@@ -146,11 +191,16 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
                   role="switch"
                   aria-checked={isOn}
                   aria-label={label}
-                  aria-busy={isPush && isPushPending}
+                  aria-busy={(isPush && isPushPending) || (isPlatform && isPlatformPending)}
                   $isOn={isOn}
                   onClick={() => {
                     if (isPush) {
                       void handlePushToggle()
+                      return
+                    }
+                    if (isPlatform) {
+                      if (isOn) setIsUnlinkOpen((open) => !open)
+                      else void handlePlatformConnect()
                       return
                     }
                     setDraft((current) => ({ ...current, [key]: !isOn }))
@@ -164,6 +214,17 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
               <S.OptionDescription>
                 {!isOn && offDescription ? offDescription : description}
               </S.OptionDescription>
+              {isPlatform && (
+                <ConfirmPopover
+                  open={isUnlinkOpen}
+                  message="연동을 해제하면 불러온 좋아요가 삭제돼요."
+                  confirmLabel="연동 해제"
+                  onConfirm={handlePlatformUnlink}
+                  onClose={closeUnlink}
+                  anchorRef={toggleRefs.platformLinked}
+                  surface="sheet"
+                />
+              )}
               {offNotice && (
                 <ConfirmPopover
                   open={offNoticeKey === key}

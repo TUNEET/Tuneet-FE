@@ -17,7 +17,8 @@ export type MusicCardProps = {
   tone: MusicCardTone
   nickname: string
   meta: string
-  image: string
+  image?: string | null
+  thumbnail?: ReactNode
   title: string
   description: string
   descriptionAction?: ReactNode
@@ -34,6 +35,7 @@ export function MusicCard({
   nickname,
   meta,
   image,
+  thumbnail,
   title,
   description,
   descriptionAction,
@@ -71,9 +73,7 @@ export function MusicCard({
       </S.Top>
       <S.Body>
         <S.Main $expanded={expanded}>
-          <S.Thumbnail $playable={playable}>
-            <CoverImage src={image} />
-          </S.Thumbnail>
+          <S.Thumbnail $playable={playable}>{thumbnail ?? <CoverImage src={image} />}</S.Thumbnail>
           <S.Texts>
             <S.Title $tone={tone} $expanded={expanded}>
               {title}

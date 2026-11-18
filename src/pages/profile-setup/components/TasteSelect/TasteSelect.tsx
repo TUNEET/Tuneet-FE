@@ -29,7 +29,7 @@ export function TasteSelect({
   return (
     <>
       <S.Panels>
-        <S.Panel $openHeight="17.9rem" $isOpen={isGenreOpen}>
+        <S.Panel $openHeight="auto" $isOpen={isGenreOpen}>
           <S.PanelHeader
             type="button"
             aria-expanded={isGenreOpen}
@@ -67,10 +67,7 @@ export function TasteSelect({
           )}
         </S.Panel>
 
-        <S.Panel
-          $openHeight={selectedArtists.length > 0 ? 'auto' : '9.7rem'}
-          $isOpen={isArtistOpen}
-        >
+        <S.Panel $openHeight="auto" $isOpen={isArtistOpen}>
           <S.PanelHeader
             type="button"
             aria-expanded={isArtistOpen}

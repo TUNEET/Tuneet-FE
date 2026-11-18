@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { getApiError } from '@/apis/error'
 import { deleteAllSentFeedMessages, getSentFeedMessages } from '@/apis/feed'
 import { deleteAllNotifications, getReceivedFeedMessages } from '@/apis/notification'
+import { getMyProfile } from '@/apis/user'
 import { LikeButton } from '@/components/common/LikeButton/LikeButton'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { MusicCard } from '@/components/common/MusicCard/MusicCard'
@@ -51,7 +52,10 @@ export function NotificationsPage() {
   const latestReceivedId = received.items[0]?.id
 
   useEffect(() => {
-    if (latestReceivedId) markCommentSeen(latestReceivedId)
+    if (!latestReceivedId) return
+    getMyProfile()
+      .then(({ userId }) => markCommentSeen(userId, latestReceivedId))
+      .catch(() => {})
   }, [latestReceivedId])
   const sentinelRef = useInfiniteScroll<HTMLDivElement>(
     current.loadMore,
