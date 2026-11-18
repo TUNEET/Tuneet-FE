@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router'
 import styled from 'styled-components'
-import { CommentAlert } from '@/components/common/CommentAlert/CommentAlert'
+import { NotificationAlert } from '@/components/common/NotificationAlert/NotificationAlert'
 import { ROUTES } from '@/constants/routes'
 import { getReceivedFeedMessages } from '@/apis/notification'
 import { getMyProfile } from '@/apis/user'
 import { preloadTabPages } from '@/routes/preloadTabPages'
 import type { ReceivedNotification } from '@/types/notification'
 import { getLastSeenCommentId, markCommentSeen } from '@/utils/commentAlert'
+import { toPushAlert } from '@/utils/pushAlert'
+import type { PushAlert } from '@/utils/pushAlert'
 import { hasSeenWelcomeGuide, markWelcomeGuideSeen } from '@/utils/welcomeGuide'
 import { BottomNav } from './BottomNav'
 import { Header } from './Header'
@@ -39,6 +41,35 @@ export function TabLayout() {
 
     return () => {
       isStale = true
+    }
+  }, [])
+
+  // 앱을 보고 있을 때 온 푸시는 FCM이 띄우지 않아서 카드로 직접 보여준다
+  const [pushAlert, setPushAlert] = useState<PushAlert | null>(null)
+
+  useEffect(() => {
+    if (!('Notification' in window)) return
+    let unsubscribe: (() => void) | undefined
+    let isStale = false
+
+    // firebase는 무거워서 화면이 뜬 뒤에 불러온다
+    void import('@/utils/firebase')
+      .then(({ listenForegroundMessage }) =>
+        listenForegroundMessage((payload) => {
+          void toPushAlert(payload).then((alert) => {
+            if (!isStale) setPushAlert(alert)
+          })
+        }),
+      )
+      .then((stop) => {
+        if (isStale) stop()
+        else unsubscribe = stop
+      })
+      .catch(() => {})
+
+    return () => {
+      isStale = true
+      unsubscribe?.()
     }
   }, [])
 
@@ -109,16 +140,36 @@ export function TabLayout() {
         <Outlet />
       </Content>
       <BottomNav />
-      {incomingComment && (
-        <CommentAlert
-          nickname={incomingComment.comment.senderNickname}
-          createdAt={incomingComment.comment.createdAt}
+      {pushAlert ? (
+        <NotificationAlert
+          key={`${pushAlert.kind}-${pushAlert.createdAt}`}
+          title={pushAlert.title}
+          nickname={pushAlert.nickname}
+          createdAt={pushAlert.createdAt}
+          confirmLabel={pushAlert.confirmLabel}
           onConfirm={() => {
-            closeIncomingComment()
-            navigate(ROUTES.exploreNotifications)
+            setPushAlert(null)
+            navigate(
+              pushAlert.path ??
+                (pushAlert.kind === 'comment' ? ROUTES.exploreNotifications : ROUTES.letterbox),
+            )
           }}
-          onClose={closeIncomingComment}
+          onClose={() => setPushAlert(null)}
         />
+      ) : (
+        incomingComment && (
+          <NotificationAlert
+            title="내 피드에 코멘트가 도착했어요!"
+            confirmLabel="코멘트 확인하기"
+            nickname={incomingComment.comment.senderNickname}
+            createdAt={incomingComment.comment.createdAt}
+            onConfirm={() => {
+              closeIncomingComment()
+              navigate(ROUTES.exploreNotifications)
+            }}
+            onClose={closeIncomingComment}
+          />
+        )
       )}
     </>
   )
