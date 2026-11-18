@@ -32,15 +32,17 @@ export function useRoomHome() {
     }
   }, [id, isValidId, showToast])
 
-  const updateFeeds = useCallback(
+  const updateLikes = useCallback(
     (update: LikeUpdater) =>
-      setRoom((prev) => (prev ? { ...prev, feeds: update(prev.feeds) } : prev)),
+      setRoom((prev) =>
+        prev ? { ...prev, feeds: update(prev.feeds), playlist: update(prev.playlist) } : prev,
+      ),
     [],
   )
 
   return {
     roomId: id,
-    updateFeeds,
+    updateLikes,
     room: isValidId ? room : null,
     isLoading: isValidId && room === undefined,
   }

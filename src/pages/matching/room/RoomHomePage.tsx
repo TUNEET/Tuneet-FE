@@ -25,8 +25,8 @@ import * as S from './RoomHomePage.styles'
 export function RoomHomePage() {
   const navigate = useNavigate()
   const showToast = useToast()
-  const { room, isLoading, updateFeeds } = useRoomHome()
-  const handleLikeToggle = useMusicLike(updateFeeds)
+  const { room, isLoading, updateLikes } = useRoomHome()
+  const handleLikeToggle = useMusicLike(updateLikes)
   const goToMatching = () => navigate(ROUTES.matching)
   const [isLeaveOpen, setIsLeaveOpen] = useState(false)
   const [isLeaving, setIsLeaving] = useState(false)
@@ -105,7 +105,10 @@ export function RoomHomePage() {
           onActionClick={() => navigate(getRoomPlaylistPath(room.id))}
         />
         {room.playlist.length > 0 ? (
-          <Playlist songs={room.playlist.slice(0, ROOM_HOME_PREVIEW_COUNT)} />
+          <Playlist
+            songs={room.playlist.slice(0, ROOM_HOME_PREVIEW_COUNT)}
+            onLikeToggle={handleLikeToggle}
+          />
         ) : (
           <S.Empty>아직 담긴 노래가 없어요</S.Empty>
         )}

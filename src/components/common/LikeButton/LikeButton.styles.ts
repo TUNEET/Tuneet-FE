@@ -4,13 +4,13 @@ export type LikeButtonTone = 'blue' | 'lavender' | 'rose' | 'roseBadge'
 
 const TONE_COLORS = { blue: 'blue', lavender: 'lavender', rose: 'primary' } as const
 
-export const Button = styled.button<{ $tone: LikeButtonTone }>`
+export const Button = styled.button<{ $tone: LikeButtonTone; $size: number }>`
   display: flex;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: 1.4rem;
-  height: 1.4rem;
+  width: ${({ $size }) => $size / 10}rem;
+  height: ${({ $size }) => $size / 10}rem;
   padding: 0;
   border: none;
   background: none;

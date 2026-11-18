@@ -66,8 +66,9 @@ const toPlaylist = (items: RoomPlaylistResponse[]): PlaylistSong[] =>
     .sort((a, b) => a.position - b.position)
     .map(({ roomPlaylistId, music, deletable }) => ({
       id: roomPlaylistId,
-      ...toSong(music),
+      song: { musicId: music.musicId, ...toSong(music) },
       deletable,
+      liked: music.liked ?? false,
     }))
 
 const toMember = (
