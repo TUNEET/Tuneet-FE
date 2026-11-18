@@ -40,6 +40,11 @@ export function ArtistSearchSheet({ onAdd, onClose }: ArtistSearchSheetProps) {
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [onClose])
 
+  const addArtist = (artist: ArtistSearchItem) => {
+    onAdd({ id: artist.id, name: artist.name, image: artist.artistImage })
+    setAddedArtistId(artist.id)
+  }
+
   const results = keyword !== '' && result?.keyword === keyword ? result.items : null
   const hasResults = results !== null && results.length > 0
   const isNoResult = results !== null && results.length === 0
@@ -68,7 +73,7 @@ export function ArtistSearchSheet({ onAdd, onClose }: ArtistSearchSheetProps) {
             <S.ResultList>
               {results.map((artist) => (
                 <S.ResultItem key={artist.id} $variant="profile">
-                  <S.ResultSong>
+                  <S.ResultSong onClick={() => addArtist(artist)}>
                     <CoverImage src={artist.artistImage} />
                     <span>
                       {artist.name}
@@ -78,10 +83,7 @@ export function ArtistSearchSheet({ onAdd, onClose }: ArtistSearchSheetProps) {
                   <S.AddButton
                     type="button"
                     aria-label={`${artist.name} 추가`}
-                    onClick={() => {
-                      onAdd({ id: artist.id, name: artist.name, image: artist.artistImage })
-                      setAddedArtistId(artist.id)
-                    }}
+                    onClick={() => addArtist(artist)}
                   >
                     <img src={plusCircleRoseIcon} alt="" width={16} height={16} />
                   </S.AddButton>
