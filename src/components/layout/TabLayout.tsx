@@ -8,6 +8,7 @@ import { getMyProfile } from '@/apis/user'
 import { preloadTabPages } from '@/routes/preloadTabPages'
 import type { ReceivedNotification } from '@/types/notification'
 import { getLastSeenCommentId, markCommentSeen } from '@/utils/commentAlert'
+import { hasSeenWelcomeGuide, markWelcomeGuideSeen } from '@/utils/welcomeGuide'
 import { BottomNav } from './BottomNav'
 import { Header } from './Header'
 
@@ -41,6 +42,35 @@ export function TabLayout() {
     }
   }, [])
 
+  const [welcomeHintUserId, setWelcomeHintUserId] = useState<number | null>(null)
+  const isOnLetterbox = pathname.startsWith(ROUTES.letterbox)
+
+  useEffect(() => {
+    let isStale = false
+
+    getMyProfile()
+      .then(({ userId }) => {
+        if (!isStale && !hasSeenWelcomeGuide(userId)) setWelcomeHintUserId(userId)
+      })
+      .catch(() => {})
+
+    return () => {
+      isStale = true
+    }
+  }, [])
+
+  useEffect(() => {
+    if (welcomeHintUserId !== null && isOnLetterbox) markWelcomeGuideSeen(welcomeHintUserId)
+  }, [welcomeHintUserId, isOnLetterbox])
+
+  const isWelcomeHintShown =
+    welcomeHintUserId !== null && !isOnLetterbox && !hasSeenWelcomeGuide(welcomeHintUserId)
+
+  const closeWelcomeHint = () => {
+    if (welcomeHintUserId !== null) markWelcomeGuideSeen(welcomeHintUserId)
+    setWelcomeHintUserId(null)
+  }
+
   const closeIncomingComment = () => {
     if (incomingComment) markCommentSeen(incomingComment.userId, incomingComment.comment.id)
     setIncomingComment(null)
@@ -68,7 +98,12 @@ export function TabLayout() {
           onActionClick={() => toggle(ROUTES.exploreNotifications, ROUTES.explore)}
         />
       ) : (
-        <Header action="message" onActionClick={() => toggle(ROUTES.letterbox, ROUTES.matching)} />
+        <Header
+          action="message"
+          onActionClick={() => toggle(ROUTES.letterbox, ROUTES.matching)}
+          hint={isWelcomeHintShown ? '편지함을 확인해 보세요!' : undefined}
+          onHintClose={closeWelcomeHint}
+        />
       )}
       <Content>
         <Outlet />
