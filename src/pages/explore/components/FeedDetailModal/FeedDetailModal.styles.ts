@@ -33,6 +33,14 @@ export const Author = styled.div`
   display: flex;
   align-items: center;
   min-width: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+
+  &:is(button) {
+    cursor: pointer;
+  }
 `
 
 export const AuthorIcon = styled.span`

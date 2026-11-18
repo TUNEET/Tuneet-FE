@@ -18,6 +18,7 @@ type FeedCardProps = {
   liked?: boolean
   onClick?: (feed: Feed) => void
   onLikeToggle?: (feed: Feed) => void
+  onAuthorClick?: () => void
 }
 
 export function FeedCard({
@@ -27,6 +28,7 @@ export function FeedCard({
   liked = false,
   onClick,
   onLikeToggle,
+  onAuthorClick,
 }: FeedCardProps) {
   const { nickname, song, content, createdAt } = feed
 
@@ -47,6 +49,7 @@ export function FeedCard({
       actionAlign="start"
       expanded={expanded}
       onClick={onClick && (() => onClick(feed))}
+      onAuthorClick={onAuthorClick}
     />
   )
 }

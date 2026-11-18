@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNavigate } from 'react-router'
 import eyeClosedIcon from '@/assets/icons/deye.svg'
@@ -9,6 +9,7 @@ import { login } from '@/apis/auth'
 import { getApiError } from '@/apis/error'
 import { ROUTES } from '@/constants/routes'
 import { isProfileSetupPending, setTokens } from '@/utils/auth'
+import { startYoutubeMusicConnect } from '@/utils/youtubeMusic'
 import * as S from './LoginPage.styles'
 
 const FIELDS = [
@@ -33,12 +34,12 @@ export function LoginPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+  const formRef = useRef<HTMLFormElement>(null)
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    if (isSubmitting) return
+  const loginWithForm = async (afterLogin: () => Promise<void> | void) => {
+    if (isSubmitting || !formRef.current) return
 
-    const formData = new FormData(event.currentTarget)
+    const formData = new FormData(formRef.current)
     const email = String(formData.get('email')).trim()
     const password = String(formData.get('password'))
 
@@ -50,13 +51,24 @@ export function LoginPage() {
     setIsSubmitting(true)
     try {
       setTokens(await login({ email, password }))
-      navigate(isProfileSetupPending() ? ROUTES.profileSetup : ROUTES.home, { replace: true })
+      await afterLogin()
     } catch (error) {
       setErrorMessage(getApiError(error).message)
-    } finally {
       setIsSubmitting(false)
     }
   }
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    loginWithForm(() =>
+      navigate(isProfileSetupPending() ? ROUTES.profileSetup : ROUTES.home, { replace: true }),
+    )
+  }
+
+  const handleYoutubeMusicConnect = () =>
+    loginWithForm(() =>
+      startYoutubeMusicConnect(isProfileSetupPending() ? 'profileSetup' : 'settings'),
+    )
 
   return (
     <S.Page>
@@ -69,7 +81,7 @@ export function LoginPage() {
       <S.Logo src={logo} alt="TUNEET" />
       <S.Description>로그인해서 연결을 시작하세요.</S.Description>
 
-      <form onSubmit={handleSubmit} noValidate>
+      <form ref={formRef} onSubmit={handleSubmit} noValidate>
         <S.Fields>
           {FIELDS.map(({ id, label, type, placeholder, autoComplete }) => {
             const isPassword = type === 'password'
@@ -126,9 +138,13 @@ export function LoginPage() {
         회원가입
       </S.SignupButton>
 
-      <S.YoutubeMusicButton type="button">
+      <S.YoutubeMusicButton
+        type="button"
+        disabled={isSubmitting}
+        onClick={handleYoutubeMusicConnect}
+      >
         <img src={youtubeMusicIcon} alt="" width={30} height={30} />
-        유튜브 뮤직으로 로그인
+        유튜브 뮤직 연동하기
       </S.YoutubeMusicButton>
     </S.Page>
   )

@@ -22,10 +22,11 @@ export const toSearchedSong = ({ musicId, title, artist, musicPicture }: FeedMus
 })
 
 const toExploreFeed = (
-  { feedId, isMine, nickname, music, content, createdAt }: FeedResponse,
+  { feedId, userId, isMine, nickname, music, content, createdAt }: FeedResponse,
   mine = false,
 ): ExploreFeed => ({
   id: feedId,
+  userId: userId ?? null,
   nickname,
   song: toSearchedSong(music),
   content,

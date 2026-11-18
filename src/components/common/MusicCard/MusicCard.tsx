@@ -28,6 +28,7 @@ export type MusicCardProps = {
   actionAlign?: 'start' | 'end'
   expanded?: boolean
   onClick?: () => void
+  onAuthorClick?: () => void
 }
 
 export function MusicCard({
@@ -45,6 +46,7 @@ export function MusicCard({
   actionAlign = 'end',
   expanded = false,
   onClick,
+  onAuthorClick,
 }: MusicCardProps) {
   const clickableProps = onClick && {
     role: 'button',
@@ -62,10 +64,24 @@ export function MusicCard({
   return (
     <S.Card $tone={tone} $clickable={!!onClick} {...clickableProps}>
       <S.Top>
-        <S.Author>
-          <img src={USER_ICONS[tone]} alt="" width={14} height={14} />
-          <S.Caption $tone={tone}>{nickname}</S.Caption>
-        </S.Author>
+        {onAuthorClick ? (
+          <S.AuthorButton
+            type="button"
+            aria-label={`${nickname} 프로필 보기`}
+            onClick={(event) => {
+              event.stopPropagation()
+              onAuthorClick()
+            }}
+          >
+            <img src={USER_ICONS[tone]} alt="" width={14} height={14} />
+            <S.Caption $tone={tone}>{nickname}</S.Caption>
+          </S.AuthorButton>
+        ) : (
+          <S.Author>
+            <img src={USER_ICONS[tone]} alt="" width={14} height={14} />
+            <S.Caption $tone={tone}>{nickname}</S.Caption>
+          </S.Author>
+        )}
         <S.Meta>
           <S.Caption $tone={tone}>{meta}</S.Caption>
           {badge && <Badge>{badge}</Badge>}

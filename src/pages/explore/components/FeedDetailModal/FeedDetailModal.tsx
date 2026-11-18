@@ -22,6 +22,7 @@ type FeedDetailModalProps = {
   onEdit?: () => void
   onDelete?: () => void | Promise<void>
   commentable?: boolean
+  onAuthorClick?: () => void
   onClose: () => void
 }
 
@@ -33,6 +34,7 @@ export function FeedDetailModal({
   onEdit,
   onDelete,
   commentable = true,
+  onAuthorClick,
   onClose,
 }: FeedDetailModalProps) {
   const { nickname, song, content, createdAt } = feed
@@ -67,7 +69,12 @@ export function FeedDetailModal({
       <S.Card>
         <S.Character src={characterImage} alt="" />
         <S.Top>
-          <S.Author>
+          <S.Author
+            as={onAuthorClick ? 'button' : 'div'}
+            type={onAuthorClick ? 'button' : undefined}
+            aria-label={onAuthorClick ? `${nickname} 프로필 보기` : undefined}
+            onClick={onAuthorClick}
+          >
             <S.AuthorIcon>
               <img src={userBlueIcon} alt="" width={14} height={14} />
             </S.AuthorIcon>

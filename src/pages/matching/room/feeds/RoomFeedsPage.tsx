@@ -21,7 +21,7 @@ const getPostId = ({ id }: RoomPost) => id
 export function RoomFeedsPage() {
   const navigate = useNavigate()
   const showToast = useToast()
-  const { roomId, room, isLoading } = useRoomHome()
+  const { roomId, room, isLoading, getPostAuthorPath } = useRoomHome()
   const [selectedPost, setSelectedPost] = useState<RoomPost | null>(null)
 
   const fetchPosts = useCallback(
@@ -43,6 +43,11 @@ export function RoomFeedsPage() {
     posts.setItems(update)
     setSelectedPost((prev) => (prev ? update([prev])[0] : prev))
   })
+
+  const getAuthorClick = (post: RoomPost) => {
+    const path = getPostAuthorPath(post)
+    return path ? () => navigate(path) : undefined
+  }
 
   const handleDelete = async (postId: number) => {
     try {
@@ -93,6 +98,7 @@ export function RoomFeedsPage() {
               liked={feed.liked}
               onLikeToggle={() => handleLikeToggle(feed)}
               onClick={() => setSelectedPost(feed)}
+              onAuthorClick={getAuthorClick(feed)}
             />
           ))}
         </S.CardList>
@@ -109,6 +115,7 @@ export function RoomFeedsPage() {
           onLikeToggle={() => handleLikeToggle(selectedPost)}
           commentable={false}
           onDelete={() => handleDelete(selectedPost.id)}
+          onAuthorClick={getAuthorClick(selectedPost)}
           onClose={() => setSelectedPost(null)}
         />
       )}
