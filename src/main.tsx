@@ -17,12 +17,6 @@ window.addEventListener('vite:preloadError', (event) => {
 
 if (isLoggedIn()) void syncPushToken()
 
-// 앱이 켜져 있을 때 알림을 누르면 서비스 워커가 보낸 경로로 앱 안에서 이동한다
-navigator.serviceWorker?.addEventListener('message', (event: MessageEvent) => {
-  const { type, path } = (event.data ?? {}) as { type?: string; path?: string }
-  if (type === 'TUNEET_PUSH_NAVIGATE' && path?.startsWith('/')) void router.navigate(path)
-})
-
 if (import.meta.env.DEV) {
   void import('@/utils/firebase').then(({ getCurrentFcmToken, listenForegroundMessage }) => {
     Object.assign(window, {
