@@ -5,11 +5,12 @@ import * as S from './LinkJoinSection.styles'
 
 type LinkJoinSectionProps = {
   link: string
+  isEntering: boolean
   onLinkChange: (link: string) => void
   onJoin: (inviteCode: string) => void
 }
 
-export function LinkJoinSection({ link, onLinkChange, onJoin }: LinkJoinSectionProps) {
+export function LinkJoinSection({ link, isEntering, onLinkChange, onJoin }: LinkJoinSectionProps) {
   const inviteCode = parseInviteCode(link)
 
   return (
@@ -26,7 +27,10 @@ export function LinkJoinSection({ link, onLinkChange, onJoin }: LinkJoinSectionP
         onChange={(event) => onLinkChange(event.target.value)}
       />
       <S.Actions>
-        <Button disabled={!inviteCode} onClick={() => inviteCode && onJoin(inviteCode)}>
+        <Button
+          disabled={!inviteCode || isEntering}
+          onClick={() => inviteCode && onJoin(inviteCode)}
+        >
           입장하기
         </Button>
       </S.Actions>

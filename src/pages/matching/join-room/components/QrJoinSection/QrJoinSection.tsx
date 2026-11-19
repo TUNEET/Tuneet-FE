@@ -6,11 +6,17 @@ import * as S from './QrJoinSection.styles'
 
 type QrJoinSectionProps = {
   inviteCode: string | null
+  isEntering: boolean
   onImageSelect: (file: File) => void
   onJoin: (inviteCode: string) => void
 }
 
-export function QrJoinSection({ inviteCode, onImageSelect, onJoin }: QrJoinSectionProps) {
+export function QrJoinSection({
+  inviteCode,
+  isEntering,
+  onImageSelect,
+  onJoin,
+}: QrJoinSectionProps) {
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) onImageSelect(file)
@@ -27,7 +33,10 @@ export function QrJoinSection({ inviteCode, onImageSelect, onJoin }: QrJoinSecti
           <img src={qrScanIcon} alt="" />
           <S.FileInput type="file" accept="image/*" onChange={handleFileChange} />
         </S.ScanPicker>
-        <Button disabled={!inviteCode} onClick={() => inviteCode && onJoin(inviteCode)}>
+        <Button
+          disabled={!inviteCode || isEntering}
+          onClick={() => inviteCode && onJoin(inviteCode)}
+        >
           입장하기
         </Button>
       </S.Row>

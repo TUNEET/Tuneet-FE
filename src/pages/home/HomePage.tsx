@@ -8,7 +8,7 @@ import { FeedCard } from '@/components/common/FeedCard/FeedCard'
 import { ProfileCard } from '@/components/common/ProfileCard/ProfileCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { RecommendationList } from '@/components/common/RecommendationList/RecommendationList'
-import { getAuthorPath, getUserProfilePath, ROUTES } from '@/constants/routes'
+import { getAuthorPath, getFeedPath, getUserProfilePath, ROUTES } from '@/constants/routes'
 import { useRecommendations } from '@/hooks/useRecommendations'
 import { useToast } from '@/hooks/useToast'
 import type { ExploreFeed } from '@/types/feed'
@@ -27,7 +27,6 @@ type FeedState =
 export function HomePage() {
   const [isHomeScreenGuideOpen, setIsHomeScreenGuideOpen] = useState(shouldShowHomeScreenGuide)
 
-  // 닫지 않고 다른 탭으로 가도 다시 뜨지 않게 처음 띄울 때 본 것으로 남긴다
   useEffect(() => {
     if (isHomeScreenGuideOpen) markHomeScreenGuideSeen()
   }, [isHomeScreenGuideOpen])
@@ -104,7 +103,7 @@ export function HomePage() {
                 <FeedCard
                   key={feed.id}
                   feed={feed}
-                  onClick={() => navigate(ROUTES.explore)}
+                  onClick={() => navigate(getFeedPath(feed.id), { state: { fromList: true } })}
                   onAuthorClick={getAuthorClick(feed)}
                 />
               ))}

@@ -11,10 +11,6 @@ const getMusicId = (item: LikeableItem) => ('song' in item ? item.song : item.mu
 
 export type LikeUpdater = <T extends LikeableItem>(items: T[]) => T[]
 
-/**
- * 좋아요는 곡 단위라 같은 곡이 있는 항목의 하트를 모두 함께 바꾼다.
- * applyToLists: 받은 updater를 하트를 맞출 목록의 setState에 넘긴다
- */
 export function useMusicLike(applyToLists: (update: LikeUpdater) => void) {
   const showToast = useToast()
   const pendingRef = useRef(new Set<string>())

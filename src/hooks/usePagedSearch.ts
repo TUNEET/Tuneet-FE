@@ -12,14 +12,9 @@ type UsePagedSearchOptions<T> = {
   keyword: string
   page: number
   pageSize: number
-  /** 다음 페이지를 미리 받을 때 이미지도 같이 받아 두려고 쓴다 */
   getImage?: (item: T) => string | null | undefined
 }
 
-/**
- * 페이지 단위 검색. 받은 페이지는 기억해 두고 다음 페이지를 미리 받아서
- * 페이지를 넘길 때 바로 보이게 한다. 입력 중일 때만 잠깐 기다렸다가 요청한다
- */
 export function usePagedSearch<T>({
   search,
   keyword,
@@ -29,7 +24,6 @@ export function usePagedSearch<T>({
 }: UsePagedSearchOptions<T>) {
   const [result, setResult] = useState<PagedSearchResult<T> | null>(null)
   const [isError, setIsError] = useState(false)
-  // 진행 중인 요청도 담아서 미리 받기와 실제 요청이 겹치지 않게 한다
   const cacheRef = useRef(new Map<string, Promise<PageData<T>>>())
   const getImageRef = useRef(getImage)
 
@@ -51,7 +45,6 @@ export function usePagedSearch<T>({
         totalPages,
       }))
       cache.set(key, request)
-      // 실패한 페이지는 다시 시도할 수 있게 지운다
       request.catch(() => cache.delete(key))
       return request
     }
@@ -71,7 +64,6 @@ export function usePagedSearch<T>({
 
     let isStale = false
     const isCached = cache.has(`${keyword}\u0000${page}`)
-    // 검색어를 바꿀 때만 입력이 끝나길 기다리고, 페이지 이동은 바로 요청한다
     const delay = isCached || page !== 1 ? 0 : SEARCH_DEBOUNCE_MS
 
     const timer = setTimeout(() => {

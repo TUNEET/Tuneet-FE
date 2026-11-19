@@ -145,7 +145,7 @@ export function SignupPage() {
         locationAgreed: formData.has('locationConsent'),
       })
 
-      markProfileSetupPending()
+      markProfileSetupPending(email)
       markHomeScreenGuidePending()
       navigate(ROUTES.login)
     } catch (error) {

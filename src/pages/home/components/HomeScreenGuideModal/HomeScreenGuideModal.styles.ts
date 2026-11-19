@@ -24,8 +24,6 @@ export const Character = styled.img`
   pointer-events: none;
 `
 
-/* Figma 유리 효과의 빛(-45°, 80%): 왼쪽 위 가장자리는 밝게, 반대쪽은 은은하게.
-   굴절·깊이·분산은 CSS로 표현할 수 없어 흐림과 가장자리 빛만 옮겼다 */
 const glassEdge =
   'inset 0.5px 0.5px 0 rgba(255, 255, 255, 0.8), inset -0.5px -0.5px 0 rgba(255, 255, 255, 0.3)'
 
@@ -35,7 +33,6 @@ export const Card = styled.div`
   overflow: hidden;
   border-radius: 2.4rem;
   background: rgba(250, 250, 250, 0.5);
-  /* Figma 유리 효과(흐릿함 5) */
   box-shadow: ${glassEdge};
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);
@@ -77,7 +74,6 @@ export const PushNote = styled.p`
   color: ${({ theme }) => theme.colors.blue};
 `
 
-/* 캡처는 화면에 보이는 부분만 잘라 3배 크기로 넣어 두었다 */
 const StepImage = styled.img`
   position: absolute;
   left: 2rem;
@@ -105,7 +101,6 @@ export const StepAdd = styled(StepImage)`
   border-radius: 1000px;
 `
 
-/* 선의 오른쪽 점이 번호 배지 가운데에 오도록 놓는다 */
 export const Line = styled.img<{ $left: string; $top: string }>`
   position: absolute;
   top: ${({ $top }) => $top};
@@ -140,7 +135,6 @@ export const CloseButton = styled.button`
   padding: 1rem;
   border-radius: 100px;
   background: rgba(233.92, 233.92, 233.92, 0.7);
-  /* 카드와 같은 유리 효과 */
   box-shadow: ${glassEdge};
   -webkit-backdrop-filter: blur(5px);
   backdrop-filter: blur(5px);

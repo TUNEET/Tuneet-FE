@@ -31,6 +31,12 @@ function logout() {
   window.location.replace(ROUTES.onboarding)
 }
 
+function isSessionExpired(reissueError: unknown) {
+  if (!axios.isAxiosError(reissueError)) return true
+  const status = reissueError.response?.status
+  return status !== undefined && status < 500
+}
+
 type RetryConfig = InternalAxiosRequestConfig & { _retry?: boolean }
 
 instance.interceptors.response.use(
@@ -60,7 +66,7 @@ instance.interceptors.response.use(
       config.headers.Authorization = `Bearer ${accessToken}`
       return instance(config)
     } catch (reissueError) {
-      logout()
+      if (isSessionExpired(reissueError)) logout()
       return Promise.reject(reissueError)
     }
   },

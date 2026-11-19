@@ -12,6 +12,7 @@ import { getReceivedLetter, replyLetter, sendLetter, sendRandomLetter } from '@/
 import { getMyProfile, getUserProfile } from '@/apis/user'
 import { LETTER_ERROR_MESSAGES } from '@/constants/letterErrors'
 import { ROUTES } from '@/constants/routes'
+import { useGoBack } from '@/hooks/useGoBack'
 import { useToast } from '@/hooks/useToast'
 import type { SearchedSong } from '@/types/music'
 import { SongField } from './components/SongField/SongField'
@@ -19,6 +20,7 @@ import * as S from './LetterWritePage.styles'
 
 const CONTENT_MAX_LENGTH = 100
 const RANDOM_RECIPIENT = '누군가'
+const RECIPIENT_NOT_FOUND_MESSAGE = '받는 사람을 찾을 수 없어요'
 
 type WriteMode =
   { type: 'reply'; letterId: number } | { type: 'direct'; userId: number } | { type: 'random' }
@@ -31,6 +33,7 @@ function getWriteMode(params: { letterId?: string; userId?: string }): WriteMode
 
 export function LetterWritePage() {
   const navigate = useNavigate()
+  const goBack = useGoBack(ROUTES.matching)
   const showToast = useToast()
   const { letterId, userId } = useParams()
   const fieldId = useId()
@@ -52,26 +55,55 @@ export function LetterWritePage() {
     let isStale = false
     const mode = getWriteMode({ letterId, userId })
 
-    const loadRecipientName = async () => {
-      if (mode.type === 'reply') return (await getReceivedLetter(mode.letterId)).senderNickname
-      if (mode.type === 'direct') return (await getUserProfile(mode.userId)).nickname
-      return RANDOM_RECIPIENT
+    const leaveWithToast = (message: string) => {
+      showToast(message)
+      goBack()
     }
 
-    Promise.all([loadRecipientName(), getMyProfile()])
-      .then(([recipient, profile]) => {
+    const loadRecipient = async () => {
+      if (mode.type === 'reply') {
+        const letter = await getReceivedLetter(mode.letterId)
+        return { name: letter.senderNickname, isReplied: letter.isReplied === true }
+      }
+      if (mode.type === 'direct') {
+        return { name: (await getUserProfile(mode.userId)).nickname, isReplied: false }
+      }
+      return { name: RANDOM_RECIPIENT, isReplied: false }
+    }
+
+    const targetId =
+      mode.type === 'reply' ? mode.letterId : mode.type === 'direct' ? mode.userId : null
+    if (targetId !== null && (!Number.isInteger(targetId) || targetId <= 0)) {
+      queueMicrotask(() => {
+        if (!isStale) leaveWithToast(RECIPIENT_NOT_FOUND_MESSAGE)
+      })
+      return () => {
+        isStale = true
+      }
+    }
+
+    loadRecipient()
+      .then(({ name, isReplied }) => {
         if (isStale) return
-        setRecipientName(recipient)
-        setSenderName(profile.nickname ?? '')
+        if (isReplied) leaveWithToast(LETTER_ERROR_MESSAGES.L4007)
+        else setRecipientName(name)
       })
       .catch((error) => {
-        if (!isStale) showToast(getApiError(error, LETTER_ERROR_MESSAGES).message)
+        if (!isStale) leaveWithToast(getApiError(error, LETTER_ERROR_MESSAGES).message)
+      })
+
+    getMyProfile()
+      .then((profile) => {
+        if (!isStale) setSenderName(profile.nickname ?? '')
+      })
+      .catch((error) => {
+        if (!isStale) showToast(getApiError(error).message)
       })
 
     return () => {
       isStale = true
     }
-  }, [letterId, userId, showToast])
+  }, [letterId, userId, showToast, goBack])
 
   const canSend = content.trim() !== '' && song !== null && !isSent && !isSending
 
@@ -103,7 +135,7 @@ export function LetterWritePage() {
     <SheetPage tone="letter">
       <S.Header>
         <S.Title>편지 쓰기</S.Title>
-        <S.ExitButton type="button" onClick={() => navigate(-1)}>
+        <S.ExitButton type="button" onClick={goBack}>
           나가기
         </S.ExitButton>
       </S.Header>

@@ -11,7 +11,8 @@ import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 type SongSelectProps = {
   songs: Song[]
-  onAddSong: (song: Song) => void
+  /** false를 돌려주면 추가되지 않은 것으로 보고 '추가되었습니다' 안내를 띄우지 않는다 */
+  onAddSong: (song: Song) => boolean | void
   onRemoveSong: (song: Song) => void
 }
 
