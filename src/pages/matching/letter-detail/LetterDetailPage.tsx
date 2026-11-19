@@ -10,6 +10,7 @@ import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopove
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { getLetterReplyPath, ROUTES } from '@/constants/routes'
+import { useGoBack } from '@/hooks/useGoBack'
 import { useMusicLike } from '@/hooks/useMusicLike'
 import { useToast } from '@/hooks/useToast'
 import type { ReceivedLetter } from '@/types/letter'
@@ -33,6 +34,7 @@ function LetterDetail({ letterId }: { letterId: string | undefined }) {
   const deleteButtonRef = useRef<HTMLButtonElement>(null)
   const closeDelete = useCallback(() => setIsDeleteOpen(false), [])
   const goToLetterbox = () => navigate(ROUTES.letterbox)
+  const leaveAfterDelete = useGoBack(ROUTES.letterbox)
   const id = Number(letterId)
   const handleLikeToggle = useMusicLike((update) =>
     setLetter((prev) => (prev ? update([prev])[0] : prev)),
@@ -70,7 +72,7 @@ function LetterDetail({ letterId }: { letterId: string | undefined }) {
     try {
       await deleteReceivedLetter(letter.letterId)
       showToast('편지를 삭제했어요')
-      goToLetterbox()
+      leaveAfterDelete()
     } catch (error) {
       showToast(getApiError(error, LETTER_ERROR_MESSAGES).message)
       setIsDeleting(false)
