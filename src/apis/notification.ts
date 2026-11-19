@@ -1,34 +1,45 @@
 import type { ApiResponse } from '@/types/api'
 import type {
+  FeedComment,
+  FeedMessageResponse,
   NotificationListResponse,
   NotificationResponse,
   ReceivedNotification,
-  SentNotification,
+  ReplyTarget,
 } from '@/types/notification'
-import { getSentFeedMessages, toSearchedSong } from './feed'
+import { toSearchedSong } from './feed'
 import { instance } from './instance'
 
 const PAGE_SIZE = 20
 
 const toReceivedNotification = ({
   notificationId,
+  type,
   feedId,
+  feedMessageId,
+  replyId,
   senderNickname,
   messageContent,
   music,
   isRead,
+  isReplied,
   createdAt,
 }: NotificationResponse): ReceivedNotification => ({
   id: notificationId,
+  kind: type === 'FEED_MESSAGE_REPLY' ? 'reply' : 'comment',
   feedId,
+  feedMessageId,
+  replyId,
   senderNickname,
   message: messageContent,
   song: toSearchedSong(music),
   liked: music.liked ?? false,
   isRead,
+  isReplied: isReplied ?? false,
   createdAt,
 })
 
+/** 받은 코멘트 탭이라 코멘트·코멘트 답장 알림만 보여준다 (편지 알림은 편지함에서 본다) */
 export async function getReceivedFeedMessages(cursor?: number, size = PAGE_SIZE) {
   const { data } = await instance.get<ApiResponse<NotificationListResponse>>(
     '/api/v1/notifications',
@@ -36,7 +47,7 @@ export async function getReceivedFeedMessages(cursor?: number, size = PAGE_SIZE)
   )
   return {
     items: data.data.notifications
-      .filter(({ type }) => type === 'FEED_MESSAGE')
+      .filter(({ type }) => type === 'FEED_MESSAGE' || type === 'FEED_MESSAGE_REPLY')
       .map(toReceivedNotification),
     hasNext: data.data.hasNext,
   }
@@ -54,24 +65,28 @@ export async function deleteFcmToken(token: string) {
   await instance.delete<ApiResponse<unknown>>('/api/v1/notifications/tokens', { data: { token } })
 }
 
-export type FeedCommentKind = 'received' | 'sent'
+/** 피드 하나에 달린 코멘트 전체 (최신순) */
+export async function getFeedComments(feedId: number): Promise<FeedComment[]> {
+  const { data } = await instance.get<ApiResponse<{ messages: FeedMessageResponse[] }>>(
+    `/api/v1/feeds/${feedId}/messages`,
+  )
+  return data.data.messages.map(({ senderNickname, music, messageContent, createdAt }) => ({
+    nickname: senderNickname,
+    song: toSearchedSong(music),
+    message: messageContent,
+    liked: music.liked ?? false,
+    createdAt,
+  }))
+}
 
-const FEED_COMMENT_MAX_PAGES = 5
-
-/**
- * 한 피드에 오간 코멘트. 피드별로 주는 API가 없어서
- * 받은·보낸 코멘트 목록을 최근 몇 페이지까지 넘겨 보며 그 피드 것만 모은다
- */
-export async function getFeedComments(feedId: number, kind: FeedCommentKind) {
-  const fetchPage = kind === 'received' ? getReceivedFeedMessages : getSentFeedMessages
-  const comments: (ReceivedNotification | SentNotification)[] = []
-  let cursor: number | undefined
-
-  for (let page = 0; page < FEED_COMMENT_MAX_PAGES; page += 1) {
-    const { items, hasNext } = await fetchPage(cursor)
-    comments.push(...items.filter((item) => item.feedId === feedId))
-    if (!hasNext || items.length === 0) break
-    cursor = items[items.length - 1].id
-  }
-  return comments
+/** 받은 코멘트에 답장하거나, 받은 답장에 다시 답장한다 */
+export async function sendReply(
+  target: ReplyTarget,
+  body: { musicId: string; replyContent: string },
+) {
+  const url =
+    target.type === 'comment'
+      ? `/api/v1/feeds/messages/${target.feedMessageId}/replies`
+      : `/api/v1/feeds/messages/replies/${target.replyId}/replies`
+  await instance.post<ApiResponse<unknown>>(url, body)
 }

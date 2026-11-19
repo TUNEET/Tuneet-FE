@@ -1,34 +1,29 @@
 import { useEffect, useState } from 'react'
 import { getApiError } from '@/apis/error'
 import { getFeedComments } from '@/apis/notification'
-import type { FeedCommentKind } from '@/apis/notification'
 import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 import { HeartIcon } from '@/components/common/HeartIcon/HeartIcon'
 import { useMusicLike } from '@/hooks/useMusicLike'
 import { useToast } from '@/hooks/useToast'
-import type { ReceivedNotification, SentNotification } from '@/types/notification'
+import type { FeedComment } from '@/types/notification'
 import { formatTimeAgo } from '@/utils/format'
 import * as S from './FeedCommentsCard.styles'
 
-type Comment = ReceivedNotification | SentNotification
-
-const getPartner = (comment: Comment) =>
-  'senderNickname' in comment ? comment.senderNickname : comment.receiverNickname
-
 type FeedCommentsCardProps = {
   feedId: number
-  kind: FeedCommentKind
+  /** 코멘트를 누르면 그 코멘트의 상세를 보여 줄 수 있게 넘겨준다 */
+  onSelect?: (comment: FeedComment) => void
 }
 
-/** 한 피드에서 오간 코멘트를 모아 보여 준다 */
-export function FeedCommentsCard({ feedId, kind }: FeedCommentsCardProps) {
+/** 한 피드에 달린 코멘트를 모아 보여 준다 */
+export function FeedCommentsCard({ feedId, onSelect }: FeedCommentsCardProps) {
   const showToast = useToast()
-  const [comments, setComments] = useState<Comment[] | null>(null)
+  const [comments, setComments] = useState<FeedComment[] | null>(null)
 
   useEffect(() => {
     let isStale = false
 
-    getFeedComments(feedId, kind)
+    getFeedComments(feedId)
       .then((found) => {
         if (!isStale) setComments(found)
       })
@@ -41,7 +36,7 @@ export function FeedCommentsCard({ feedId, kind }: FeedCommentsCardProps) {
     return () => {
       isStale = true
     }
-  }, [feedId, kind, showToast])
+  }, [feedId, showToast])
 
   const handleLikeToggle = useMusicLike((update) =>
     setComments((current) => (current ? update(current) : current)),
@@ -54,9 +49,21 @@ export function FeedCommentsCard({ feedId, kind }: FeedCommentsCardProps) {
       {comments && comments.length > 0 && (
         <S.List>
           {comments.map((comment) => (
-            <S.Item key={comment.id}>
+            // 코멘트 번호가 응답에 없어서 보낸 사람·시간으로 구분한다
+            <S.Item
+              key={`${comment.nickname}-${comment.createdAt}`}
+              $clickable={!!onSelect}
+              role={onSelect ? 'button' : undefined}
+              tabIndex={onSelect ? 0 : undefined}
+              onClick={() => onSelect?.(comment)}
+              onKeyDown={(event) => {
+                if (!onSelect || (event.key !== 'Enter' && event.key !== ' ')) return
+                event.preventDefault()
+                onSelect(comment)
+              }}
+            >
               <S.ItemTop>
-                <span>{getPartner(comment)}</span>
+                <span>{comment.nickname}</span>
                 <span>{formatTimeAgo(comment.createdAt)}</span>
               </S.ItemTop>
               <S.ItemBody>
@@ -75,7 +82,11 @@ export function FeedCommentsCard({ feedId, kind }: FeedCommentsCardProps) {
                   type="button"
                   aria-label={comment.liked ? '좋아요 취소' : '좋아요'}
                   aria-pressed={comment.liked}
-                  onClick={() => handleLikeToggle(comment)}
+                  onClick={(event) => {
+                    // 하트를 누를 때는 상세가 열리지 않게 한다
+                    event.stopPropagation()
+                    handleLikeToggle(comment)
+                  }}
                 >
                   <HeartIcon filled={comment.liked} size={9} />
                 </S.Like>

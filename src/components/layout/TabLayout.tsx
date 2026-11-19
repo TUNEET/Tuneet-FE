@@ -9,7 +9,7 @@ import { preloadTabPages } from '@/routes/preloadTabPages'
 import type { ReceivedNotification } from '@/types/notification'
 import { getLastSeenCommentId, markCommentSeen } from '@/utils/commentAlert'
 import { getInviteJoinPath, takePendingInviteCode } from '@/utils/invite'
-import { toPushAlert } from '@/utils/pushAlert'
+import { ALERT_COPY, isFeedAlertKind, toPushAlert } from '@/utils/pushAlert'
 import type { PushAlert } from '@/utils/pushAlert'
 import { hasSeenWelcomeGuide, markWelcomeGuideSeen } from '@/utils/welcomeGuide'
 import { BottomNav } from './BottomNav'
@@ -154,7 +154,7 @@ export function TabLayout() {
             setPushAlert(null)
             navigate(
               pushAlert.path ??
-                (pushAlert.kind === 'comment' ? ROUTES.exploreNotifications : ROUTES.letterbox),
+                (isFeedAlertKind(pushAlert.kind) ? ROUTES.exploreNotifications : ROUTES.letterbox),
             )
           }}
           onClose={() => setPushAlert(null)}
@@ -162,8 +162,7 @@ export function TabLayout() {
       ) : (
         incomingComment && (
           <NotificationAlert
-            title="내 피드에 코멘트가 도착했어요!"
-            confirmLabel="편지함에서 확인하기"
+            {...ALERT_COPY[incomingComment.comment.kind === 'reply' ? 'commentReply' : 'comment']}
             nickname={incomingComment.comment.senderNickname}
             createdAt={incomingComment.comment.createdAt}
             onConfirm={() => {

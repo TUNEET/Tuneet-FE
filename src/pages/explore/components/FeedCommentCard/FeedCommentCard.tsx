@@ -7,9 +7,11 @@ import musicNoteWhiteIcon from '@/assets/icons/music-note-white.svg'
 import sentFullIcon from '@/assets/icons/sent-full.svg'
 import { getApiError } from '@/apis/error'
 import { sendFeedMessage } from '@/apis/feed'
+import { sendReply } from '@/apis/notification'
 import { SongSearchSheet } from '@/components/common/SongSearchSheet/SongSearchSheet'
 import { useToast } from '@/hooks/useToast'
 import type { SearchedSong } from '@/types/music'
+import type { ReplyTarget } from '@/types/notification'
 import * as S from './FeedCommentCard.styles'
 import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
@@ -17,10 +19,13 @@ const COMMENT_MAX_LENGTH = 100
 
 type FeedCommentCardProps = {
   feedId: number
+  /** 넘기면 피드에 새 코멘트를 쓰는 대신 받은 코멘트·답장에 답장한다 */
+  replyTarget?: ReplyTarget
   onSent: () => void
 }
 
-export function FeedCommentCard({ feedId, onSent }: FeedCommentCardProps) {
+export function FeedCommentCard({ feedId, replyTarget, onSent }: FeedCommentCardProps) {
+  const isReply = replyTarget !== undefined
   const showToast = useToast()
   const [comment, setComment] = useState('')
   const [song, setSong] = useState<SearchedSong | null>(null)
@@ -33,8 +38,13 @@ export function FeedCommentCard({ feedId, onSent }: FeedCommentCardProps) {
 
     setIsSending(true)
     try {
-      await sendFeedMessage(feedId, { musicId: song.musicId, messageContent: comment.trim() })
-      showToast('코멘트를 보냈어요')
+      if (replyTarget) {
+        await sendReply(replyTarget, { musicId: song.musicId, replyContent: comment.trim() })
+        showToast('답장을 보냈어요')
+      } else {
+        await sendFeedMessage(feedId, { musicId: song.musicId, messageContent: comment.trim() })
+        showToast('코멘트를 보냈어요')
+      }
       onSent()
     } catch (error) {
       showToast(getApiError(error).message)
@@ -76,11 +86,11 @@ export function FeedCommentCard({ feedId, onSent }: FeedCommentCardProps) {
         )}
         <S.Label htmlFor="feed-comment-text">
           <img src={commentIcon} alt="" width={20} height={20} />
-          코멘트 작성
+          {isReply ? '답장 작성' : '코멘트 작성'}
         </S.Label>
         <S.CommentInput
           id="feed-comment-text"
-          placeholder={`코멘트는 최대 ${COMMENT_MAX_LENGTH}자까지 작성할 수 있어요.`}
+          placeholder={`${isReply ? '답장' : '코멘트'}은 최대 ${COMMENT_MAX_LENGTH}자까지 작성할 수 있어요.`}
           maxLength={COMMENT_MAX_LENGTH}
           value={comment}
           onChange={(event) => setComment(event.target.value)}

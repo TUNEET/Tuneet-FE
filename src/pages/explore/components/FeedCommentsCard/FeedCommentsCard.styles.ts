@@ -35,7 +35,7 @@ export const List = styled.ul`
   }
 `
 
-export const Item = styled.li`
+export const Item = styled.li<{ $clickable: boolean }>`
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -43,6 +43,7 @@ export const Item = styled.li`
   padding: 1rem;
   border-radius: 1rem;
   background-color: #e0e6f0;
+  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
 `
 
 export const ItemTop = styled.div`
