@@ -1,20 +1,21 @@
 import { useCallback, useRef, useState } from 'react'
+import type { MouseEvent, PointerEvent } from 'react'
 import playCircleIcon from '@/assets/icons/play-circle.svg'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 import { LikeButton } from '@/components/common/LikeButton/LikeButton'
 import { useLongPress } from '@/hooks/useLongPress'
 import type { PlaylistSong } from '@/types/room'
+import { getYoutubeMusicSearchUrl } from '@/utils/youtubeMusic'
 import * as S from './Playlist.styles'
 
 type PlaylistProps = {
   songs: PlaylistSong[]
-  onPlayClick?: (item: PlaylistSong) => void
   onLikeToggle?: (item: PlaylistSong) => void
   onDelete?: (item: PlaylistSong) => void
 }
 
-export function Playlist({ songs, onPlayClick, onLikeToggle, onDelete }: PlaylistProps) {
+export function Playlist({ songs, onLikeToggle, onDelete }: PlaylistProps) {
   const [deletingId, setDeletingId] = useState<number | null>(null)
   const closeDelete = useCallback(() => setDeletingId(null), [])
 
@@ -31,7 +32,6 @@ export function Playlist({ songs, onPlayClick, onLikeToggle, onDelete }: Playlis
             closeDelete()
             onDelete?.(item)
           }}
-          onPlayClick={onPlayClick}
           onLikeToggle={onLikeToggle}
         />
       ))}
@@ -45,7 +45,6 @@ type PlaylistItemProps = {
   onLongPress?: () => void
   onCloseDelete: () => void
   onConfirmDelete: () => void
-  onPlayClick?: (item: PlaylistSong) => void
   onLikeToggle?: (item: PlaylistSong) => void
 }
 
@@ -55,7 +54,6 @@ function PlaylistItem({
   onLongPress,
   onCloseDelete,
   onConfirmDelete,
-  onPlayClick,
   onLikeToggle,
 }: PlaylistItemProps) {
   const itemRef = useRef<HTMLLIElement>(null)
@@ -76,9 +74,13 @@ function PlaylistItem({
         )}
       </S.Pill>
       <S.PlayButton
-        type="button"
-        aria-label={`${song.title} 재생`}
-        onClick={() => onPlayClick?.(item)}
+        as="a"
+        href={getYoutubeMusicSearchUrl(song.title, song.artist)}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`${song.title} 유튜브 뮤직에서 듣기`}
+        onPointerDown={(event: PointerEvent) => event.stopPropagation()}
+        onContextMenu={(event: MouseEvent) => event.stopPropagation()}
       >
         <img src={playCircleIcon} alt="" width={16} height={16} />
       </S.PlayButton>

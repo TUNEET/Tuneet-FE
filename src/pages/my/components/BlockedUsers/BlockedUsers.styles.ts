@@ -48,7 +48,6 @@ export const Avatar = styled.div`
   }
 `
 
-/** 프로필 사진은 어두운 덮개 아래에 깔린다 */
 export const Photo = styled(CoverImage)`
   position: absolute;
   inset: 0;

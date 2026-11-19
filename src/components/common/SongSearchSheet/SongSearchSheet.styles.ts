@@ -105,7 +105,6 @@ export const Sheet = styled.div<VariantProps>`
   ${({ $variant }) =>
     $variant !== 'playlist' &&
     css`
-      /* 페이지 버튼 아래 빈 공간만 줄여서 내용 위치는 그대로 둔다 */
       height: 45rem;
 
       &::before {
@@ -164,7 +163,6 @@ export const ResultList = styled(List)`
   margin-top: 2rem;
 `
 
-/** 곡·아티스트 이름 영역. 플러스 버튼뿐 아니라 이 부분을 눌러도 추가된다 */
 export const ResultSong = styled(Song).attrs({ as: 'button', type: 'button' })`
   flex: 1;
   align-self: stretch;

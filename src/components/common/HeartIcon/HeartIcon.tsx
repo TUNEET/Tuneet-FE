@@ -6,7 +6,6 @@ type HeartIconProps = {
   size: number
 }
 
-/** currentColor로 그려서 부모의 color를 따른다 */
 export function HeartIcon({ filled, size }: HeartIconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 11.2 10.2" aria-hidden>

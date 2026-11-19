@@ -13,7 +13,6 @@ type NotificationAlertProps = {
   onClose: () => void
 }
 
-/** 코멘트·편지·답장이 도착했을 때 하단에 띄우는 카드 */
 export function NotificationAlert({
   title,
   nickname,

@@ -76,7 +76,6 @@ export const Actions = styled.div`
   pointer-events: auto;
 `
 
-/** 좋아요 기록·차단한 사용자로 들어가는 메뉴를 한 카드에 묶는다 */
 export const MenuCard = styled.ul`
   margin-top: 2rem;
   overflow: hidden;

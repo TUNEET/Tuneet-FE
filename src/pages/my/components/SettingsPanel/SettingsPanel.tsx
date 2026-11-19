@@ -62,14 +62,11 @@ type SettingsPanelProps = {
 export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) {
   const showToast = useToast()
   const [draft, setDraft] = useState(settings)
-  // 서버에 저장이 확인된 값. 저장이 실패하면 여기로 되돌린다
   const savedRef = useRef(settings)
-  // 빠르게 여러 번 바꿔도 마지막 요청의 응답만 반영한다
   const latestRequestRef = useRef(0)
   const appliedRequestRef = useRef(0)
   const [openTermId, setOpenTermId] = useState<string | null>(null)
   const [offNoticeKey, setOffNoticeKey] = useState<ToggleKey | null>(null)
-  // 위치 동의 없이 위치 노출을 켜면 서버가 받아 주지 않아서 동의부터 안내한다
   const [isConsentNoticeOpen, setIsConsentNoticeOpen] = useState(false)
   const closeConsentNotice = useCallback(() => setIsConsentNoticeOpen(false), [])
   const [isPushOn, setIsPushOn] = useState(isPushEnabled)
@@ -144,7 +141,6 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
     }
   }
 
-  /** 바꾼 값을 화면에 먼저 보여 주고 바로 서버에 저장한다 */
   const applySettings = async (next: Settings) => {
     setDraft(next)
     const requestId = ++latestRequestRef.current
@@ -157,7 +153,6 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
           locationAgreed: next.terms.locationConsent,
         }),
       )
-      // 늦게 도착한 예전 응답이 더 새로운 저장값을 덮지 않게 한다
       if (requestId < appliedRequestRef.current) return
       appliedRequestRef.current = requestId
       savedRef.current = saved
@@ -276,7 +271,6 @@ export function SettingsPanel({ settings, onSave, onExit }: SettingsPanelProps) 
                     const { checked } = event.target
                     if (required && !checked) return
 
-                    // 위치 동의를 풀면 위치 노출도 함께 끈다
                     const isLocationRevoked = id === 'locationConsent' && !checked
                     if (isLocationRevoked) setIsConsentNoticeOpen(false)
                     void applySettings({

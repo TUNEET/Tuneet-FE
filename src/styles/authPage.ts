@@ -87,7 +87,6 @@ const autofillCover = css`
   box-shadow: inset 0 0 0 5rem ${({ theme }) => theme.colors.border};
   -webkit-text-fill-color: ${({ theme }) => theme.colors.textHeading};
   caret-color: ${({ theme }) => theme.colors.textHeading};
-  /* 그림자가 늦게 덮일 때 노란색이 잠깐 비치지 않게 배경 전환을 사실상 멈춘다 */
   transition: background-color 600000s 0s;
 `
 
@@ -113,8 +112,6 @@ export const Input = styled.input`
     outline-offset: -1px;
   }
 
-  /* 자동완성 노란 배경은 브라우저가 칠해서 직접 못 바꾸니 안쪽 그림자로 덮는다.
-     모바일은 포커스·표준 :autofill 상태에서 따로 칠해서 그 경우까지 함께 덮는다 */
   &:-webkit-autofill,
   &:-webkit-autofill:hover,
   &:-webkit-autofill:focus,
@@ -122,7 +119,6 @@ export const Input = styled.input`
     ${autofillCover}
   }
 
-  /* :autofill을 모르는 브라우저가 위 규칙까지 버리지 않게 따로 둔다 */
   &:autofill {
     ${autofillCover}
   }

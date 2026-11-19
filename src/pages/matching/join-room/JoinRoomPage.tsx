@@ -1,13 +1,14 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useRef, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router'
 import { Divider } from '@/components/common/Divider/Divider'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { getApiError } from '@/apis/error'
 import { enterRoom } from '@/apis/room'
-import { getRoomPath } from '@/constants/routes'
+import { getRoomPath, ROUTES } from '@/constants/routes'
+import { useGoBack } from '@/hooks/useGoBack'
 import { useToast } from '@/hooks/useToast'
-import { parseInviteCode } from '@/utils/invite'
+import { getInviteUrl, isValidInviteCode, parseInviteCode } from '@/utils/invite'
 import { decodeQrFromImage } from '@/utils/qr'
 import { LinkJoinSection } from './components/LinkJoinSection/LinkJoinSection'
 import { QrJoinSection } from './components/QrJoinSection/QrJoinSection'
@@ -18,11 +19,17 @@ const PASSWORD_MISMATCH_CODE = 'R4003'
 
 export function JoinRoomPage() {
   const navigate = useNavigate()
+  const goBack = useGoBack(ROUTES.matching)
   const showToast = useToast()
-  const [link, setLink] = useState('')
+  const [searchParams] = useSearchParams()
+  const [link, setLink] = useState(() => {
+    const code = searchParams.get('code')
+    return isValidInviteCode(code) ? getInviteUrl(code) : ''
+  })
   const [qrInviteCode, setQrInviteCode] = useState<string | null>(null)
   const [lockedInviteCode, setLockedInviteCode] = useState<string | null>(null)
   const [isEntering, setIsEntering] = useState(false)
+  const enteringRef = useRef(false)
   const [mismatchCount, setMismatchCount] = useState(0)
 
   const handleQrImageSelect = async (file: File) => {
@@ -38,9 +45,20 @@ export function JoinRoomPage() {
     navigate(getRoomPath(roomId))
   }
 
-  const handleJoin = async (inviteCode: string) => {
-    if (isEntering) return
+  const startEntering = () => {
+    if (enteringRef.current) return false
+    enteringRef.current = true
     setIsEntering(true)
+    return true
+  }
+
+  const finishEntering = () => {
+    enteringRef.current = false
+    setIsEntering(false)
+  }
+
+  const handleJoin = async (inviteCode: string) => {
+    if (!startEntering()) return
     try {
       const { roomId, alreadyJoined } = await enterRoom(inviteCode)
       goToRoom(roomId, alreadyJoined)
@@ -51,13 +69,12 @@ export function JoinRoomPage() {
         setLockedInviteCode(inviteCode)
       } else showToast(message)
     } finally {
-      setIsEntering(false)
+      finishEntering()
     }
   }
 
   const handlePasswordSubmit = async (password: string) => {
-    if (!lockedInviteCode || isEntering) return
-    setIsEntering(true)
+    if (!lockedInviteCode || !startEntering()) return
     try {
       const { roomId, alreadyJoined } = await enterRoom(lockedInviteCode, password)
       setLockedInviteCode(null)
@@ -71,17 +88,23 @@ export function JoinRoomPage() {
       setLockedInviteCode(null)
       showToast(message)
     } finally {
-      setIsEntering(false)
+      finishEntering()
     }
   }
 
   return (
     <SheetPage>
-      <SectionHeader title="방 입장하기" actionLabel="나가기" onActionClick={() => navigate(-1)} />
-      <LinkJoinSection link={link} onLinkChange={setLink} onJoin={handleJoin} />
+      <SectionHeader title="방 입장하기" actionLabel="나가기" onActionClick={goBack} />
+      <LinkJoinSection
+        link={link}
+        isEntering={isEntering}
+        onLinkChange={setLink}
+        onJoin={handleJoin}
+      />
       <Divider />
       <QrJoinSection
         inviteCode={qrInviteCode}
+        isEntering={isEntering}
         onImageSelect={handleQrImageSelect}
         onJoin={handleJoin}
       />

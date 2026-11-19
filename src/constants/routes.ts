@@ -25,6 +25,7 @@ export const ROUTES = {
   anonymousLetterWrite: '/matching/letter',
   createRoom: '/matching/rooms/new',
   joinRoom: '/matching/rooms/join',
+  invite: '/invite/:inviteCode',
   room: '/matching/rooms/:roomId',
   roomMembers: '/matching/rooms/:roomId/members',
   roomFeeds: '/matching/rooms/:roomId/feeds',

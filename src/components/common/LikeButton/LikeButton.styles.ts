@@ -19,7 +19,6 @@ export const Button = styled.button<{ $tone: LikeButtonTone; $size: number }>`
   ${({ theme, $tone }) =>
     $tone === 'roseBadge'
       ? css`
-          /* 분홍 원 안에 하트 아이콘을 올린다. 하트 색은 아이콘 파일에 들어 있다 */
           width: 2.4rem;
           height: 2.4rem;
           border-radius: 9999px;

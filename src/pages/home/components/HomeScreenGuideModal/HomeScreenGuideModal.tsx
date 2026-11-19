@@ -12,7 +12,6 @@ type HomeScreenGuideModalProps = {
   onClose: () => void
 }
 
-/** 홈 화면 추가 방법을 단계별 캡처로 안내한다 */
 export function HomeScreenGuideModal({ onClose }: HomeScreenGuideModalProps) {
   const titleId = useId()
 
@@ -44,7 +43,6 @@ export function HomeScreenGuideModal({ onClose }: HomeScreenGuideModalProps) {
           <S.StepShare src={stepShareImage} alt="" />
           <S.StepMenu src={stepMenuImage} alt="" />
           <S.StepAdd src={stepAddImage} alt="" />
-          {/* 선은 배지 아래에 깔리게 배지보다 먼저 둔다 */}
           <S.Line src={line1} alt="" $left="17.13rem" $top="13.63rem" width={95} height={6} />
           <S.Line src={line2} alt="" $left="6.03rem" $top="16.83rem" width={206} height={28} />
           <S.Line src={line3} alt="" $left="9.03rem" $top="29.13rem" width={176} height={6} />

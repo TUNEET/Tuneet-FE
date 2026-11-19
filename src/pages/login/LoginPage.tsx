@@ -8,7 +8,7 @@ import logo from '@/assets/images/logo.svg'
 import { login } from '@/apis/auth'
 import { getApiError } from '@/apis/error'
 import { ROUTES } from '@/constants/routes'
-import { isProfileSetupPending, setTokens } from '@/utils/auth'
+import { isProfileSetupPending, setTokens, syncProfileSetupPending } from '@/utils/auth'
 import { startYoutubeMusicConnect } from '@/utils/youtubeMusic'
 import * as S from './LoginPage.styles'
 
@@ -51,6 +51,7 @@ export function LoginPage() {
     setIsSubmitting(true)
     try {
       setTokens(await login({ email, password }))
+      syncProfileSetupPending(email)
       await afterLogin()
     } catch (error) {
       setErrorMessage(getApiError(error).message)

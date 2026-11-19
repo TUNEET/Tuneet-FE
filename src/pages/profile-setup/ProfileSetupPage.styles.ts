@@ -9,13 +9,11 @@ export const SETUP_SHIFT = {
   bottom: 0.5,
 }
 
-/* $hasNote: 설명 아래 안내 문구가 붙으면 그만큼 아래 선택 영역을 내린다 */
 export const Page = styled(BasePage)<{ $hasNote?: boolean }>`
   --max-shrink: 18rem;
   --setup-note-space: ${({ $hasNote }) => ($hasNote ? '2.2rem' : '0rem')};
 `
 
-/** 설명 바로 아래에 붙는 작은 안내 문구 */
 export const StepNote = styled.span`
   display: block;
   margin-top: 0.6rem;
