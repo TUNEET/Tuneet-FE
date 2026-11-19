@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { logout } from '@/apis/auth'
 import { getApiError } from '@/apis/error'
+import { uploadImage } from '@/apis/image'
 import {
   addProfile,
   checkNicknameAvailability,
@@ -64,6 +65,8 @@ export function MyPage() {
   const [draftArtists, setDraftArtists] = useState(artists)
   const [song, setSong] = useState<ProfileMusic | null>(null)
   const [draftSong, setDraftSong] = useState(song)
+  const [draftImageFile, setDraftImageFile] = useState<File | null>(null)
+  const [draftPreviewUrl, setDraftPreviewUrl] = useState<string | null>(null)
   const [isSavingProfile, setIsSavingProfile] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [isTasteOpen, setIsTasteOpen] = useState(false)
@@ -114,6 +117,12 @@ export function MyPage() {
       isStale = true
     }
   }, [showToast])
+
+  useEffect(() => {
+    if (!draftPreviewUrl) return
+
+    return () => URL.revokeObjectURL(draftPreviewUrl)
+  }, [draftPreviewUrl])
 
   useEffect(() => {
     if (subView !== 'settings' || settings) return
@@ -176,7 +185,22 @@ export function MyPage() {
     setDraftGenres(genres)
     setDraftArtists(artists)
     setDraftSong(song)
+    clearDraftImage()
     setIsEditing(true)
+  }
+
+  const clearDraftImage = () => {
+    setDraftImageFile(null)
+    setDraftPreviewUrl(null)
+  }
+
+  const selectImage = (file: File) => {
+    if (!file.type.startsWith('image/')) {
+      showToast('이미지 파일만 올릴 수 있어요.')
+      return
+    }
+    setDraftImageFile(file)
+    setDraftPreviewUrl(URL.createObjectURL(file))
   }
 
   const saveProfile = async () => {
@@ -205,18 +229,23 @@ export function MyPage() {
       draftArtists.some((artist) => !artistKeys.includes(getArtistKey(artist)))
     const draftSongId = draftSong?.musicId
     const isSongChanged = !!draftSongId && draftSongId !== song?.musicId
+    const isImageChanged = draftImageFile !== null
 
     setIsSavingProfile(true)
     try {
-      if (isNicknameChanged) {
-        if (!(await checkNicknameAvailability(trimmedNickname))) {
-          showToast(NICKNAME_DUPLICATED_MESSAGE)
-          return
+      if (isNicknameChanged && !(await checkNicknameAvailability(trimmedNickname))) {
+        showToast(NICKNAME_DUPLICATED_MESSAGE)
+        return
+      }
+      if (isNicknameChanged || isImageChanged) {
+        const profilePicture = draftImageFile
+          ? await uploadImage(draftImageFile, 'PROFILE')
+          : (profile?.profilePicture ?? undefined)
+        await addProfile({ nickname: trimmedNickname, profilePicture })
+        if (draftImageFile && profilePicture) {
+          setProfile((current) => current && { ...current, profilePicture })
+          clearDraftImage()
         }
-        await addProfile({
-          nickname: trimmedNickname,
-          profilePicture: profile?.profilePicture ?? undefined,
-        })
       }
       if (isGenresChanged) {
         await replaceGenres(draftGenres.map(toGenreName))
@@ -317,7 +346,7 @@ export function MyPage() {
       <S.ProfileArea>
         <ProfileComplete
           nickname={isEditing ? draftNickname : nickname}
-          previewUrl={profile?.profilePicture ?? null}
+          previewUrl={(isEditing && draftPreviewUrl) || profile?.profilePicture || null}
           songs={songs}
           genres={isEditing ? draftGenres : genres}
           artists={isEditing ? draftArtists : artists}
@@ -325,6 +354,7 @@ export function MyPage() {
           characterColorId={profile ? getCharacterColorId(profile.userId) : undefined}
           isEditing={isEditing}
           onNicknameChange={setDraftNickname}
+          onImageSelect={selectImage}
           onTagsClick={isEditing ? () => setIsTasteOpen(true) : undefined}
         >
           {!isEditing && (

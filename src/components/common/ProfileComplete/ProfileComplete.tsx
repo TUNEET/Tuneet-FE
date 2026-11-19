@@ -1,4 +1,5 @@
-import type { KeyboardEvent, ReactNode } from 'react'
+import { useRef } from 'react'
+import type { ChangeEvent, KeyboardEvent, ReactNode } from 'react'
 import editIcon from '@/assets/icons/edit-outline.svg'
 import boltLargeIcon from '@/assets/icons/fa6-solid_bolt-lightning-1.svg'
 import boltSmallIcon from '@/assets/icons/fa6-solid_bolt-lightning.svg'
@@ -58,6 +59,7 @@ type ProfileCompleteProps = {
   characterColorId?: CharacterColorId
   isEditing?: boolean
   onNicknameChange?: (nickname: string) => void
+  onImageSelect?: (file: File) => void
   onTagsClick?: () => void
   onStart?: () => void
   children?: ReactNode
@@ -73,10 +75,19 @@ export function ProfileComplete({
   characterColorId,
   isEditing = false,
   onNicknameChange,
+  onImageSelect,
   onTagsClick,
   onStart,
   children,
 }: ProfileCompleteProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (file) onImageSelect?.(file)
+  }
+
   const tagsButtonProps = onTagsClick && {
     role: 'button',
     tabIndex: 0,
@@ -170,11 +181,23 @@ export function ProfileComplete({
             value={nickname}
             onChange={(event) => onNicknameChange?.(event.target.value)}
           />
-          <S.AvatarButton type="button" aria-label="프로필 사진 변경" style={avatarStyle}>
+          <S.AvatarButton
+            type="button"
+            aria-label="프로필 사진 변경"
+            style={avatarStyle}
+            onClick={() => fileInputRef.current?.click()}
+          >
             {avatarImage}
             <S.AvatarOverlay />
             <S.AvatarIcon src={editIcon} alt="" />
           </S.AvatarButton>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={handleImageChange}
+          />
         </>
       ) : (
         <>
