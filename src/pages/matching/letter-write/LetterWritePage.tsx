@@ -20,6 +20,7 @@ import * as S from './LetterWritePage.styles'
 
 const CONTENT_MAX_LENGTH = 100
 const RANDOM_RECIPIENT = '누군가'
+const RECIPIENT_NOT_FOUND_MESSAGE = '받는 사람을 찾을 수 없어요'
 
 type WriteMode =
   { type: 'reply'; letterId: number } | { type: 'direct'; userId: number } | { type: 'random' }
@@ -54,26 +55,55 @@ export function LetterWritePage() {
     let isStale = false
     const mode = getWriteMode({ letterId, userId })
 
-    const loadRecipientName = async () => {
-      if (mode.type === 'reply') return (await getReceivedLetter(mode.letterId)).senderNickname
-      if (mode.type === 'direct') return (await getUserProfile(mode.userId)).nickname
-      return RANDOM_RECIPIENT
+    const leaveWithToast = (message: string) => {
+      showToast(message)
+      goBack()
     }
 
-    Promise.all([loadRecipientName(), getMyProfile()])
-      .then(([recipient, profile]) => {
+    const loadRecipient = async () => {
+      if (mode.type === 'reply') {
+        const letter = await getReceivedLetter(mode.letterId)
+        return { name: letter.senderNickname, isReplied: letter.isReplied === true }
+      }
+      if (mode.type === 'direct') {
+        return { name: (await getUserProfile(mode.userId)).nickname, isReplied: false }
+      }
+      return { name: RANDOM_RECIPIENT, isReplied: false }
+    }
+
+    const targetId =
+      mode.type === 'reply' ? mode.letterId : mode.type === 'direct' ? mode.userId : null
+    if (targetId !== null && (!Number.isInteger(targetId) || targetId <= 0)) {
+      queueMicrotask(() => {
+        if (!isStale) leaveWithToast(RECIPIENT_NOT_FOUND_MESSAGE)
+      })
+      return () => {
+        isStale = true
+      }
+    }
+
+    loadRecipient()
+      .then(({ name, isReplied }) => {
         if (isStale) return
-        setRecipientName(recipient)
-        setSenderName(profile.nickname ?? '')
+        if (isReplied) leaveWithToast(LETTER_ERROR_MESSAGES.L4007)
+        else setRecipientName(name)
       })
       .catch((error) => {
-        if (!isStale) showToast(getApiError(error, LETTER_ERROR_MESSAGES).message)
+        if (!isStale) leaveWithToast(getApiError(error, LETTER_ERROR_MESSAGES).message)
+      })
+
+    getMyProfile()
+      .then((profile) => {
+        if (!isStale) setSenderName(profile.nickname ?? '')
+      })
+      .catch((error) => {
+        if (!isStale) showToast(getApiError(error).message)
       })
 
     return () => {
       isStale = true
     }
-  }, [letterId, userId, showToast])
+  }, [letterId, userId, showToast, goBack])
 
   const canSend = content.trim() !== '' && song !== null && !isSent && !isSending
 
