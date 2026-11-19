@@ -102,7 +102,6 @@ export const MenuIcon = styled.img`
   flex-shrink: 0;
 `
 
-/* 아이콘 폭이 달라도 글자 시작 위치가 같게 아이콘 칸을 맞춘다 */
 export const MenuIconSlot = styled.span`
   display: flex;
   flex-shrink: 0;

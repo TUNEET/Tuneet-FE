@@ -21,7 +21,7 @@ export function LetterSection({ quota, onWriteClick }: LetterSectionProps) {
           </S.Count>
         </S.Remaining>
       </S.Info>
-      <Button disabled={quota === null || isExhausted} onClick={onWriteClick}>
+      <Button disabled={isExhausted} onClick={onWriteClick}>
         편지 쓰기
       </Button>
     </S.Wrapper>

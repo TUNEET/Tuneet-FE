@@ -11,11 +11,9 @@ import * as S from './FeedCommentsCard.styles'
 
 type FeedCommentsCardProps = {
   feedId: number
-  /** 코멘트를 누르면 그 코멘트의 상세를 보여 줄 수 있게 넘겨준다 */
   onSelect?: (comment: FeedComment) => void
 }
 
-/** 한 피드에 달린 코멘트를 모아 보여 준다 */
 export function FeedCommentsCard({ feedId, onSelect }: FeedCommentsCardProps) {
   const showToast = useToast()
   const [comments, setComments] = useState<FeedComment[] | null>(null)
@@ -49,7 +47,6 @@ export function FeedCommentsCard({ feedId, onSelect }: FeedCommentsCardProps) {
       {comments && comments.length > 0 && (
         <S.List>
           {comments.map((comment) => (
-            // 코멘트 번호가 응답에 없어서 보낸 사람·시간으로 구분한다
             <S.Item
               key={`${comment.nickname}-${comment.createdAt}`}
               $clickable={!!onSelect}
@@ -83,7 +80,6 @@ export function FeedCommentsCard({ feedId, onSelect }: FeedCommentsCardProps) {
                   aria-label={comment.liked ? '좋아요 취소' : '좋아요'}
                   aria-pressed={comment.liked}
                   onClick={(event) => {
-                    // 하트를 누를 때는 상세가 열리지 않게 한다
                     event.stopPropagation()
                     handleLikeToggle(comment)
                   }}

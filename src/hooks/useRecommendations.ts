@@ -7,7 +7,7 @@ import {
   refreshRecommendations,
 } from '@/apis/recommendation'
 import type { TasteMatch } from '@/types/match'
-import { getCurrentPosition } from '@/utils/geolocation'
+import { getCurrentPosition, PositionTimeoutError } from '@/utils/geolocation'
 import { useToast } from './useToast'
 
 export type LocationBlock = 'notAgreed' | 'hidden'
@@ -74,6 +74,10 @@ export function useRecommendations() {
     try {
       setState({ status: 'done', users: await refreshWithCurrentPosition() })
     } catch (error) {
+      if (error instanceof PositionTimeoutError) {
+        showToast(error.message)
+        return
+      }
       if (error instanceof GeolocationPositionError) {
         showToast('위치 권한을 허용해야 새로 추천받을 수 있어요')
         return

@@ -71,7 +71,7 @@ export const router = createBrowserRouter([
                           import('@/pages/explore/ExplorePage').then((m) => ({
                             Component: m.ExplorePage,
                           })),
-                        children: [{ path: ROUTES.feed }],
+                        children: [{ path: ROUTES.feed, element: null }],
                       },
                       {
                         path: ROUTES.exploreWrite,
