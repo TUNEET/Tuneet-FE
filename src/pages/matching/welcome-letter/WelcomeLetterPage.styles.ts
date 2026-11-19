@@ -6,7 +6,7 @@ export const Paper = styled.article`
   flex-direction: column;
   gap: 1.6rem;
   margin-top: 2rem;
-  padding: 2.8rem 2.2rem 2.4rem;
+  padding: 2rem 2.2rem 2.4rem;
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 1.6rem;
   background-color: ${({ theme }) => theme.colors.surfacePink};
@@ -17,7 +17,7 @@ export const Paper = styled.article`
 export const Character = styled.img`
   position: absolute;
   top: -4.4rem;
-  right: 1.6rem;
+  right: 4rem;
   width: 5.6rem;
   height: 5.6rem;
   object-fit: contain;
@@ -32,6 +32,10 @@ export const Title = styled.h1`
   font-weight: 700;
   line-height: 1.4;
   color: ${({ theme }) => theme.colors.textHeading};
+`
+
+export const TitleLine = styled.span`
+  white-space: nowrap;
 `
 
 export const Divider = styled.hr`

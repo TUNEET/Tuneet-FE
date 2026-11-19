@@ -3,8 +3,11 @@ import homeIcon from '@/assets/icons/home-active.svg'
 import matchingIcon from '@/assets/icons/matching-active.svg'
 import myIcon from '@/assets/icons/my-active.svg'
 
+const WELCOME_TITLE_LINES = ['TUNEET팀이 보낸', '첫 번째 편지'] as const
+
 export const WELCOME_LETTER = {
-  title: 'TUNEET팀이 보낸 첫 번째 편지',
+  title: WELCOME_TITLE_LINES.join(' '),
+  titleLines: WELCOME_TITLE_LINES,
   sender: 'TUNEET팀',
   preview: '음악으로 사람과 사람을 연결하는 공간, TUNEET에 오신 걸 환영해요!',
   defaultNickname: '튜니',
