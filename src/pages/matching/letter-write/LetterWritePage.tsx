@@ -12,6 +12,7 @@ import { getReceivedLetter, replyLetter, sendLetter, sendRandomLetter } from '@/
 import { getMyProfile, getUserProfile } from '@/apis/user'
 import { LETTER_ERROR_MESSAGES } from '@/constants/letterErrors'
 import { ROUTES } from '@/constants/routes'
+import { useGoBack } from '@/hooks/useGoBack'
 import { useToast } from '@/hooks/useToast'
 import type { SearchedSong } from '@/types/music'
 import { SongField } from './components/SongField/SongField'
@@ -31,6 +32,7 @@ function getWriteMode(params: { letterId?: string; userId?: string }): WriteMode
 
 export function LetterWritePage() {
   const navigate = useNavigate()
+  const goBack = useGoBack(ROUTES.matching)
   const showToast = useToast()
   const { letterId, userId } = useParams()
   const fieldId = useId()
@@ -103,7 +105,7 @@ export function LetterWritePage() {
     <SheetPage tone="letter">
       <S.Header>
         <S.Title>편지 쓰기</S.Title>
-        <S.ExitButton type="button" onClick={() => navigate(-1)}>
+        <S.ExitButton type="button" onClick={goBack}>
           나가기
         </S.ExitButton>
       </S.Header>

@@ -10,6 +10,7 @@ import { ProfileCard } from '@/components/common/ProfileCard/ProfileCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { getLetterWritePath, ROUTES } from '@/constants/routes'
+import { useGoBack } from '@/hooks/useGoBack'
 import { useLetterQuota } from '@/hooks/useLetterQuota'
 import { useToast } from '@/hooks/useToast'
 import type { CommonTaste, OtherUserProfileResponse } from '@/types/user'
@@ -46,7 +47,7 @@ export function UserProfilePage() {
   const [isBlocking, setIsBlocking] = useState(false)
   const blockButtonRef = useRef<HTMLButtonElement>(null)
   const closeBlock = useCallback(() => setIsBlockOpen(false), [])
-  const goBack = () => navigate(-1)
+  const goBack = useGoBack(ROUTES.matching)
 
   useEffect(() => {
     if (!isValidId) return

@@ -5,7 +5,8 @@ import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { getApiError } from '@/apis/error'
 import { enterRoom } from '@/apis/room'
-import { getRoomPath } from '@/constants/routes'
+import { getRoomPath, ROUTES } from '@/constants/routes'
+import { useGoBack } from '@/hooks/useGoBack'
 import { useToast } from '@/hooks/useToast'
 import { getInviteUrl, isValidInviteCode, parseInviteCode } from '@/utils/invite'
 import { decodeQrFromImage } from '@/utils/qr'
@@ -18,6 +19,7 @@ const PASSWORD_MISMATCH_CODE = 'R4003'
 
 export function JoinRoomPage() {
   const navigate = useNavigate()
+  const goBack = useGoBack(ROUTES.matching)
   const showToast = useToast()
   const [searchParams] = useSearchParams()
   const [link, setLink] = useState(() => {
@@ -92,7 +94,7 @@ export function JoinRoomPage() {
 
   return (
     <SheetPage>
-      <SectionHeader title="방 입장하기" actionLabel="나가기" onActionClick={() => navigate(-1)} />
+      <SectionHeader title="방 입장하기" actionLabel="나가기" onActionClick={goBack} />
       <LinkJoinSection
         link={link}
         isEntering={isEntering}
