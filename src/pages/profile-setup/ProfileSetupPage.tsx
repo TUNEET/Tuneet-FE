@@ -77,8 +77,7 @@ export function ProfileSetupPage() {
   }, [previewUrl])
 
   useEffect(() => {
-    if (!resumedConnect) return
-    clearConnectResult()
+    if (resumedConnect) clearConnectResult()
     let isStale = false
 
     getMyProfile()
@@ -86,24 +85,27 @@ export function ProfileSetupPage() {
         if (isStale) return
         const restoredNickname = savedNickname ?? ''
         if (!restoredNickname) {
-          setStep('profile')
+          if (resumedConnect) setStep('profile')
           return
         }
-        setNickname(restoredNickname)
+        setNickname((current) => current || restoredNickname)
         setSavedProfile({ nickname: restoredNickname, imageFile: null })
-        setPreviewUrl(profilePicture)
+        setPreviewUrl((current) => current ?? profilePicture)
         if (profileMusic) {
-          setMusic({
-            musicId: profileMusic.musicId,
-            title: profileMusic.title,
-            artist: profileMusic.artist,
-            albumImage: profileMusic.musicPicture ?? '',
-          })
+          setMusic(
+            (current) =>
+              current ?? {
+                musicId: profileMusic.musicId,
+                title: profileMusic.title,
+                artist: profileMusic.artist,
+                albumImage: profileMusic.musicPicture ?? '',
+              },
+          )
           setSavedMusicId(profileMusic.musicId)
         }
       })
       .catch((error) => {
-        if (!isStale) showToast(getApiError(error).message)
+        if (!isStale && resumedConnect) showToast(getApiError(error).message)
       })
 
     return () => {
