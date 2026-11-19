@@ -52,7 +52,8 @@ const getArtistKey = ({ id, name }: ProfileArtist) => id ?? name
 
 export function MyPage() {
   const navigate = useNavigate()
-  const locationState = useLocation().state as MyPageLocationState | null
+  const location = useLocation()
+  const locationState = location.state as MyPageLocationState | null
   const showToast = useToast()
   const { rows: genreRows, toGenreName } = useGenres()
   const [profile, setProfile] = useState<MyProfileResponse | null>(null)
@@ -72,9 +73,14 @@ export function MyPage() {
   const [isSavedOpen, setIsSavedOpen] = useState(false)
   const [confirmType, setConfirmType] = useState<'delete' | 'logout' | null>(null)
 
-  const [subView, setSubView] = useState<'blocked' | 'likes' | 'settings' | null>(
-    locationState?.view === 'settings' ? 'settings' : null,
-  )
+  const initialSubView = locationState?.view === 'settings' ? 'settings' : null
+  const [subView, setSubView] = useState<'blocked' | 'likes' | 'settings' | null>(initialSubView)
+  const [locationKey, setLocationKey] = useState(location.key)
+
+  if (locationKey !== location.key) {
+    setLocationKey(location.key)
+    setSubView(initialSubView)
+  }
   const [settings, setSettings] = useState<Settings | null>(null)
   const saveButtonRef = useRef<HTMLButtonElement>(null)
   const deleteButtonRef = useRef<HTMLButtonElement>(null)
