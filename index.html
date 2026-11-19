@@ -30,10 +30,36 @@
     <link rel="preconnect" href="https://coverartarchive.org" />
     <link rel="preconnect" href="https://archive.org" />
     <title>TUNEET</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        background-color: #f2ebf2;
+      }
+
+      @media (min-width: 768px) {
+        html,
+        body {
+          background-color: #2e2e2e;
+        }
+      }
+
+      .static-intro {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+        border: 0;
+      }
+    </style>
   </head>
   <body>
     <div id="root">
-      <main style="max-width: 640px; margin: 40px auto; padding: 0 16px; font-family: sans-serif">
+      <main class="static-intro">
         <h1>TUNEET</h1>
         <p>
           좋아하는 장르·아티스트·노래로 음악 프로필을 만들고, 취향이 비슷한 사람을 추천받아 편지를
