@@ -15,6 +15,7 @@ import * as S from './ExploreWritePage.styles'
 import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 const COMMENT_MAX_LENGTH = 100
+const FEED_NOT_FOUND_MESSAGE = '피드를 찾을 수 없어요'
 
 export function ExploreWritePage() {
   const navigate = useNavigate()
@@ -28,23 +29,33 @@ export function ExploreWritePage() {
   const canSubmit = song !== null && comment.trim() !== '' && !isSubmitting
 
   useEffect(() => {
-    if (!params.feedId) return
+    if (feedId === null) return
+
+    const leaveWithToast = (message: string) => {
+      showToast(message)
+      navigate(ROUTES.explore, { replace: true })
+    }
+
+    if (!Number.isInteger(feedId) || feedId <= 0) {
+      leaveWithToast(FEED_NOT_FOUND_MESSAGE)
+      return
+    }
 
     let isStale = false
-    getFeed(Number(params.feedId))
+    getFeed(feedId)
       .then((feed) => {
         if (isStale) return
         setSong(feed.song)
         setComment(feed.content)
       })
       .catch((error) => {
-        if (!isStale) showToast(getApiError(error).message)
+        if (!isStale) leaveWithToast(getApiError(error).message)
       })
 
     return () => {
       isStale = true
     }
-  }, [params.feedId, showToast])
+  }, [feedId, navigate, showToast])
 
   const handleSubmit = async () => {
     if (!canSubmit || !song) return
