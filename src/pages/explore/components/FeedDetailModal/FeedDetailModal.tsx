@@ -10,8 +10,8 @@ import userBlueIcon from '@/assets/icons/user-blue.svg'
 import { HeartIcon } from '@/components/common/HeartIcon/HeartIcon'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { Modal } from '@/components/common/Modal/Modal'
-import type { FeedCommentKind } from '@/apis/notification'
 import type { Feed } from '@/types/feed'
+import type { FeedComment, ReplyTarget } from '@/types/notification'
 import { formatTimeAgo } from '@/utils/format'
 import { getYoutubeMusicSearchUrl } from '@/utils/youtubeMusic'
 import { FeedCommentCard } from '../FeedCommentCard/FeedCommentCard'
@@ -27,10 +27,14 @@ type FeedDetailModalProps = {
   onDelete?: () => void | Promise<void>
   commentable?: boolean
   onAuthorClick?: () => void
-  /** 받은 코멘트처럼 답장할 수 있을 때 넘기면 답장 아이콘이 생긴다 */
-  onReply?: () => void
-  /** 넘기면 코멘트 전체보기 아이콘이 생기고, 누르면 이 피드에 오간 코멘트를 모아 보여 준다 */
-  comments?: { feedId: number; kind: FeedCommentKind }
+  /** 넘기면 답장 아이콘이 생기고, 누르면 답장 작성 카드로 바뀐다 */
+  replyTarget?: ReplyTarget
+  /** 답장을 보낸 뒤 호출된다 */
+  onReplied?: () => void
+  /** reply: 처음부터 답장 작성 카드로 연다 */
+  initialMode?: 'detail' | 'reply'
+  /** 넘기면 코멘트 전체보기 아이콘이 생기고, 누르면 이 피드에 달린 코멘트를 모아 보여 준다 */
+  commentsFeedId?: number
   onClose: () => void
 }
 
@@ -43,8 +47,10 @@ export function FeedDetailModal({
   onDelete,
   commentable = true,
   onAuthorClick,
-  onReply,
-  comments,
+  replyTarget,
+  onReplied,
+  initialMode = 'detail',
+  commentsFeedId,
   onClose,
 }: FeedDetailModalProps) {
   const { nickname, song, content, createdAt } = feed
@@ -52,9 +58,12 @@ export function FeedDetailModal({
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isCommenting, setIsCommenting] = useState(false)
   const [isViewingComments, setIsViewingComments] = useState(false)
+  // 모아보기에서 누른 코멘트. 닫으면 다시 모아보기 목록으로 돌아간다
+  const [openedComment, setOpenedComment] = useState<FeedComment | null>(null)
+  const [isReplying, setIsReplying] = useState(initialMode === 'reply' && !!replyTarget)
   const [isDeleting, setIsDeleting] = useState(false)
   const closeDelete = () => setIsDeleteOpen(false)
-  const hasActions = isMine || commentable || !!onReply || !!comments
+  const hasActions = isMine || commentable || !!replyTarget || commentsFeedId !== undefined
 
   const handleDelete = async () => {
     closeDelete()
@@ -75,10 +84,41 @@ export function FeedDetailModal({
     )
   }
 
-  if (isViewingComments && comments) {
+  if (isReplying && replyTarget) {
+    return (
+      <Modal open onClose={onClose} labelledBy="feed-comment-title">
+        <FeedCommentCard
+          feedId={feed.id}
+          replyTarget={replyTarget}
+          onSent={() => {
+            onReplied?.()
+            onClose()
+          }}
+        />
+      </Modal>
+    )
+  }
+
+  if (isViewingComments && commentsFeedId !== undefined) {
+    if (openedComment) {
+      return (
+        <FeedDetailModal
+          feed={{
+            id: commentsFeedId,
+            nickname: openedComment.nickname,
+            song: openedComment.song,
+            content: openedComment.message,
+            createdAt: openedComment.createdAt,
+          }}
+          commentable={false}
+          onClose={() => setOpenedComment(null)}
+        />
+      )
+    }
+
     return (
       <Modal open onClose={onClose} labelledBy="feed-comments-title">
-        <FeedCommentsCard feedId={comments.feedId} kind={comments.kind} />
+        <FeedCommentsCard feedId={commentsFeedId} onSelect={setOpenedComment} />
       </Modal>
     )
   }
@@ -155,12 +195,16 @@ export function FeedDetailModal({
                     <img src={deleteIcon} alt="" width={26} height={26} />
                   </S.ActionButton>
                 )}
-                {onReply && (
-                  <S.ActionButton type="button" aria-label="답장" onClick={onReply}>
+                {replyTarget && (
+                  <S.ActionButton
+                    type="button"
+                    aria-label="답장"
+                    onClick={() => setIsReplying(true)}
+                  >
                     <img src={replyIcon} alt="" width={20} height={19} />
                   </S.ActionButton>
                 )}
-                {comments && (
+                {commentsFeedId !== undefined && (
                   <S.ActionButton
                     type="button"
                     aria-label="코멘트 전체보기"
