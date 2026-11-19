@@ -298,7 +298,7 @@ export function ProfileSetupPage() {
         <SetupStepLayout
           title="좋아하는 노래를 들려주세요!"
           description="나를 표현하는 노래를 1개 이상 선택해 주세요."
-          note="취향은 나중에 마이페이지에서 언제든 수정할 수 있어요."
+          note="고른 노래는 다른 사람과 공통 취향을 찾는 데 쓰여요."
           onBack={() => setStep('taste')}
         >
           <SongSelect songs={songs} onAddSong={addSong} onRemoveSong={removeSong} />

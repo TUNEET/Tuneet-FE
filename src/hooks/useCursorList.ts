@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-type CursorPage<T> = { items: T[]; hasNext: boolean }
+type CursorPage<T> = { items: T[]; hasNext: boolean; nextCursor?: number }
+
+const MAX_EMPTY_PAGES = 5
 
 export function useCursorList<T>(
   fetchPage: (cursor?: number) => Promise<CursorPage<T>>,
@@ -11,13 +13,33 @@ export function useCursorList<T>(
   const [hasNext, setHasNext] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const loadingRef = useRef(true)
+  const nextCursorRef = useRef<number | undefined>(undefined)
+
+  const fetchNonEmptyPage = useCallback(
+    async (cursor?: number) => {
+      let page = await fetchPage(cursor)
+      for (
+        let count = 1;
+        count < MAX_EMPTY_PAGES &&
+        page.items.length === 0 &&
+        page.hasNext &&
+        page.nextCursor !== undefined;
+        count++
+      ) {
+        page = await fetchPage(page.nextCursor)
+      }
+      return page
+    },
+    [fetchPage],
+  )
 
   useEffect(() => {
     let isStale = false
 
-    fetchPage()
+    fetchNonEmptyPage()
       .then((page) => {
         if (isStale) return
+        nextCursorRef.current = page.nextCursor
         setItems(page.items)
         setHasNext(page.hasNext)
       })
@@ -33,16 +55,19 @@ export function useCursorList<T>(
     return () => {
       isStale = true
     }
-  }, [fetchPage, onError])
+  }, [fetchNonEmptyPage, onError])
 
   const loadMore = useCallback(async () => {
-    if (loadingRef.current || !hasNext || items.length === 0) return
+    const cursor =
+      nextCursorRef.current ?? (items.length > 0 ? getCursor(items[items.length - 1]) : undefined)
+    if (loadingRef.current || !hasNext || cursor === undefined) return
 
     loadingRef.current = true
     setIsLoading(true)
     try {
-      const page = await fetchPage(getCursor(items[items.length - 1]))
-      setItems((prev) => [...prev, ...page.items])
+      const page = await fetchNonEmptyPage(cursor)
+      nextCursorRef.current = page.nextCursor
+      if (page.items.length > 0) setItems((prev) => [...prev, ...page.items])
       setHasNext(page.hasNext)
     } catch (error) {
       setHasNext(false)
@@ -51,7 +76,7 @@ export function useCursorList<T>(
       loadingRef.current = false
       setIsLoading(false)
     }
-  }, [fetchPage, getCursor, onError, hasNext, items])
+  }, [fetchNonEmptyPage, getCursor, onError, hasNext, items])
 
   return { items, setItems, hasNext, isLoading, loadMore }
 }

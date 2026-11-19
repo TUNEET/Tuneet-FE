@@ -44,11 +44,13 @@ export async function getReceivedFeedMessages(cursor?: number, size = PAGE_SIZE)
     '/api/v1/notifications',
     { params: { cursor, size } },
   )
+  const { notifications, hasNext } = data.data
   return {
-    items: data.data.notifications
+    items: notifications
       .filter(({ type }) => type === 'FEED_MESSAGE' || type === 'FEED_MESSAGE_REPLY')
       .map(toReceivedNotification),
-    hasNext: data.data.hasNext,
+    hasNext,
+    nextCursor: notifications.at(-1)?.notificationId,
   }
 }
 
