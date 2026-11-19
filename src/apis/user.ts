@@ -84,7 +84,6 @@ export async function getUserProfile(userId: number) {
   return data.data
 }
 
-/** 최근 차단순 */
 export async function getBlockedUsers() {
   const { data } =
     await instance.get<ApiResponse<BlockedUserListResponse>>('/api/v1/users/me/blocks')

@@ -7,7 +7,6 @@ type SetupStepLayoutProps = {
   title: string
   description: ReactNode
   singleLineDescription?: boolean
-  /** 설명 아래에 붙는 작은 안내 문구 */
   note?: string
   onBack?: () => void
   children: ReactNode

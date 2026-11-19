@@ -35,7 +35,6 @@ import type { Settings } from './components/SettingsPanel/settings'
 import { SettingsPanel } from './components/SettingsPanel/SettingsPanel'
 import * as S from './MyPage.styles'
 
-/** 차단 아이콘. 메뉴 카드의 하트와 같은 선 두께·색으로 맞춘다 */
 function BlockIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>

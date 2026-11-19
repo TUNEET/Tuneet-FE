@@ -26,7 +26,6 @@ const toReceivedNotification = ({
   createdAt,
 })
 
-/** 받은 코멘트 탭이라 피드 메시지 알림만 보여준다 */
 export async function getReceivedFeedMessages(cursor?: number, size = PAGE_SIZE) {
   const { data } = await instance.get<ApiResponse<NotificationListResponse>>(
     '/api/v1/notifications',
