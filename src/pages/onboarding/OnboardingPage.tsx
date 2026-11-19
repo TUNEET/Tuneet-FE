@@ -30,11 +30,6 @@ export function OnboardingPage() {
         우리의 음악으로, TUNEET
       </S.Heading>
       <S.Logo src={logo} alt="TUNEET" />
-      <S.Intro>
-        좋아하는 장르·아티스트·노래로 음악 프로필을 만들고, 취향이 비슷한 사람을 추천받아 편지를
-        주고받는 서비스예요. 유튜브 뮤직을 연결하면 좋아요한 곡으로 프로필을 채울 수 있어요 (읽기
-        전용).
-      </S.Intro>
       <S.Buttons>
         <S.Button type="button" $variant="primary" onClick={() => navigate(ROUTES.login)}>
           로그인

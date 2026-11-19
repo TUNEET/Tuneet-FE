@@ -31,19 +31,6 @@ export const Heading = styled.h1`
   color: ${({ theme }) => theme.colors.textHeading};
 `
 
-export const Intro = styled.p`
-  position: absolute;
-  top: 25.2rem;
-  right: 3rem;
-  left: 3rem;
-  font-size: ${({ theme }) => theme.fontSize.xs};
-  font-weight: 400;
-  line-height: 1.8rem;
-  letter-spacing: 0.02em;
-  word-break: keep-all;
-  color: ${({ theme }) => theme.colors.textPlaceholder};
-`
-
 export const Links = styled.nav`
   position: absolute;
   right: 3rem;
