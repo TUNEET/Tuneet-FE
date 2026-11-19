@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 import { Divider } from '@/components/common/Divider/Divider'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
@@ -27,6 +27,7 @@ export function JoinRoomPage() {
   const [qrInviteCode, setQrInviteCode] = useState<string | null>(null)
   const [lockedInviteCode, setLockedInviteCode] = useState<string | null>(null)
   const [isEntering, setIsEntering] = useState(false)
+  const enteringRef = useRef(false)
   const [mismatchCount, setMismatchCount] = useState(0)
 
   const handleQrImageSelect = async (file: File) => {
@@ -42,9 +43,20 @@ export function JoinRoomPage() {
     navigate(getRoomPath(roomId))
   }
 
-  const handleJoin = async (inviteCode: string) => {
-    if (isEntering) return
+  const startEntering = () => {
+    if (enteringRef.current) return false
+    enteringRef.current = true
     setIsEntering(true)
+    return true
+  }
+
+  const finishEntering = () => {
+    enteringRef.current = false
+    setIsEntering(false)
+  }
+
+  const handleJoin = async (inviteCode: string) => {
+    if (!startEntering()) return
     try {
       const { roomId, alreadyJoined } = await enterRoom(inviteCode)
       goToRoom(roomId, alreadyJoined)
@@ -55,13 +67,12 @@ export function JoinRoomPage() {
         setLockedInviteCode(inviteCode)
       } else showToast(message)
     } finally {
-      setIsEntering(false)
+      finishEntering()
     }
   }
 
   const handlePasswordSubmit = async (password: string) => {
-    if (!lockedInviteCode || isEntering) return
-    setIsEntering(true)
+    if (!lockedInviteCode || !startEntering()) return
     try {
       const { roomId, alreadyJoined } = await enterRoom(lockedInviteCode, password)
       setLockedInviteCode(null)
@@ -75,17 +86,23 @@ export function JoinRoomPage() {
       setLockedInviteCode(null)
       showToast(message)
     } finally {
-      setIsEntering(false)
+      finishEntering()
     }
   }
 
   return (
     <SheetPage>
       <SectionHeader title="방 입장하기" actionLabel="나가기" onActionClick={() => navigate(-1)} />
-      <LinkJoinSection link={link} onLinkChange={setLink} onJoin={handleJoin} />
+      <LinkJoinSection
+        link={link}
+        isEntering={isEntering}
+        onLinkChange={setLink}
+        onJoin={handleJoin}
+      />
       <Divider />
       <QrJoinSection
         inviteCode={qrInviteCode}
+        isEntering={isEntering}
         onImageSelect={handleQrImageSelect}
         onJoin={handleJoin}
       />
