@@ -18,9 +18,13 @@ import { LetterCards } from './components/LetterCards/LetterCards'
 import * as S from './LetterDetailPage.styles'
 
 export function LetterDetailPage() {
+  const { letterId } = useParams()
+  return <LetterDetail key={letterId} letterId={letterId} />
+}
+
+function LetterDetail({ letterId }: { letterId: string | undefined }) {
   const navigate = useNavigate()
   const showToast = useToast()
-  const { letterId } = useParams()
 
   const [letter, setLetter] = useState<ReceivedLetter | null | undefined>(undefined)
   const [myNickname, setMyNickname] = useState('')
