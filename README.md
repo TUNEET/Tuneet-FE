@@ -13,42 +13,42 @@
 ## 🖥️ FE Developer
 
 | <a href="https://github.com/yangyangeeee"><img width="150" alt="/" src="https://avatars.githubusercontent.com/yangyangeeee" /></a> | <a href="https://github.com/2godong"><img width="150" alt="/" src="https://avatars.githubusercontent.com/2godong" /></a> |
-| --- | --- |
-| 양서윤 | 이소라 |
+| ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| 양서윤                                                                                                                             | 이소라                                                                                                                   |
 
 <br>
 
 ## ✨ 주요 기능
 
-| 영역 | 기능 |
-| --- | --- |
-| **시작하기** | 이메일 회원가입·로그인(약관 동의), 토큰 자동 재발급 |
-| **음악 프로필** | 닉네임·프로필 사진, 장르·아티스트·대표곡 선택, 유튜브 뮤직 연동으로 좋아요한 곡 불러오기(읽기 전용) |
-| **홈** | 내 프로필 카드, 최근 피드, 취향이 비슷한 추천 유저 |
-| **탐색** | 음악 피드 작성·수정·삭제, 좋아요, 노래를 담은 코멘트 보내기, 받은·보낸 코멘트 알림 |
-| **매칭** | 취향·거리 기반 유저 추천, 상대 프로필의 공통 취향·취향 일치율, 차단 |
-| **편지** | 특정 유저·랜덤 유저에게 노래를 담은 편지 보내기, 답장, 받은·보낸 편지함, 하루 발송 횟수 제한, 환영 편지 |
-| **방** | 방 만들기(비밀번호 설정 가능), 초대 링크·QR로 초대·입장, 멤버별 취향 일치율, 방 피드, 함께 만드는 플레이리스트 |
-| **마이페이지** | 프로필 수정, 좋아요 기록, 차단 관리, 설정(위치 공개·편지 수신·약관), 푸시 알림, 로그아웃·탈퇴 |
-| **PWA·알림** | 홈 화면 설치, FCM 푸시 알림(코멘트·편지·답장 도착) |
+| 영역            | 기능                                                                                                           |
+| --------------- | -------------------------------------------------------------------------------------------------------------- |
+| **시작하기**    | 이메일 회원가입·로그인(약관 동의), 토큰 자동 재발급                                                            |
+| **음악 프로필** | 닉네임·프로필 사진, 장르·아티스트·대표곡 선택, 유튜브 뮤직 연동으로 좋아요한 곡 불러오기(읽기 전용)            |
+| **홈**          | 내 프로필 카드, 최근 피드, 취향이 비슷한 추천 유저                                                             |
+| **탐색**        | 음악 피드 작성·수정·삭제, 좋아요, 노래를 담은 코멘트 보내기, 받은·보낸 코멘트 알림                             |
+| **매칭**        | 취향·거리 기반 유저 추천, 상대 프로필의 공통 취향·취향 일치율, 차단                                            |
+| **편지**        | 특정 유저·랜덤 유저에게 노래를 담은 편지 보내기, 답장, 받은·보낸 편지함, 하루 발송 횟수 제한, 환영 편지        |
+| **방**          | 방 만들기(비밀번호 설정 가능), 초대 링크·QR로 초대·입장, 멤버별 취향 일치율, 방 피드, 함께 만드는 플레이리스트 |
+| **마이페이지**  | 프로필 수정, 좋아요 기록, 차단 관리, 설정(위치 공개·편지 수신·약관), 푸시 알림, 로그아웃·탈퇴                  |
+| **PWA·알림**    | 홈 화면 설치, FCM 푸시 알림(코멘트·편지·답장 도착)                                                             |
 
 <br>
 
 ## 🛠 기술 스택
 
-| **역할** | **종류** | **선정 이유** |
-| --- | --- | --- |
-| Library | <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"> | 컴포넌트 단위로 UI를 나눠 재사용하고 관리하기 쉬움 |
-| Programming Language | <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white"> | 타입으로 오류를 미리 잡을 수 있어 규모가 커져도 안정적으로 유지보수 가능 |
-| Styling | <img src="https://img.shields.io/badge/styledcomponents-DB7093?style=for-the-badge&logo=styledcomponents&logoColor=white"> | CSS-in-JS 방식으로 컴포넌트와 스타일을 함께 관리하고, 테마로 디자인 토큰을 통일 |
-| Data Fetching | <img src="https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=Axios&logoColor=white"> | 인스턴스와 인터셉터로 공통 설정(기본 URL, 토큰, 에러 처리)을 한 곳에서 관리하고, JSON 자동 변환 지원 |
-| Routing | <img src="https://img.shields.io/badge/ReactRouter-CA4245?style=for-the-badge&logo=ReactRouter&logoColor=white"> | 중첩 레이아웃, 페이지 단위 지연 로딩(lazy), 진입 전 데이터 미리 받기(loader) 지원 |
-| Push · PWA | <img src="https://img.shields.io/badge/Firebase-DD2C00?style=for-the-badge&logo=Firebase&logoColor=white"> <img src="https://img.shields.io/badge/PWA-5A0FC8?style=for-the-badge&logo=PWA&logoColor=white"> | FCM으로 웹 푸시 알림, vite-plugin-pwa로 홈 화면 설치·오프라인 캐시 |
-| Linting | <img src="https://img.shields.io/badge/oxlint-1A1A1A?style=for-the-badge&logoColor=white"> | ESLint보다 50~100배 빠른 린터로, Vite 공식 템플릿 기본 도구 |
-| Formatting | <img src="https://img.shields.io/badge/prettier-000000?style=for-the-badge&logo=prettier&logoColor=F7B93E"> | 협업 시 일관된 코드 스타일 유지 |
-| Package Manager | <img src="https://img.shields.io/badge/pnpm-F69220?style=for-the-badge&logo=pnpm&logoColor=white"> | 빠른 설치 속도와 적은 디스크 사용량, 엄격한 의존성 관리 |
-| Deployment | <img src="https://img.shields.io/badge/vercel-000000?style=for-the-badge&logo=vercel&logoColor=white"> | 쉽고 빠른 배포 및 자동 CI/CD 지원, PR마다 미리보기 배포 제공 |
-| Bundler | <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=Vite&logoColor=white"> | 빠른 개발 서버와 빌드 속도 |
+| **역할**             | **종류**                                                                                                                                                                                                    | **선정 이유**                                                                                        |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Library              | <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white">                                                                                                        | 컴포넌트 단위로 UI를 나눠 재사용하고 관리하기 쉬움                                                   |
+| Programming Language | <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white">                                                                                              | 타입으로 오류를 미리 잡을 수 있어 규모가 커져도 안정적으로 유지보수 가능                             |
+| Styling              | <img src="https://img.shields.io/badge/styledcomponents-DB7093?style=for-the-badge&logo=styledcomponents&logoColor=white">                                                                                  | CSS-in-JS 방식으로 컴포넌트와 스타일을 함께 관리하고, 테마로 디자인 토큰을 통일                      |
+| Data Fetching        | <img src="https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=Axios&logoColor=white">                                                                                                        | 인스턴스와 인터셉터로 공통 설정(기본 URL, 토큰, 에러 처리)을 한 곳에서 관리하고, JSON 자동 변환 지원 |
+| Routing              | <img src="https://img.shields.io/badge/ReactRouter-CA4245?style=for-the-badge&logo=ReactRouter&logoColor=white">                                                                                            | 중첩 레이아웃, 페이지 단위 지연 로딩(lazy), 진입 전 데이터 미리 받기(loader) 지원                    |
+| Push · PWA           | <img src="https://img.shields.io/badge/Firebase-DD2C00?style=for-the-badge&logo=Firebase&logoColor=white"> <img src="https://img.shields.io/badge/PWA-5A0FC8?style=for-the-badge&logo=PWA&logoColor=white"> | FCM으로 웹 푸시 알림, vite-plugin-pwa로 홈 화면 설치·오프라인 캐시                                   |
+| Linting              | <img src="https://img.shields.io/badge/oxlint-1A1A1A?style=for-the-badge&logoColor=white">                                                                                                                  | ESLint보다 50~100배 빠른 린터로, Vite 공식 템플릿 기본 도구                                          |
+| Formatting           | <img src="https://img.shields.io/badge/prettier-000000?style=for-the-badge&logo=prettier&logoColor=F7B93E">                                                                                                 | 협업 시 일관된 코드 스타일 유지                                                                      |
+| Package Manager      | <img src="https://img.shields.io/badge/pnpm-F69220?style=for-the-badge&logo=pnpm&logoColor=white">                                                                                                          | 빠른 설치 속도와 적은 디스크 사용량, 엄격한 의존성 관리                                              |
+| Deployment           | <img src="https://img.shields.io/badge/vercel-000000?style=for-the-badge&logo=vercel&logoColor=white">                                                                                                      | 쉽고 빠른 배포 및 자동 CI/CD 지원, PR마다 미리보기 배포 제공                                         |
+| Bundler              | <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=Vite&logoColor=white">                                                                                                          | 빠른 개발 서버와 빌드 속도                                                                           |
 
 <br>
 
@@ -70,16 +70,16 @@ pnpm dev
 
 ### 환경변수
 
-| 이름 | 설명 |
-| --- | --- |
-| `VITE_API_BASE_URL` | 백엔드 API 서버 주소 |
-| `VITE_FIREBASE_API_KEY` | Firebase 웹 앱 설정 |
-| `VITE_FIREBASE_AUTH_DOMAIN` | Firebase 웹 앱 설정 |
-| `VITE_FIREBASE_PROJECT_ID` | Firebase 웹 앱 설정 |
-| `VITE_FIREBASE_STORAGE_BUCKET` | Firebase 웹 앱 설정 |
-| `VITE_FIREBASE_MESSAGING_SENDER_ID` | Firebase 웹 앱 설정 |
-| `VITE_FIREBASE_APP_ID` | Firebase 웹 앱 설정 |
-| `VITE_FIREBASE_VAPID_KEY` | 웹 푸시용 VAPID 공개 키 |
+| 이름                                | 설명                    |
+| ----------------------------------- | ----------------------- |
+| `VITE_API_BASE_URL`                 | 백엔드 API 서버 주소    |
+| `VITE_FIREBASE_API_KEY`             | Firebase 웹 앱 설정     |
+| `VITE_FIREBASE_AUTH_DOMAIN`         | Firebase 웹 앱 설정     |
+| `VITE_FIREBASE_PROJECT_ID`          | Firebase 웹 앱 설정     |
+| `VITE_FIREBASE_STORAGE_BUCKET`      | Firebase 웹 앱 설정     |
+| `VITE_FIREBASE_MESSAGING_SENDER_ID` | Firebase 웹 앱 설정     |
+| `VITE_FIREBASE_APP_ID`              | Firebase 웹 앱 설정     |
+| `VITE_FIREBASE_VAPID_KEY`           | 웹 푸시용 VAPID 공개 키 |
 
 ### 명령어
 
