@@ -130,7 +130,6 @@ export function HomePage() {
         </S.Section>
       </S.Sheet>
 
-      <S.BottomFade />
       {isHomeScreenGuideOpen && (
         <HomeScreenGuideModal onClose={() => setIsHomeScreenGuideOpen(false)} />
       )}

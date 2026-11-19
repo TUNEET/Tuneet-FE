@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 
-export { BottomFade, CardList, Glow, Glows, Greeting, Page, Section, Sheet } from '@/styles/tabPage'
+export { CardList, Glow, Glows, Greeting, Page, Section, Sheet } from '@/styles/tabPage'
 
 export const ProfileArea = styled.div`
   position: relative;
