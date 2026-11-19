@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { getMyProfile } from '@/apis/user'
 import welcomeLetterIcon from '@/assets/icons/welcome-letter.svg'
@@ -28,7 +28,7 @@ export function WelcomeLetterPage() {
   }, [])
 
   const {
-    title,
+    titleLines,
     greeting,
     intro,
     question,
@@ -52,7 +52,14 @@ export function WelcomeLetterPage() {
         <S.Character src={characterLetter} alt="" />
         <S.Title>
           <img src={welcomeLetterIcon} alt="" width={24} height={18} />
-          {title}
+          <span>
+            {titleLines.map((line, index) => (
+              <Fragment key={line}>
+                {index > 0 && ' '}
+                <S.TitleLine>{line}</S.TitleLine>
+              </Fragment>
+            ))}
+          </span>
         </S.Title>
         <S.Divider />
 
