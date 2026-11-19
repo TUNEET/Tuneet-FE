@@ -1,6 +1,11 @@
 import styled, { css } from 'styled-components'
 
+const shiftUp = (top: number, min: number) =>
+  `max(${min}rem, calc(${top}rem + var(--shrink) * 0.5))`
+
 export const Page = styled.div`
+  --shrink: min(0rem, calc(var(--frame-height) - 85.2rem));
+
   position: relative;
   height: var(--frame-height);
   overflow: hidden;
@@ -21,7 +26,7 @@ export const Blob = styled.div`
 
 export const Heading = styled.h1`
   position: absolute;
-  top: 16rem;
+  top: ${shiftUp(16, 10)};
   left: 3rem;
   font-family: ${({ theme }) => theme.fontFamily.display};
   font-size: ${({ theme }) => theme.fontSize.xxl};
@@ -55,7 +60,7 @@ export const Links = styled.nav`
 
 export const Logo = styled.img`
   position: absolute;
-  top: 12rem;
+  top: ${shiftUp(12, 6)};
   left: 3rem;
   width: 11.3rem;
   height: 2rem;
