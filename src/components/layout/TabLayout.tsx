@@ -8,6 +8,7 @@ import { getMyProfile } from '@/apis/user'
 import { preloadTabPages } from '@/routes/preloadTabPages'
 import type { ReceivedNotification } from '@/types/notification'
 import { getLastSeenCommentId, markCommentSeen } from '@/utils/commentAlert'
+import { getInviteJoinPath, takePendingInviteCode } from '@/utils/invite'
 import { toPushAlert } from '@/utils/pushAlert'
 import type { PushAlert } from '@/utils/pushAlert'
 import { hasSeenWelcomeGuide, markWelcomeGuideSeen } from '@/utils/welcomeGuide'
@@ -21,6 +22,11 @@ export function TabLayout() {
   useEffect(() => {
     preloadTabPages()
   }, [])
+
+  useEffect(() => {
+    const inviteCode = takePendingInviteCode()
+    if (inviteCode) navigate(getInviteJoinPath(inviteCode))
+  }, [navigate])
   const isExplore = pathname.startsWith(ROUTES.explore)
   const [incomingComment, setIncomingComment] = useState<{
     userId: number
