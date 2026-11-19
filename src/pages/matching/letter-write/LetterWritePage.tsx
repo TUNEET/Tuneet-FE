@@ -5,10 +5,17 @@ import sendActiveIcon from '@/assets/icons/send-active.svg'
 import sendIcon from '@/assets/icons/send.svg'
 import characterLetter from '@/assets/images/character-letter.png'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
+import { NoticeModal } from '@/components/common/NoticeModal/NoticeModal'
 import { SongSearchSheet } from '@/components/common/SongSearchSheet/SongSearchSheet'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
 import { getApiError } from '@/apis/error'
-import { getReceivedLetter, replyLetter, sendLetter, sendRandomLetter } from '@/apis/letter'
+import {
+  getLetterQuota,
+  getReceivedLetter,
+  replyLetter,
+  sendLetter,
+  sendRandomLetter,
+} from '@/apis/letter'
 import { getMyProfile, getUserProfile } from '@/apis/user'
 import { LETTER_ERROR_MESSAGES } from '@/constants/letterErrors'
 import { ROUTES } from '@/constants/routes'
@@ -21,6 +28,8 @@ import * as S from './LetterWritePage.styles'
 const CONTENT_MAX_LENGTH = 100
 const RANDOM_RECIPIENT = '누군가'
 const RECIPIENT_NOT_FOUND_MESSAGE = '받는 사람을 찾을 수 없어요'
+const QUOTA_EXCEEDED_CODE = 'L4004'
+const DEFAULT_QUOTA_LIMIT = 5
 
 type WriteMode =
   { type: 'reply'; letterId: number } | { type: 'direct'; userId: number } | { type: 'random' }
@@ -46,6 +55,7 @@ export function LetterWritePage() {
   const [isSent, setIsSent] = useState(false)
   const [isSentPopoverOpen, setIsSentPopoverOpen] = useState(false)
   const [isSongSearchOpen, setIsSongSearchOpen] = useState(false)
+  const [quotaLimit, setQuotaLimit] = useState<number | null>(null)
   const closeSongSearch = useCallback(() => setIsSongSearchOpen(false), [])
   const sendButtonRef = useRef<HTMLButtonElement>(null)
   const closeSentPopover = useCallback(() => setIsSentPopoverOpen(false), [])
@@ -105,6 +115,21 @@ export function LetterWritePage() {
     }
   }, [letterId, userId, showToast, goBack])
 
+  useEffect(() => {
+    if (letterId) return
+    let isStale = false
+
+    getLetterQuota()
+      .then(({ remaining, limit }) => {
+        if (!isStale && remaining <= 0) setQuotaLimit(limit)
+      })
+      .catch(() => {})
+
+    return () => {
+      isStale = true
+    }
+  }, [letterId])
+
   const canSend = content.trim() !== '' && song !== null && !isSent && !isSending
 
   const handleSubmit = async (event: FormEvent) => {
@@ -125,7 +150,9 @@ export function LetterWritePage() {
       setIsSent(true)
       setIsSentPopoverOpen(true)
     } catch (error) {
-      showToast(getApiError(error, LETTER_ERROR_MESSAGES).message)
+      const { code, message } = getApiError(error, LETTER_ERROR_MESSAGES)
+      if (code === QUOTA_EXCEEDED_CODE) setQuotaLimit((limit) => limit ?? DEFAULT_QUOTA_LIMIT)
+      else showToast(message)
     } finally {
       setIsSending(false)
     }
@@ -210,6 +237,16 @@ export function LetterWritePage() {
           onAdd={setSong}
           addedIds={song ? [song.musicId] : []}
           onClose={closeSongSearch}
+        />
+      )}
+
+      {quotaLimit !== null && (
+        <NoticeModal
+          title="오늘의 편지를 모두 사용했어요."
+          description={`편지는 하루에 ${quotaLimit}장만 보낼 수 있어요.\n자정 이후에 다시 시도해 주세요.`}
+          secondaryAction={{ label: '홈으로', onClick: () => navigate(ROUTES.home) }}
+          primaryAction={{ label: '이전 화면으로', onClick: goBack }}
+          onClose={goBack}
         />
       )}
     </SheetPage>
