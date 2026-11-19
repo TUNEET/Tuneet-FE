@@ -18,7 +18,7 @@ export const ProfileArea = styled.div`
   pointer-events: none;
 
   > div {
-    padding-bottom: 3rem;
+    padding-bottom: 2rem;
   }
 `
 
@@ -80,7 +80,7 @@ export const MenuCard = styled.ul`
   margin-top: 2rem;
   overflow: hidden;
   border-radius: 1rem;
-  background-color: ${({ theme }) => theme.colors.surfacePink};
+  background-color: #f6eaf1;
   pointer-events: auto;
 
   li + li {
@@ -91,28 +91,31 @@ export const MenuCard = styled.ul`
 export const MenuItem = styled.button`
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.1rem;
   width: 100%;
-  height: 4.8rem;
-  padding: 0 1.6rem;
+  height: 4.4rem;
+  padding: 0 1.6rem 0 1.4rem;
   text-align: left;
 `
 
-export const MenuIcon = styled.span`
+export const MenuIcon = styled.img`
+  flex-shrink: 0;
+`
+
+/* 아이콘 폭이 달라도 글자 시작 위치가 같게 아이콘 칸을 맞춘다 */
+export const MenuIconSlot = styled.span`
   display: flex;
   flex-shrink: 0;
   align-items: center;
-  justify-content: center;
-  width: 1.6rem;
-  height: 1.6rem;
-  color: ${({ theme }) => theme.colors.primary};
+  width: 1.5rem;
 `
 
 export const MenuLabel = styled.span`
   flex: 1;
-  font-size: ${({ theme }) => theme.fontSize.sm};
-  font-weight: 500;
-  letter-spacing: 0.028rem;
+  font-size: ${({ theme }) => theme.fontSize.md};
+  font-weight: 600;
+  line-height: 2rem;
+  letter-spacing: 0.032rem;
   color: ${({ theme }) => theme.colors.textProfile};
 `
 

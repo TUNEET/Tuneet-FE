@@ -3,16 +3,19 @@ import youtubeMusicIcon from '@/assets/icons/youtube_Music.svg'
 import deleteIcon from '@/assets/icons/del-icon.svg'
 import editIcon from '@/assets/icons/edit-icon.svg'
 import feedIcon from '@/assets/icons/feed-icon.svg'
+import fullChatsIcon from '@/assets/icons/fullChats.svg'
 import replyIcon from '@/assets/icons/repplyy.svg'
 import characterImage from '@/assets/images/character-feed.webp'
 import userBlueIcon from '@/assets/icons/user-blue.svg'
 import { HeartIcon } from '@/components/common/HeartIcon/HeartIcon'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { Modal } from '@/components/common/Modal/Modal'
+import type { FeedCommentKind } from '@/apis/notification'
 import type { Feed } from '@/types/feed'
 import { formatTimeAgo } from '@/utils/format'
 import { getYoutubeMusicSearchUrl } from '@/utils/youtubeMusic'
 import { FeedCommentCard } from '../FeedCommentCard/FeedCommentCard'
+import { FeedCommentsCard } from '../FeedCommentsCard/FeedCommentsCard'
 import * as S from './FeedDetailModal.styles'
 
 type FeedDetailModalProps = {
@@ -26,6 +29,8 @@ type FeedDetailModalProps = {
   onAuthorClick?: () => void
   /** 받은 코멘트처럼 답장할 수 있을 때 넘기면 답장 아이콘이 생긴다 */
   onReply?: () => void
+  /** 넘기면 코멘트 전체보기 아이콘이 생기고, 누르면 이 피드에 오간 코멘트를 모아 보여 준다 */
+  comments?: { feedId: number; kind: FeedCommentKind }
   onClose: () => void
 }
 
@@ -39,15 +44,17 @@ export function FeedDetailModal({
   commentable = true,
   onAuthorClick,
   onReply,
+  comments,
   onClose,
 }: FeedDetailModalProps) {
   const { nickname, song, content, createdAt } = feed
   const deleteButtonRef = useRef<HTMLButtonElement>(null)
   const [isDeleteOpen, setIsDeleteOpen] = useState(false)
   const [isCommenting, setIsCommenting] = useState(false)
+  const [isViewingComments, setIsViewingComments] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const closeDelete = () => setIsDeleteOpen(false)
-  const hasActions = isMine || commentable || !!onReply
+  const hasActions = isMine || commentable || !!onReply || !!comments
 
   const handleDelete = async () => {
     closeDelete()
@@ -64,6 +71,14 @@ export function FeedDetailModal({
     return (
       <Modal open onClose={onClose} labelledBy="feed-comment-title">
         <FeedCommentCard feedId={feed.id} onSent={onClose} />
+      </Modal>
+    )
+  }
+
+  if (isViewingComments && comments) {
+    return (
+      <Modal open onClose={onClose} labelledBy="feed-comments-title">
+        <FeedCommentsCard feedId={comments.feedId} kind={comments.kind} />
       </Modal>
     )
   }
@@ -121,13 +136,15 @@ export function FeedDetailModal({
           <>
             <S.Divider />
             <S.Actions>
-              {isMine ? (
-                <>
-                  {onEdit && (
-                    <S.ActionButton type="button" aria-label="수정" onClick={onEdit}>
-                      <img src={editIcon} alt="" width={16} height={16} />
-                    </S.ActionButton>
-                  )}
+              {isMine && onEdit ? (
+                <S.ActionButton type="button" aria-label="수정" onClick={onEdit}>
+                  <img src={editIcon} alt="" width={16} height={16} />
+                </S.ActionButton>
+              ) : (
+                <span />
+              )}
+              <S.ActionGroup>
+                {isMine && (
                   <S.ActionButton
                     ref={deleteButtonRef}
                     type="button"
@@ -137,25 +154,31 @@ export function FeedDetailModal({
                   >
                     <img src={deleteIcon} alt="" width={26} height={26} />
                   </S.ActionButton>
-                </>
-              ) : (
-                <>
-                  {onReply && (
-                    <S.ActionButton type="button" aria-label="답장" onClick={onReply}>
-                      <img src={replyIcon} alt="" width={20} height={19} />
-                    </S.ActionButton>
-                  )}
-                  {commentable && (
-                    <S.ActionButton
-                      type="button"
-                      aria-label="코멘트"
-                      onClick={() => setIsCommenting(true)}
-                    >
-                      <img src={feedIcon} alt="" width={26} height={26} />
-                    </S.ActionButton>
-                  )}
-                </>
-              )}
+                )}
+                {onReply && (
+                  <S.ActionButton type="button" aria-label="답장" onClick={onReply}>
+                    <img src={replyIcon} alt="" width={20} height={19} />
+                  </S.ActionButton>
+                )}
+                {comments && (
+                  <S.ActionButton
+                    type="button"
+                    aria-label="코멘트 전체보기"
+                    onClick={() => setIsViewingComments(true)}
+                  >
+                    <img src={fullChatsIcon} alt="" width={26} height={26} />
+                  </S.ActionButton>
+                )}
+                {!isMine && commentable && (
+                  <S.ActionButton
+                    type="button"
+                    aria-label="코멘트"
+                    onClick={() => setIsCommenting(true)}
+                  >
+                    <img src={feedIcon} alt="" width={26} height={26} />
+                  </S.ActionButton>
+                )}
+              </S.ActionGroup>
             </S.Actions>
           </>
         )}

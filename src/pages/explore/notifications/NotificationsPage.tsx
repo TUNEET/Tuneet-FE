@@ -193,6 +193,7 @@ export function NotificationsPage() {
           onLikeToggle={() => handleLikeToggle(selected)}
           commentable={false}
           onReply={tab === 'received' ? handleReply : undefined}
+          comments={selected.feedId !== null ? { feedId: selected.feedId, kind: tab } : undefined}
           onClose={() => setSelectedId(null)}
         />
       )}

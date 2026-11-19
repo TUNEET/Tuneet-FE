@@ -1,16 +1,16 @@
-import { useCallback, useEffect, useId, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import plusCircleBlueIcon from '@/assets/icons/plus-circle-blue.svg'
 import plusCircleRoseIcon from '@/assets/icons/plus-circle-rose.svg'
 import plusCircleIcon from '@/assets/icons/plus-circle.svg'
 import characterMusicSearch from '@/assets/images/character-music-search.png'
 import characterProfileSearch from '@/assets/images/character-search.webp'
 import { searchMusics } from '@/apis/music'
-import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import type { MusicSearchItem, SearchedSong } from '@/types/music'
 import * as S from './SongSearchSheet.styles'
 import type { SongSearchSheetVariant } from './SongSearchSheet.styles'
 import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 import { usePagedSearch } from '@/hooks/usePagedSearch'
+import { useToast } from '@/hooks/useToast'
 
 const PAGE_SIZE = 5
 
@@ -43,6 +43,8 @@ type SongSearchSheetProps = {
   variant?: SongSearchSheetVariant
   title?: string
   hiddenTitle?: string
+  /** 이미 고른 곡의 musicId. 넘기지 않으면 이 시트에서 추가한 곡만 추가된 것으로 본다 */
+  addedIds?: string[]
 }
 
 export function SongSearchSheet({
@@ -51,12 +53,14 @@ export function SongSearchSheet({
   variant = 'playlist',
   title,
   hiddenTitle,
+  addedIds,
 }: SongSearchSheetProps) {
   const titleId = useId()
   const [query, setQuery] = useState('')
   const [page, setPage] = useState(1)
-  const [addedSongId, setAddedSongId] = useState<string | null>(null)
-  const closeAddedPopover = useCallback(() => setAddedSongId(null), [])
+  const showToast = useToast()
+  const [sheetAddedIds, setSheetAddedIds] = useState<string[]>([])
+  const isAdded = (id: string) => (addedIds ?? sheetAddedIds).includes(id)
   const keyword = query.trim()
   const { result, isError } = usePagedSearch({
     search: searchMusics,
@@ -75,8 +79,11 @@ export function SongSearchSheet({
   }, [onClose])
 
   const handleAdd = async (item: MusicSearchItem) => {
-    const isAdded = await onAdd(toSearchedSong(item))
-    if (isAdded !== false) setAddedSongId(item.id)
+    if (isAdded(item.id)) return
+    const result = await onAdd(toSearchedSong(item))
+    if (result === false) return
+    setSheetAddedIds((ids) => [...ids, item.id])
+    showToast('노래가 추가되었습니다.')
   }
 
   const results = keyword !== '' && result?.keyword === keyword ? result.items : null
@@ -112,28 +119,22 @@ export function SongSearchSheet({
             <S.ResultList>
               {results.map((song) => (
                 <S.ResultItem key={song.id} $variant={variant}>
-                  <S.ResultSong onClick={() => handleAdd(song)}>
+                  <S.ResultSong disabled={isAdded(song.id)} onClick={() => handleAdd(song)}>
                     <CoverImage src={song.coverUrl} />
                     <span>
                       {song.title} - {song.artist}
                     </span>
                   </S.ResultSong>
-                  <S.AddButton
-                    type="button"
-                    aria-label={`${song.title} 추가`}
-                    onClick={() => handleAdd(song)}
-                  >
-                    <img src={ADD_ICONS[variant]} alt="" width={16} height={16} />
-                  </S.AddButton>
-                  <ConfirmPopover
-                    open={addedSongId === song.id}
-                    message="노래가 추가되었습니다."
-                    confirmLabel={isPlaylist ? '플레이리스트로 이동' : '닫기'}
-                    onConfirm={isPlaylist ? onClose : closeAddedPopover}
-                    onClose={closeAddedPopover}
-                    surface="sheet"
-                    tone={variant === 'profile' ? 'muted' : 'default'}
-                  />
+                  {/* 이미 추가된 곡은 플러스를 숨긴다 */}
+                  {!isAdded(song.id) && (
+                    <S.AddButton
+                      type="button"
+                      aria-label={`${song.title} 추가`}
+                      onClick={() => handleAdd(song)}
+                    >
+                      <img src={ADD_ICONS[variant]} alt="" width={16} height={16} />
+                    </S.AddButton>
+                  )}
                 </S.ResultItem>
               ))}
             </S.ResultList>

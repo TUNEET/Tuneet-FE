@@ -95,6 +95,7 @@ export function FeedCommentCard({ feedId, onSent }: FeedCommentCardProps) {
           variant="explore"
           title="함께 보낼 노래"
           onAdd={setSong}
+          addedIds={song ? [song.musicId] : []}
           onClose={() => setIsSongSearchOpen(false)}
         />
       )}

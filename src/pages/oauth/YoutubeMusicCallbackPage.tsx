@@ -39,7 +39,9 @@ export function YoutubeMusicCallbackPage() {
     }
 
     connect(code, state)
-      .then((artistCandidates) => saveConnectResult({ origin, status: 'success', artistCandidates }))
+      .then((artistCandidates) =>
+        saveConnectResult({ origin, status: 'success', artistCandidates }),
+      )
       .catch(() => saveConnectResult({ origin, status: 'failure', artistCandidates: [] }))
       .finally(goBack)
   }, [code, state, navigate])

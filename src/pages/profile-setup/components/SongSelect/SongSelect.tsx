@@ -77,6 +77,7 @@ export function SongSelect({ songs, onAddSong, onRemoveSong }: SongSelectProps) 
           onAdd={({ musicId, title, artist, albumImageUrl }) =>
             onAddSong({ musicId, title, artist, albumImage: albumImageUrl })
           }
+          addedIds={songs.flatMap(({ musicId }) => (musicId ? [musicId] : []))}
           onClose={() => setIsSearchOpen(false)}
         />
       )}

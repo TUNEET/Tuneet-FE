@@ -148,7 +148,13 @@ export function RoomPlaylistPage() {
           />
         </S.Actions>
       </S.Content>
-      {isSongSearchOpen && <SongSearchSheet onAdd={handleAddSong} onClose={closeSongSearch} />}
+      {isSongSearchOpen && (
+        <SongSearchSheet
+          onAdd={handleAddSong}
+          addedIds={songs?.map(({ song }) => song.musicId) ?? []}
+          onClose={closeSongSearch}
+        />
+      )}
     </SheetPage>
   )
 }

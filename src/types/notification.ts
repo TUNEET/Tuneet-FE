@@ -3,6 +3,8 @@ import type { SearchedSong } from './music'
 
 type BaseNotification = {
   id: number
+  /** 코멘트가 달린 피드. 피드가 지워졌으면 null */
+  feedId: number | null
   message: string
   song: SearchedSong
   liked: boolean

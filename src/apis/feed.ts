@@ -70,12 +70,14 @@ export async function sendFeedMessage(feedId: number, body: FeedMessageRequest) 
 
 const toSentNotification = ({
   feedMessageId,
+  feedId,
   receiverNickname,
   music,
   messageContent,
   createdAt,
 }: SentFeedMessageResponse): SentNotification => ({
   id: feedMessageId,
+  feedId,
   receiverNickname,
   message: messageContent,
   song: toSearchedSong(music),

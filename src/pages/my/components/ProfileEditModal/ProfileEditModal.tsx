@@ -159,12 +159,17 @@ export function ProfileEditModal({
           onAdd={({ musicId, title, artist, albumImageUrl }) =>
             onSelectSong({ musicId, title, artist, albumImage: albumImageUrl })
           }
+          addedIds={selectedSong?.musicId ? [selectedSong.musicId] : []}
           onClose={() => setIsSongSearchOpen(false)}
         />
       )}
 
       {isArtistSearchOpen && (
-        <ArtistSearchSheet onAdd={onAddArtist} onClose={() => setIsArtistSearchOpen(false)} />
+        <ArtistSearchSheet
+          onAdd={onAddArtist}
+          addedIds={selectedArtists.flatMap(({ id }) => (id ? [id] : []))}
+          onClose={() => setIsArtistSearchOpen(false)}
+        />
       )}
     </>
   )
