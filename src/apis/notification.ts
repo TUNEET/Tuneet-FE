@@ -39,7 +39,6 @@ const toReceivedNotification = ({
   createdAt,
 })
 
-/** 받은 코멘트 탭이라 코멘트·코멘트 답장 알림만 보여준다 (편지 알림은 편지함에서 본다) */
 export async function getReceivedFeedMessages(cursor?: number, size = PAGE_SIZE) {
   const { data } = await instance.get<ApiResponse<NotificationListResponse>>(
     '/api/v1/notifications',
@@ -65,7 +64,6 @@ export async function deleteFcmToken(token: string) {
   await instance.delete<ApiResponse<unknown>>('/api/v1/notifications/tokens', { data: { token } })
 }
 
-/** 피드 하나에 달린 코멘트 전체 (최신순) */
 export async function getFeedComments(feedId: number): Promise<FeedComment[]> {
   const { data } = await instance.get<ApiResponse<{ messages: FeedMessageResponse[] }>>(
     `/api/v1/feeds/${feedId}/messages`,
@@ -79,7 +77,6 @@ export async function getFeedComments(feedId: number): Promise<FeedComment[]> {
   }))
 }
 
-/** 받은 코멘트에 답장하거나, 받은 답장에 다시 답장한다 */
 export async function sendReply(
   target: ReplyTarget,
   body: { musicId: string; replyContent: string },

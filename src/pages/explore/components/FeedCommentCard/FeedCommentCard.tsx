@@ -19,7 +19,6 @@ const COMMENT_MAX_LENGTH = 100
 
 type FeedCommentCardProps = {
   feedId: number
-  /** 넘기면 피드에 새 코멘트를 쓰는 대신 받은 코멘트·답장에 답장한다 */
   replyTarget?: ReplyTarget
   onSent: () => void
 }

@@ -16,7 +16,6 @@ const getArtistImage = ({ artistImage }: ArtistSearchItem) => artistImage
 type ArtistSearchSheetProps = {
   onAdd: (artist: ProfileArtist) => void
   onClose: () => void
-  /** 이미 고른 아티스트 id. 넘기지 않으면 이 시트에서 추가한 아티스트만 추가된 것으로 본다 */
   addedIds?: string[]
 }
 
@@ -85,7 +84,6 @@ export function ArtistSearchSheet({ onAdd, onClose, addedIds }: ArtistSearchShee
                       {artist.disambiguation && ` (${artist.disambiguation})`}
                     </span>
                   </S.ResultSong>
-                  {/* 이미 추가된 아티스트는 플러스를 숨긴다 */}
                   {!isAdded(artist.id) && (
                     <S.AddButton
                       type="button"

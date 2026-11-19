@@ -18,7 +18,6 @@ export const Title = styled.h2`
   color: ${({ theme }) => theme.colors.textPrimary};
 `
 
-/* 코멘트가 많으면 카드 안에서만 스크롤된다 */
 export const List = styled.ul`
   display: flex;
   flex: 1;
