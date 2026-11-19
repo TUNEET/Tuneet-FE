@@ -15,12 +15,19 @@ const QR_IMAGE_SIZE = 336
 
 type RoomCreatedModalProps = {
   room: CreatedRoom | null
+  title?: string
   onClose: () => void
   onEdit?: () => void
-  onDelete: () => void
+  onDelete?: () => void
 }
 
-export function RoomCreatedModal({ room, onClose, onEdit, onDelete }: RoomCreatedModalProps) {
+export function RoomCreatedModal({
+  room,
+  title = '방이 생성되었어요!',
+  onClose,
+  onEdit,
+  onDelete,
+}: RoomCreatedModalProps) {
   const titleId = useId()
   const showToast = useToast()
   const trashButtonRef = useRef<HTMLButtonElement>(null)
@@ -84,15 +91,17 @@ export function RoomCreatedModal({ room, onClose, onEdit, onDelete }: RoomCreate
 
   const handleDelete = () => {
     closeDelete()
-    onDelete()
+    onDelete?.()
   }
+
+  const hasFooter = Boolean(onEdit || onDelete)
 
   return (
     <Modal open onClose={onClose} labelledBy={titleId}>
       <S.CardArea>
         <S.Character src={characterCheer} alt="" />
         <S.Card>
-          <S.Title id={titleId}>방이 생성되었어요!</S.Title>
+          <S.Title id={titleId}>{title}</S.Title>
           <S.RoomInfo>
             <S.QrBox>
               <QRCodeCanvas
@@ -125,33 +134,41 @@ export function RoomCreatedModal({ room, onClose, onEdit, onDelete }: RoomCreate
           <S.ShareButton type="button" onClick={handleShare}>
             공유하고 초대하기
           </S.ShareButton>
-          <S.Divider />
-          <S.Footer>
-            {onEdit && (
-              <S.IconButton type="button" aria-label="방 정보 수정" onClick={onEdit}>
-                <img src={editPurpleIcon} alt="" width={26} height={26} />
-              </S.IconButton>
-            )}
-            <S.IconButton
-              ref={trashButtonRef}
-              type="button"
-              aria-label="방 삭제"
-              aria-expanded={isDeleteOpen}
-              onClick={() => setIsDeleteOpen((prev) => !prev)}
-            >
-              <img src={trashIcon} alt="" width={26} height={26} />
-            </S.IconButton>
-          </S.Footer>
+          {hasFooter && (
+            <>
+              <S.Divider />
+              <S.Footer>
+                {onEdit && (
+                  <S.IconButton type="button" aria-label="방 정보 수정" onClick={onEdit}>
+                    <img src={editPurpleIcon} alt="" width={26} height={26} />
+                  </S.IconButton>
+                )}
+                {onDelete && (
+                  <S.IconButton
+                    ref={trashButtonRef}
+                    type="button"
+                    aria-label="방 삭제"
+                    aria-expanded={isDeleteOpen}
+                    onClick={() => setIsDeleteOpen((prev) => !prev)}
+                  >
+                    <img src={trashIcon} alt="" width={26} height={26} />
+                  </S.IconButton>
+                )}
+              </S.Footer>
+            </>
+          )}
         </S.Card>
-        <ConfirmPopover
-          open={isDeleteOpen}
-          message="방을 삭제하시겠어요?"
-          confirmLabel="방 삭제"
-          onConfirm={handleDelete}
-          onClose={closeDelete}
-          anchorRef={trashButtonRef}
-          surface="dim"
-        />
+        {onDelete && (
+          <ConfirmPopover
+            open={isDeleteOpen}
+            message="방을 삭제하시겠어요?"
+            confirmLabel="방 삭제"
+            onConfirm={handleDelete}
+            onClose={closeDelete}
+            anchorRef={trashButtonRef}
+            surface="dim"
+          />
+        )}
       </S.CardArea>
     </Modal>
   )

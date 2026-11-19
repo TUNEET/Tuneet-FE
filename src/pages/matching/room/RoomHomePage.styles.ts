@@ -20,10 +20,15 @@ export const Empty = styled.p`
   color: ${({ theme }) => theme.colors.textPlaceholder};
 `
 
+export const BottomActions = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: -1rem;
+`
+
 export const LeaveArea = styled.div`
   position: relative;
-  align-self: flex-end;
-  margin-top: -1rem;
 `
 
 export const LeaveButton = styled.button`

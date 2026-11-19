@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { getApiError } from '@/apis/error'
 import { leaveRoom } from '@/apis/room'
+import { Button } from '@/components/common/Button/Button'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { Divider } from '@/components/common/Divider/Divider'
 import { FeedCard } from '@/components/common/FeedCard/FeedCard'
@@ -16,6 +17,8 @@ import {
 } from '@/constants/routes'
 import { useMusicLike } from '@/hooks/useMusicLike'
 import { useToast } from '@/hooks/useToast'
+import { getInviteUrl } from '@/utils/invite'
+import { RoomCreatedModal } from '@/pages/matching/create-room/components/RoomCreatedModal/RoomCreatedModal'
 import { MemberCarousel } from './components/MemberCarousel/MemberCarousel'
 import { Playlist } from './components/Playlist/Playlist'
 import { RoomHeader } from './components/RoomHeader/RoomHeader'
@@ -31,6 +34,7 @@ export function RoomHomePage() {
   const goToMatching = () => navigate(ROUTES.matching)
   const [isLeaveOpen, setIsLeaveOpen] = useState(false)
   const [isLeaving, setIsLeaving] = useState(false)
+  const [isInviteOpen, setIsInviteOpen] = useState(false)
   const leaveButtonRef = useRef<HTMLButtonElement>(null)
   const closeLeave = useCallback(() => setIsLeaveOpen(false), [])
 
@@ -121,26 +125,37 @@ export function RoomHomePage() {
         )}
       </S.Section>
 
-      <S.LeaveArea>
-        <S.LeaveButton
-          ref={leaveButtonRef}
-          type="button"
-          aria-expanded={isLeaveOpen}
-          disabled={isLeaving}
-          onClick={() => setIsLeaveOpen((prev) => !prev)}
-        >
-          나가기
-        </S.LeaveButton>
-        <ConfirmPopover
-          open={isLeaveOpen}
-          message="방에서 나가시겠어요?"
-          confirmLabel="방 나가기"
-          onConfirm={handleLeave}
-          onClose={closeLeave}
-          anchorRef={leaveButtonRef}
-          placement="top"
+      <S.BottomActions>
+        <Button onClick={() => setIsInviteOpen(true)}>초대하기</Button>
+        <S.LeaveArea>
+          <S.LeaveButton
+            ref={leaveButtonRef}
+            type="button"
+            aria-expanded={isLeaveOpen}
+            disabled={isLeaving}
+            onClick={() => setIsLeaveOpen((prev) => !prev)}
+          >
+            나가기
+          </S.LeaveButton>
+          <ConfirmPopover
+            open={isLeaveOpen}
+            message="방에서 나가시겠어요?"
+            confirmLabel="방 나가기"
+            onConfirm={handleLeave}
+            onClose={closeLeave}
+            anchorRef={leaveButtonRef}
+            placement="top"
+          />
+        </S.LeaveArea>
+      </S.BottomActions>
+
+      {isInviteOpen && (
+        <RoomCreatedModal
+          room={{ ...room, inviteUrl: getInviteUrl(room.inviteCode) }}
+          title="친구를 초대해 보세요!"
+          onClose={() => setIsInviteOpen(false)}
         />
-      </S.LeaveArea>
+      )}
     </SheetPage>
   )
 }
