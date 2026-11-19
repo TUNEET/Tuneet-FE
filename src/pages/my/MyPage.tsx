@@ -13,10 +13,11 @@ import {
   updateProfileMusic,
   withdraw,
 } from '@/apis/user'
+import myBlockIcon from '@/assets/icons/my-ven.svg'
+import myLikeIcon from '@/assets/icons/my-like.svg'
 import settingIcon from '@/assets/icons/setting.svg'
 import { ChevronIcon } from '@/components/common/ChevronIcon/ChevronIcon'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
-import { HeartIcon } from '@/components/common/HeartIcon/HeartIcon'
 import { ProfileComplete } from '@/components/common/ProfileComplete/ProfileComplete'
 import { getCharacterColorId } from '@/constants/characters'
 import { ROUTES } from '@/constants/routes'
@@ -35,15 +36,6 @@ import type { Settings } from './components/SettingsPanel/settings'
 import { SettingsPanel } from './components/SettingsPanel/SettingsPanel'
 import { WithdrawConfirmModal } from './components/WithdrawConfirmModal/WithdrawConfirmModal'
 import * as S from './MyPage.styles'
-
-function BlockIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
-      <circle cx="8" cy="8" r="6.4" stroke="currentColor" strokeWidth="1.4" />
-      <path d="M3.5 12.5 12.5 3.5" stroke="currentColor" strokeWidth="1.4" />
-    </svg>
-  )
-}
 
 const NICKNAME_DUPLICATED_MESSAGE = '중복된 닉네임입니다. 다른 닉네임을 입력해 주세요.'
 const ARTIST_MIN = 3
@@ -367,9 +359,9 @@ export function MyPage() {
             <S.MenuCard>
               <li>
                 <S.MenuItem type="button" onClick={() => setSubView('likes')}>
-                  <S.MenuIcon>
-                    <HeartIcon filled={false} size={16} />
-                  </S.MenuIcon>
+                  <S.MenuIconSlot>
+                    <S.MenuIcon src={myLikeIcon} alt="" width={15} height={14} />
+                  </S.MenuIconSlot>
                   <S.MenuLabel>좋아요 기록 관리</S.MenuLabel>
                   <S.MenuChevron>
                     <ChevronIcon direction="right" />
@@ -378,9 +370,9 @@ export function MyPage() {
               </li>
               <li>
                 <S.MenuItem type="button" onClick={() => setSubView('blocked')}>
-                  <S.MenuIcon>
-                    <BlockIcon />
-                  </S.MenuIcon>
+                  <S.MenuIconSlot>
+                    <S.MenuIcon src={myBlockIcon} alt="" width={14} height={14} />
+                  </S.MenuIconSlot>
                   <S.MenuLabel>차단한 사용자</S.MenuLabel>
                   <S.MenuChevron>
                     <ChevronIcon direction="right" />

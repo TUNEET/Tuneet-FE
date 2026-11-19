@@ -170,6 +170,7 @@ export function ProfileStage({
           onAdd={({ musicId, title, artist, albumImageUrl }) =>
             onMusicChange({ musicId, title, artist, albumImage: albumImageUrl })
           }
+          addedIds={music?.musicId ? [music.musicId] : []}
           onClose={() => setIsMusicSearchOpen(false)}
         />
       )}

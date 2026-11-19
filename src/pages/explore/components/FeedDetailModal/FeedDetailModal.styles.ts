@@ -185,6 +185,13 @@ export const Actions = styled.div`
   }
 `
 
+/* 오른쪽에 모이는 아이콘들. Figma 기준 16px 간격 */
+export const ActionGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+`
+
 export const ActionButton = styled.button`
   display: flex;
   align-items: center;

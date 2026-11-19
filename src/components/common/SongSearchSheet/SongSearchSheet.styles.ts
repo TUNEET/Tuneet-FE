@@ -168,6 +168,10 @@ export const ResultSong = styled(Song).attrs({ as: 'button', type: 'button' })`
   align-self: stretch;
   text-align: left;
   cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
 `
 
 export const ResultItem = styled(Item)<VariantProps>`
