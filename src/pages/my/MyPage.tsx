@@ -132,7 +132,9 @@ export function MyPage() {
         if (!isStale) setSettings(toSettings(data))
       })
       .catch((error) => {
-        if (!isStale) showToast(getApiError(error).message)
+        if (isStale) return
+        showToast(getApiError(error).message)
+        setSubView(null)
       })
 
     return () => {
