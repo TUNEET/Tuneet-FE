@@ -16,6 +16,8 @@ import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 
 const COMMENT_MAX_LENGTH = 100
 const FEED_NOT_FOUND_MESSAGE = '피드를 찾을 수 없어요'
+const FEED_FORBIDDEN_MESSAGE = '내가 쓴 피드만 수정할 수 있어요'
+const FEED_ERROR_MESSAGES = { F4002: FEED_FORBIDDEN_MESSAGE }
 
 export function ExploreWritePage() {
   const navigate = useNavigate()
@@ -45,11 +47,15 @@ export function ExploreWritePage() {
     getFeed(feedId)
       .then((feed) => {
         if (isStale) return
+        if (!feed.isMine) {
+          leaveWithToast(FEED_FORBIDDEN_MESSAGE)
+          return
+        }
         setSong(feed.song)
         setComment(feed.content)
       })
       .catch((error) => {
-        if (!isStale) leaveWithToast(getApiError(error).message)
+        if (!isStale) leaveWithToast(getApiError(error, FEED_ERROR_MESSAGES).message)
       })
 
     return () => {
@@ -67,7 +73,7 @@ export function ExploreWritePage() {
       else await updateFeed(feedId, body)
       navigate(ROUTES.explore, { replace: true })
     } catch (error) {
-      showToast(getApiError(error).message)
+      showToast(getApiError(error, FEED_ERROR_MESSAGES).message)
       setIsSubmitting(false)
     }
   }
