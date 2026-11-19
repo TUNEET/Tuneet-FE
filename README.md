@@ -64,7 +64,7 @@
 
 ```bash
 pnpm install
-cp .env.example .env   # 아래 환경변수를 채워 주세요
+cp .env.example .env
 pnpm dev
 ```
 
