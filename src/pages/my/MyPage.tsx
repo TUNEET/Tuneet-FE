@@ -33,6 +33,7 @@ import { ProfileEditModal } from './components/ProfileEditModal/ProfileEditModal
 import { toSettings } from './components/SettingsPanel/settings'
 import type { Settings } from './components/SettingsPanel/settings'
 import { SettingsPanel } from './components/SettingsPanel/SettingsPanel'
+import { WithdrawConfirmModal } from './components/WithdrawConfirmModal/WithdrawConfirmModal'
 import * as S from './MyPage.styles'
 
 function BlockIcon() {
@@ -83,7 +84,6 @@ export function MyPage() {
   }
   const [settings, setSettings] = useState<Settings | null>(null)
   const saveButtonRef = useRef<HTMLButtonElement>(null)
-  const deleteButtonRef = useRef<HTMLButtonElement>(null)
   const logoutButtonRef = useRef<HTMLButtonElement>(null)
 
   const [isLoggingOut, setIsLoggingOut] = useState(false)
@@ -167,7 +167,6 @@ export function MyPage() {
   }
 
   const handleWithdraw = async () => {
-    closeConfirm()
     if (isWithdrawing) return
     setIsWithdrawing(true)
 
@@ -416,9 +415,8 @@ export function MyPage() {
             ) : (
               <>
                 <S.OutlineButton
-                  ref={deleteButtonRef}
                   type="button"
-                  aria-expanded={confirmType === 'delete'}
+                  aria-haspopup="dialog"
                   onClick={() => toggleConfirm('delete')}
                 >
                   계정 삭제
@@ -431,16 +429,13 @@ export function MyPage() {
                 >
                   로그아웃
                 </S.FilledButton>
-                <ConfirmPopover
-                  open={confirmType === 'delete'}
-                  message="계정을 삭제하시겠어요?"
-                  confirmLabel="계정 삭제"
-                  onConfirm={handleWithdraw}
-                  onClose={closeConfirm}
-                  anchorRef={deleteButtonRef}
-                  surface="dim"
-                  placement="top"
-                />
+                {confirmType === 'delete' && (
+                  <WithdrawConfirmModal
+                    isWithdrawing={isWithdrawing}
+                    onConfirm={handleWithdraw}
+                    onClose={closeConfirm}
+                  />
+                )}
                 <ConfirmPopover
                   open={confirmType === 'logout'}
                   message="로그아웃하시겠어요?"
