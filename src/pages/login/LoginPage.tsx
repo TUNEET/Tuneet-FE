@@ -7,8 +7,15 @@ import youtubeMusicIcon from '@/assets/icons/youtube_Music.svg'
 import logo from '@/assets/images/logo.svg'
 import { login } from '@/apis/auth'
 import { getApiError } from '@/apis/error'
+import { getMyProfile } from '@/apis/user'
 import { ROUTES } from '@/constants/routes'
-import { isProfileSetupPending, setTokens, syncProfileSetupPending } from '@/utils/auth'
+import {
+  isProfileSetupPending,
+  markProfileSetupPending,
+  setTokens,
+  syncProfileSetupPending,
+} from '@/utils/auth'
+import { invalidateRequest } from '@/utils/requestCache'
 import { startYoutubeMusicConnect } from '@/utils/youtubeMusic'
 import * as S from './LoginPage.styles'
 
@@ -28,6 +35,15 @@ const FIELDS = [
     autoComplete: 'current-password',
   },
 ]
+
+async function markPendingIfProfileMissing(email: string) {
+  if (isProfileSetupPending()) return
+  invalidateRequest()
+  try {
+    const { nickname } = await getMyProfile()
+    if (!nickname) markProfileSetupPending(email)
+  } catch {}
+}
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -52,6 +68,7 @@ export function LoginPage() {
     try {
       setTokens(await login({ email, password }))
       syncProfileSetupPending(email)
+      await markPendingIfProfileMissing(email)
       await afterLogin()
     } catch (error) {
       setErrorMessage(getApiError(error).message)
