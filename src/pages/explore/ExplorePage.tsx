@@ -8,6 +8,7 @@ import { NoticeModal } from '@/components/common/NoticeModal/NoticeModal'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { getAuthorPath, getExploreEditPath, getFeedPath, ROUTES } from '@/constants/routes'
 import { useCursorList } from '@/hooks/useCursorList'
+import { useHasScrolled } from '@/hooks/useHasScrolled'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import { useMusicLike } from '@/hooks/useMusicLike'
 import { useToast } from '@/hooks/useToast'
@@ -27,6 +28,8 @@ const fetchFeedPage = (cursor?: number) =>
 
 export function ExplorePage() {
   const navigate = useNavigate()
+  // 목록을 내리기 시작하면 하단 블러가 글자를 가리지 않게 숨긴다
+  const hasScrolled = useHasScrolled()
   const showToast = useToast()
   const { state } = useLocation() as { state: FeedLocationState | null }
   const feedMatch = useMatch(ROUTES.feed)
@@ -146,7 +149,7 @@ export function ExplorePage() {
         </S.Section>
       </S.ExploreSheet>
 
-      <S.BottomFade />
+      <S.BottomFade $isHidden={hasScrolled} />
 
       {isFeedMissing && (
         <NoticeModal

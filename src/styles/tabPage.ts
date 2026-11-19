@@ -65,12 +65,15 @@ export const CardList = styled.div`
   gap: 1rem;
 `
 
-export const BottomFade = styled.div`
+/** $isHidden: 스크롤을 내리기 시작하면 사라지게 할 때 쓴다 */
+export const BottomFade = styled.div<{ $isHidden?: boolean }>`
   position: fixed;
   bottom: var(--bottom-nav-height);
   left: 0;
   width: 100%;
   height: 17rem;
   background: linear-gradient(180deg, rgba(250, 250, 250, 0) 0%, rgba(250, 250, 250, 0.8) 100%);
+  opacity: ${({ $isHidden }) => ($isHidden ? 0 : 1)};
   pointer-events: none;
+  transition: opacity 0.2s ease-out;
 `
