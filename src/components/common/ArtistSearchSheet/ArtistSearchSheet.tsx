@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { searchArtists } from '@/apis/music'
 import plusCircleRoseIcon from '@/assets/icons/plus-circle-rose.svg'
 import characterImage from '@/assets/images/character-search.webp'
-import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { PageArrow } from '@/components/common/SongSearchSheet/SongSearchSheet'
 import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 import { usePagedSearch } from '@/hooks/usePagedSearch'
+import { useToast } from '@/hooks/useToast'
 import type { ArtistSearchItem, ProfileArtist } from '@/types/music'
 import * as S from './ArtistSearchSheet.styles'
 
@@ -16,13 +16,16 @@ const getArtistImage = ({ artistImage }: ArtistSearchItem) => artistImage
 type ArtistSearchSheetProps = {
   onAdd: (artist: ProfileArtist) => void
   onClose: () => void
+  /** 이미 고른 아티스트 id. 넘기지 않으면 이 시트에서 추가한 아티스트만 추가된 것으로 본다 */
+  addedIds?: string[]
 }
 
-export function ArtistSearchSheet({ onAdd, onClose }: ArtistSearchSheetProps) {
+export function ArtistSearchSheet({ onAdd, onClose, addedIds }: ArtistSearchSheetProps) {
   const [query, setQuery] = useState('')
   const [page, setPage] = useState(1)
-  const [addedArtistId, setAddedArtistId] = useState<string | null>(null)
-  const closeAddedPopover = useCallback(() => setAddedArtistId(null), [])
+  const showToast = useToast()
+  const [sheetAddedIds, setSheetAddedIds] = useState<string[]>([])
+  const isAdded = (id: string) => (addedIds ?? sheetAddedIds).includes(id)
   const keyword = query.trim()
   const { result, isError } = usePagedSearch({
     search: searchArtists,
@@ -41,8 +44,10 @@ export function ArtistSearchSheet({ onAdd, onClose }: ArtistSearchSheetProps) {
   }, [onClose])
 
   const addArtist = (artist: ArtistSearchItem) => {
+    if (isAdded(artist.id)) return
     onAdd({ id: artist.id, name: artist.name, image: artist.artistImage })
-    setAddedArtistId(artist.id)
+    setSheetAddedIds((ids) => [...ids, artist.id])
+    showToast('아티스트가 추가되었습니다.')
   }
 
   const results = keyword !== '' && result?.keyword === keyword ? result.items : null
@@ -73,29 +78,23 @@ export function ArtistSearchSheet({ onAdd, onClose }: ArtistSearchSheetProps) {
             <S.ResultList>
               {results.map((artist) => (
                 <S.ResultItem key={artist.id} $variant="profile">
-                  <S.ResultSong onClick={() => addArtist(artist)}>
+                  <S.ResultSong disabled={isAdded(artist.id)} onClick={() => addArtist(artist)}>
                     <CoverImage src={artist.artistImage} />
                     <span>
                       {artist.name}
                       {artist.disambiguation && ` (${artist.disambiguation})`}
                     </span>
                   </S.ResultSong>
-                  <S.AddButton
-                    type="button"
-                    aria-label={`${artist.name} 추가`}
-                    onClick={() => addArtist(artist)}
-                  >
-                    <img src={plusCircleRoseIcon} alt="" width={16} height={16} />
-                  </S.AddButton>
-                  <ConfirmPopover
-                    open={addedArtistId === artist.id}
-                    message="아티스트가 추가되었습니다."
-                    confirmLabel="닫기"
-                    onConfirm={closeAddedPopover}
-                    onClose={closeAddedPopover}
-                    surface="sheet"
-                    tone="muted"
-                  />
+                  {/* 이미 추가된 아티스트는 플러스를 숨긴다 */}
+                  {!isAdded(artist.id) && (
+                    <S.AddButton
+                      type="button"
+                      aria-label={`${artist.name} 추가`}
+                      onClick={() => addArtist(artist)}
+                    >
+                      <img src={plusCircleRoseIcon} alt="" width={16} height={16} />
+                    </S.AddButton>
+                  )}
                 </S.ResultItem>
               ))}
             </S.ResultList>

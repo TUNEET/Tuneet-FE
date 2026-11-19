@@ -107,6 +107,7 @@ export function RoomFeedWritePage() {
           variant="explore"
           title="게시할 노래"
           onAdd={setSong}
+          addedIds={song ? [song.musicId] : []}
           onClose={() => setIsSongSearchOpen(false)}
         />
       )}

@@ -113,7 +113,11 @@ export function TasteSelect({
       </S.Panels>
 
       {isArtistSearchOpen && (
-        <ArtistSearchSheet onAdd={onAddArtist} onClose={() => setIsArtistSearchOpen(false)} />
+        <ArtistSearchSheet
+          onAdd={onAddArtist}
+          addedIds={selectedArtists.flatMap(({ id }) => (id ? [id] : []))}
+          onClose={() => setIsArtistSearchOpen(false)}
+        />
       )}
     </>
   )

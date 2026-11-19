@@ -208,6 +208,7 @@ export function LetterWritePage() {
           variant="profile"
           title="함께 보낼 노래"
           onAdd={setSong}
+          addedIds={song ? [song.musicId] : []}
           onClose={closeSongSearch}
         />
       )}
