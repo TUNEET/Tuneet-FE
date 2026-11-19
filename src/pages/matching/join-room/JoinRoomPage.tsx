@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useNavigate, useSearchParams } from 'react-router'
 import { Divider } from '@/components/common/Divider/Divider'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
 import { SheetPage } from '@/components/layout/SheetPage/SheetPage'
@@ -7,7 +7,7 @@ import { getApiError } from '@/apis/error'
 import { enterRoom } from '@/apis/room'
 import { getRoomPath } from '@/constants/routes'
 import { useToast } from '@/hooks/useToast'
-import { parseInviteCode } from '@/utils/invite'
+import { getInviteUrl, isValidInviteCode, parseInviteCode } from '@/utils/invite'
 import { decodeQrFromImage } from '@/utils/qr'
 import { LinkJoinSection } from './components/LinkJoinSection/LinkJoinSection'
 import { QrJoinSection } from './components/QrJoinSection/QrJoinSection'
@@ -19,7 +19,11 @@ const PASSWORD_MISMATCH_CODE = 'R4003'
 export function JoinRoomPage() {
   const navigate = useNavigate()
   const showToast = useToast()
-  const [link, setLink] = useState('')
+  const [searchParams] = useSearchParams()
+  const [link, setLink] = useState(() => {
+    const code = searchParams.get('code')
+    return isValidInviteCode(code) ? getInviteUrl(code) : ''
+  })
   const [qrInviteCode, setQrInviteCode] = useState<string | null>(null)
   const [lockedInviteCode, setLockedInviteCode] = useState<string | null>(null)
   const [isEntering, setIsEntering] = useState(false)

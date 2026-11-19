@@ -1,10 +1,11 @@
-import { createBrowserRouter } from 'react-router'
+import { createBrowserRouter, redirect } from 'react-router'
 import { PAGE_DATA, warmMyProfile } from '@/apis/pageData'
 import { MobileLayout } from '@/components/layout/MobileLayout'
 import { RouteErrorFallback } from '@/components/layout/RouteErrorFallback'
 import { TabLayout } from '@/components/layout/TabLayout'
 import { ROUTES } from '@/constants/routes'
 import { isLoggedIn } from '@/utils/auth'
+import { isValidInviteCode } from '@/utils/invite'
 import { prefetch } from '@/utils/prefetch'
 import { RequireAuth } from './RequireAuth'
 import { RequireProfileSetupDone } from './RequireProfileSetupDone'
@@ -233,6 +234,15 @@ export const router = createBrowserRouter([
                 ],
               },
             ],
+          },
+          {
+            path: ROUTES.invite,
+            loader: ({ params }) =>
+              redirect(
+                isValidInviteCode(params.inviteCode)
+                  ? `${ROUTES.joinRoom}?code=${params.inviteCode}`
+                  : ROUTES.joinRoom,
+              ),
           },
           {
             path: ROUTES.onboarding,
