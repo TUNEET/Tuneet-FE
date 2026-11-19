@@ -37,8 +37,18 @@ export function isProfileSetupPending() {
   return localStorage.getItem(PROFILE_SETUP_PENDING_KEY) !== null
 }
 
-export function markProfileSetupPending() {
-  localStorage.setItem(PROFILE_SETUP_PENDING_KEY, 'true')
+const LEGACY_PENDING_VALUE = 'true'
+
+const normalizeEmail = (email: string) => email.trim().toLowerCase()
+
+export function markProfileSetupPending(email: string) {
+  localStorage.setItem(PROFILE_SETUP_PENDING_KEY, normalizeEmail(email))
+}
+
+export function syncProfileSetupPending(loginEmail: string) {
+  const pendingEmail = localStorage.getItem(PROFILE_SETUP_PENDING_KEY)
+  if (pendingEmail === null || pendingEmail === LEGACY_PENDING_VALUE) return
+  if (pendingEmail !== normalizeEmail(loginEmail)) clearProfileSetupPending()
 }
 
 export function clearProfileSetupPending() {
