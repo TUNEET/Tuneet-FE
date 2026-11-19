@@ -3,6 +3,7 @@ import youtubeMusicIcon from '@/assets/icons/youtube_Music.svg'
 import deleteIcon from '@/assets/icons/del-icon.svg'
 import editIcon from '@/assets/icons/edit-icon.svg'
 import feedIcon from '@/assets/icons/feed-icon.svg'
+import replyIcon from '@/assets/icons/repplyy.svg'
 import characterImage from '@/assets/images/character-feed.webp'
 import userBlueIcon from '@/assets/icons/user-blue.svg'
 import { HeartIcon } from '@/components/common/HeartIcon/HeartIcon'
@@ -23,6 +24,8 @@ type FeedDetailModalProps = {
   onDelete?: () => void | Promise<void>
   commentable?: boolean
   onAuthorClick?: () => void
+  /** 받은 코멘트처럼 답장할 수 있을 때 넘기면 답장 아이콘이 생긴다 */
+  onReply?: () => void
   onClose: () => void
 }
 
@@ -35,6 +38,7 @@ export function FeedDetailModal({
   onDelete,
   commentable = true,
   onAuthorClick,
+  onReply,
   onClose,
 }: FeedDetailModalProps) {
   const { nickname, song, content, createdAt } = feed
@@ -43,7 +47,7 @@ export function FeedDetailModal({
   const [isCommenting, setIsCommenting] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const closeDelete = () => setIsDeleteOpen(false)
-  const hasActions = isMine || commentable
+  const hasActions = isMine || commentable || !!onReply
 
   const handleDelete = async () => {
     closeDelete()
@@ -135,15 +139,22 @@ export function FeedDetailModal({
                   </S.ActionButton>
                 </>
               ) : (
-                commentable && (
-                  <S.ActionButton
-                    type="button"
-                    aria-label="코멘트"
-                    onClick={() => setIsCommenting(true)}
-                  >
-                    <img src={feedIcon} alt="" width={26} height={26} />
-                  </S.ActionButton>
-                )
+                <>
+                  {onReply && (
+                    <S.ActionButton type="button" aria-label="답장" onClick={onReply}>
+                      <img src={replyIcon} alt="" width={20} height={19} />
+                    </S.ActionButton>
+                  )}
+                  {commentable && (
+                    <S.ActionButton
+                      type="button"
+                      aria-label="코멘트"
+                      onClick={() => setIsCommenting(true)}
+                    >
+                      <img src={feedIcon} alt="" width={26} height={26} />
+                    </S.ActionButton>
+                  )}
+                </>
               )}
             </S.Actions>
           </>

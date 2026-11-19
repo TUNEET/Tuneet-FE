@@ -43,6 +43,7 @@ type SavedProfile = { nickname: string; imageFile: File | null }
 const MIN_GENRES = 1
 const MIN_ARTISTS = 3
 const MIN_SONGS = 1
+const MAX_SONGS = 20
 
 export function ProfileSetupPage() {
   const navigate = useNavigate()
@@ -183,11 +184,18 @@ export function ProfileSetupPage() {
   }
 
   const addSong = (song: ProfileMusic) => {
+    const isAdded = songs.some((prevSong) => getMusicKey(prevSong) === getMusicKey(song))
+    if (!isAdded && songs.length >= MAX_SONGS) {
+      showToast(`노래는 ${MAX_SONGS}개까지만 선택할 수 있어요.`)
+      return false
+    }
+
     setSongs((prevSongs) =>
       prevSongs.some((prevSong) => getMusicKey(prevSong) === getMusicKey(song))
         ? prevSongs
         : [...prevSongs, song],
     )
+    return true
   }
 
   const submitSongs = async () => {

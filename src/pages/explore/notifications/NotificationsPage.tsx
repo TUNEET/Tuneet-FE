@@ -3,7 +3,6 @@ import { getApiError } from '@/apis/error'
 import { deleteAllSentFeedMessages, getSentFeedMessages } from '@/apis/feed'
 import { deleteAllNotifications, getReceivedFeedMessages } from '@/apis/notification'
 import { getMyProfile } from '@/apis/user'
-import { LikeButton } from '@/components/common/LikeButton/LikeButton'
 import { ConfirmPopover } from '@/components/common/ConfirmPopover/ConfirmPopover'
 import { MusicCard } from '@/components/common/MusicCard/MusicCard'
 import { SectionHeader } from '@/components/common/SectionHeader/SectionHeader'
@@ -12,6 +11,8 @@ import { useCursorList } from '@/hooks/useCursorList'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 import { useMusicLike } from '@/hooks/useMusicLike'
 import { useToast } from '@/hooks/useToast'
+import replyIcon from '@/assets/icons/repplyy.svg'
+import { FeedDetailModal } from '@/pages/explore/components/FeedDetailModal/FeedDetailModal'
 import * as S from '@/pages/explore/ExplorePage.styles'
 import type { ReceivedNotification, SentNotification } from '@/types/notification'
 import { markCommentSeen } from '@/utils/commentAlert'
@@ -72,17 +73,24 @@ export function NotificationsPage() {
     tab === 'received'
       ? received.items.map(({ senderNickname, ...rest }) => ({
           ...rest,
-          nickname: `발신자 | ${senderNickname}`,
+          nickname: senderNickname,
         }))
       : sent.items.map(({ receiverNickname, ...rest }) => ({
           ...rest,
-          nickname: `수신자 | ${receiverNickname}`,
+          nickname: receiverNickname,
         }))
   const isEmpty = notifications.length === 0
+  // 누른 코멘트를 게시물 상세와 같은 모달로 보여 준다
+  const [selectedId, setSelectedId] = useState<number | null>(null)
+  const selected = notifications.find(({ id }) => id === selectedId) ?? null
   const isLoading = current.isLoading
+
+  // TODO: 백엔드가 알림에 senderId를 주면 보낸 사람에게 편지 쓰기로 연결한다
+  const handleReply = () => showToast('답장 기능을 준비하고 있어요')
 
   const handleTabChange = (next: CommentTab) => {
     closeClear()
+    setSelectedId(null)
     setTab(next)
   }
 
@@ -136,7 +144,7 @@ export function NotificationsPage() {
           ) : (
             <S.CardList>
               {notifications.map((notification) => {
-                const { id, nickname, message, song, liked, createdAt } = notification
+                const { id, nickname, message, song, createdAt } = notification
                 return (
                   <MusicCard
                     key={id}
@@ -146,10 +154,23 @@ export function NotificationsPage() {
                     image={song.albumImageUrl}
                     title={message}
                     description={`${song.title} - ${song.artist}`}
-                    descriptionAction={
-                      <LikeButton liked={liked} onToggle={() => handleLikeToggle(notification)} />
-                    }
                     playable
+                    action={
+                      tab === 'received' && (
+                        <button
+                          type="button"
+                          aria-label="답장"
+                          onClick={(event) => {
+                            // 카드를 눌렀을 때처럼 상세가 열리지 않게 막는다
+                            event.stopPropagation()
+                            handleReply()
+                          }}
+                        >
+                          <img src={replyIcon} alt="" width={20} height={19} />
+                        </button>
+                      )
+                    }
+                    onClick={() => setSelectedId(id)}
                   />
                 )
               })}
@@ -158,6 +179,23 @@ export function NotificationsPage() {
           <div ref={sentinelRef} aria-hidden />
         </S.Section>
       </S.ExploreSheet>
+
+      {selected && (
+        <FeedDetailModal
+          feed={{
+            id: selected.id,
+            nickname: selected.nickname,
+            song: selected.song,
+            content: selected.message,
+            createdAt: selected.createdAt,
+          }}
+          liked={selected.liked}
+          onLikeToggle={() => handleLikeToggle(selected)}
+          commentable={false}
+          onReply={tab === 'received' ? handleReply : undefined}
+          onClose={() => setSelectedId(null)}
+        />
+      )}
     </S.Page>
   )
 }
