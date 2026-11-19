@@ -77,8 +77,7 @@ export function ProfileSetupPage() {
   }, [previewUrl])
 
   useEffect(() => {
-    if (!resumedConnect) return
-    clearConnectResult()
+    if (resumedConnect) clearConnectResult()
     let isStale = false
 
     getMyProfile()
@@ -86,24 +85,27 @@ export function ProfileSetupPage() {
         if (isStale) return
         const restoredNickname = savedNickname ?? ''
         if (!restoredNickname) {
-          setStep('profile')
+          if (resumedConnect) setStep('profile')
           return
         }
-        setNickname(restoredNickname)
+        setNickname((current) => current || restoredNickname)
         setSavedProfile({ nickname: restoredNickname, imageFile: null })
-        setPreviewUrl(profilePicture)
+        setPreviewUrl((current) => current ?? profilePicture)
         if (profileMusic) {
-          setMusic({
-            musicId: profileMusic.musicId,
-            title: profileMusic.title,
-            artist: profileMusic.artist,
-            albumImage: profileMusic.musicPicture ?? '',
-          })
+          setMusic(
+            (current) =>
+              current ?? {
+                musicId: profileMusic.musicId,
+                title: profileMusic.title,
+                artist: profileMusic.artist,
+                albumImage: profileMusic.musicPicture ?? '',
+              },
+          )
           setSavedMusicId(profileMusic.musicId)
         }
       })
       .catch((error) => {
-        if (!isStale) showToast(getApiError(error).message)
+        if (!isStale && resumedConnect) showToast(getApiError(error).message)
       })
 
     return () => {
@@ -296,7 +298,7 @@ export function ProfileSetupPage() {
         <SetupStepLayout
           title="좋아하는 노래를 들려주세요!"
           description="나를 표현하는 노래를 1개 이상 선택해 주세요."
-          note="취향은 나중에 마이페이지에서 언제든 수정할 수 있어요."
+          note="고른 노래는 다른 사람과 공통 취향을 찾는 데 쓰여요."
           onBack={() => setStep('taste')}
         >
           <SongSelect songs={songs} onAddSong={addSong} onRemoveSong={removeSong} />

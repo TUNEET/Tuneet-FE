@@ -50,7 +50,6 @@ export function TabLayout() {
     }
   }, [])
 
-  // 앱을 보고 있을 때 온 푸시는 FCM이 띄우지 않아서 카드로 직접 보여준다
   const [pushAlert, setPushAlert] = useState<PushAlert | null>(null)
 
   useEffect(() => {
@@ -58,7 +57,6 @@ export function TabLayout() {
     let unsubscribe: (() => void) | undefined
     let isStale = false
 
-    // firebase는 무거워서 화면이 뜬 뒤에 불러온다
     void import('@/utils/firebase')
       .then(({ listenForegroundMessage }) => {
         if (isStale) return

@@ -103,7 +103,8 @@ export function UserProfilePage() {
   ]
     .filter(Boolean)
     .join(' / ')
-  const canSendLetter = !isBlocked && user.letterReceivable && (letterQuota?.remaining ?? 0) > 0
+  const canSendLetter =
+    !isBlocked && user.letterReceivable && (letterQuota === null || letterQuota.remaining > 0)
 
   const handleBlockToggle = async () => {
     if (isBlocking) return
