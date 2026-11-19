@@ -14,7 +14,7 @@ import { useToast } from '@/hooks/useToast'
 import replyIcon from '@/assets/icons/repplyy.svg'
 import { FeedDetailModal } from '@/pages/explore/components/FeedDetailModal/FeedDetailModal'
 import * as S from '@/pages/explore/ExplorePage.styles'
-import type { ReceivedNotification, SentNotification } from '@/types/notification'
+import type { ReceivedNotification, ReplyTarget, SentNotification } from '@/types/notification'
 import { markCommentSeen } from '@/utils/commentAlert'
 import { formatTimeAgo } from '@/utils/format'
 
@@ -38,6 +38,17 @@ const TAB_TEXT: Record<CommentTab, { confirm: string; toast: string; empty: stri
     toast: '보낸 코멘트를 모두 삭제했어요',
     empty: '보낸 코멘트가 없어요',
   },
+}
+
+/** 받은 코멘트·답장 중 아직 답장하지 않은 것만 답장할 수 있다 */
+function getReplyTarget(
+  notification: Partial<ReceivedNotification> & { id: number },
+): ReplyTarget | undefined {
+  const { kind, isReplied, feedMessageId, replyId } = notification
+  if (!kind || isReplied) return undefined
+  if (kind === 'reply' && replyId) return { type: 'reply', replyId }
+  if (kind === 'comment' && feedMessageId) return { type: 'comment', feedMessageId }
+  return undefined
 }
 
 export function NotificationsPage() {
@@ -80,17 +91,19 @@ export function NotificationsPage() {
           nickname: receiverNickname,
         }))
   const isEmpty = notifications.length === 0
-  // 누른 코멘트를 게시물 상세와 같은 모달로 보여 준다
-  const [selectedId, setSelectedId] = useState<number | null>(null)
-  const selected = notifications.find(({ id }) => id === selectedId) ?? null
+  // 누른 코멘트를 게시물 상세와 같은 모달로 보여 준다. reply면 바로 답장 작성으로 연다
+  const [selection, setSelection] = useState<{ id: number; mode: 'detail' | 'reply' } | null>(null)
+  const selected = notifications.find(({ id }) => id === selection?.id) ?? null
   const isLoading = current.isLoading
 
-  // TODO: 백엔드가 알림에 senderId를 주면 보낸 사람에게 편지 쓰기로 연결한다
-  const handleReply = () => showToast('답장 기능을 준비하고 있어요')
+  const markReplied = (id: number) =>
+    received.setItems((items) =>
+      items.map((item) => (item.id === id ? { ...item, isReplied: true } : item)),
+    )
 
   const handleTabChange = (next: CommentTab) => {
     closeClear()
-    setSelectedId(null)
+    setSelection(null)
     setTab(next)
   }
 
@@ -145,6 +158,7 @@ export function NotificationsPage() {
             <S.CardList>
               {notifications.map((notification) => {
                 const { id, nickname, message, song, createdAt } = notification
+                const replyTarget = getReplyTarget(notification)
                 return (
                   <MusicCard
                     key={id}
@@ -156,21 +170,21 @@ export function NotificationsPage() {
                     description={`${song.title} - ${song.artist}`}
                     playable
                     action={
-                      tab === 'received' && (
+                      replyTarget && (
                         <button
                           type="button"
                           aria-label="답장"
                           onClick={(event) => {
-                            // 카드를 눌렀을 때처럼 상세가 열리지 않게 막는다
+                            // 카드를 눌렀을 때처럼 상세가 열리지 않게 막고 바로 답장 작성을 연다
                             event.stopPropagation()
-                            handleReply()
+                            setSelection({ id, mode: 'reply' })
                           }}
                         >
                           <img src={replyIcon} alt="" width={20} height={19} />
                         </button>
                       )
                     }
-                    onClick={() => setSelectedId(id)}
+                    onClick={() => setSelection({ id, mode: 'detail' })}
                   />
                 )
               })}
@@ -180,8 +194,9 @@ export function NotificationsPage() {
         </S.Section>
       </S.ExploreSheet>
 
-      {selected && (
+      {selected && selection && (
         <FeedDetailModal
+          key={`${selected.id}-${selection.mode}`}
           feed={{
             id: selected.id,
             nickname: selected.nickname,
@@ -192,9 +207,11 @@ export function NotificationsPage() {
           liked={selected.liked}
           onLikeToggle={() => handleLikeToggle(selected)}
           commentable={false}
-          onReply={tab === 'received' ? handleReply : undefined}
-          comments={selected.feedId !== null ? { feedId: selected.feedId, kind: tab } : undefined}
-          onClose={() => setSelectedId(null)}
+          replyTarget={getReplyTarget(selected)}
+          onReplied={() => markReplied(selected.id)}
+          initialMode={selection.mode}
+          commentsFeedId={selected.feedId ?? undefined}
+          onClose={() => setSelection(null)}
         />
       )}
     </S.Page>

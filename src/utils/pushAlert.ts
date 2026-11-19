@@ -2,7 +2,8 @@ import type { MessagePayload } from 'firebase/messaging'
 import { getReceivedLetters } from '@/apis/letter'
 import { getReceivedFeedMessages } from '@/apis/notification'
 
-export type PushAlertKind = 'comment' | 'letter' | 'reply'
+/** reply: 편지 답장, commentReply: 코멘트 답장 */
+export type PushAlertKind = 'comment' | 'letter' | 'reply' | 'commentReply'
 
 export type PushAlert = {
   kind: PushAlertKind
@@ -13,11 +14,17 @@ export type PushAlert = {
   path: string | null
 }
 
-const COPY: Record<PushAlertKind, { title: string; confirmLabel: string }> = {
-  comment: { title: '내 피드에 코멘트가 도착했어요!', confirmLabel: '편지함에서 확인하기' },
+export const ALERT_COPY: Record<PushAlertKind, { title: string; confirmLabel: string }> = {
+  comment: { title: '내 피드에 코멘트가 도착했어요!', confirmLabel: '알림함에서 확인하기' },
   letter: { title: '편지가 도착했어요!', confirmLabel: '편지함에서 확인하기' },
   reply: { title: '내 편지에 답장이 도착했어요!', confirmLabel: '편지함에서 확인하기' },
+  // 편지 답장 카드를 그대로 재활용한다
+  commentReply: { title: '내 코멘트에 답장이 도착했어요!', confirmLabel: '알림함에서 확인하기' },
 }
+
+/** 코멘트·코멘트 답장은 알림 화면에서 본다 */
+export const isFeedAlertKind = (kind: PushAlertKind) =>
+  kind === 'comment' || kind === 'commentReply'
 
 const LETTER_PATH = /^\/matching\/letters\/(\d+)/
 
@@ -37,7 +44,7 @@ const createAlert = (
   detail: { nickname?: string; createdAt?: string } = {},
 ): PushAlert => ({
   kind,
-  ...COPY[kind],
+  ...ALERT_COPY[kind],
   nickname: detail.nickname,
   createdAt: detail.createdAt ?? new Date().toISOString(),
   path,
@@ -60,7 +67,7 @@ export async function toPushAlert({ data = {} }: MessagePayload): Promise<PushAl
 
     const { items } = await getReceivedFeedMessages(undefined, 5)
     const latest = items[0]
-    return createAlert('comment', path, {
+    return createAlert(latest?.kind === 'reply' ? 'commentReply' : 'comment', path, {
       nickname: latest?.senderNickname,
       createdAt: latest?.createdAt,
     })
