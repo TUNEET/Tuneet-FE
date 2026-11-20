@@ -38,6 +38,7 @@ export function SongSelect({ songs, onAddSong, onRemoveSong }: SongSelectProps) 
             readOnly
             placeholder="노래 검색하기"
             aria-label="노래 검색"
+            onMouseDown={(event) => event.preventDefault()}
             onClick={() => setIsSearchOpen(true)}
             onKeyDown={(event) => {
               if (event.key === 'Enter') setIsSearchOpen(true)

@@ -86,6 +86,7 @@ export function TasteSelect({
               readOnly
               placeholder="아티스트 검색하기"
               aria-label="아티스트 검색"
+              onMouseDown={(event) => event.preventDefault()}
               onClick={() => setIsArtistSearchOpen(true)}
               onKeyDown={(event) => {
                 if (event.key === 'Enter') setIsArtistSearchOpen(true)

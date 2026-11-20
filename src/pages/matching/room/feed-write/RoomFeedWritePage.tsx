@@ -64,6 +64,7 @@ export function RoomFeedWritePage() {
               type="search"
               readOnly
               placeholder="노래 검색하기"
+              onMouseDown={(event) => event.preventDefault()}
               onClick={() => setIsSongSearchOpen(true)}
               onKeyDown={(event) => {
                 if (event.key === 'Enter') setIsSongSearchOpen(true)
