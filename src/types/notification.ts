@@ -49,12 +49,16 @@ export type FeedMessageResponse = {
 }
 
 export type FeedComment = {
+  /** 목록 구분용 키. 코멘트는 번호가 없어 보낸 사람·시간으로 만든다 */
+  key: string
   nickname: string
   song: SearchedSong
   message: string
   liked: boolean
   createdAt: string
+  /** 이 코멘트에 받은 답장. 대댓글처럼 아래에 붙여 보여 준다 */
+  replies?: FeedComment[]
 }
 
-export type ReplyTarget =
-  { type: 'comment'; feedMessageId: number } | { type: 'reply'; replyId: number }
+/** 답장은 받은 코멘트에 한 번만 보낼 수 있다. 받은 답장에 다시 답장할 수는 없다 */
+export type ReplyTarget = { type: 'comment'; feedMessageId: number }

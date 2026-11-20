@@ -7,7 +7,7 @@ import type {
   ReceivedNotification,
   ReplyTarget,
 } from '@/types/notification'
-import { toSearchedSong } from './feed'
+import { getSentFeedMessages, toSearchedSong } from './feed'
 import { instance } from './instance'
 
 const PAGE_SIZE = 20
@@ -71,6 +71,7 @@ export async function getFeedComments(feedId: number): Promise<FeedComment[]> {
     `/api/v1/feeds/${feedId}/messages`,
   )
   return data.data.messages.map(({ senderNickname, music, messageContent, createdAt }) => ({
+    key: `comment-${senderNickname}-${createdAt}`,
     nickname: senderNickname,
     song: toSearchedSong(music),
     message: messageContent,
@@ -79,13 +80,62 @@ export async function getFeedComments(feedId: number): Promise<FeedComment[]> {
   }))
 }
 
+const RECENT_MAX_PAGES = 5
+
+/** 받은 답장 알림을 코멘트 모아보기·보낸 코멘트에 붙일 수 있는 모양으로 바꾼다 */
+export const toFeedComment = ({
+  id,
+  senderNickname,
+  song,
+  message,
+  liked,
+  createdAt,
+}: ReceivedNotification): FeedComment => ({
+  key: `reply-${id}`,
+  nickname: senderNickname,
+  song,
+  message,
+  liked,
+  createdAt,
+})
+
+/** 커서 목록을 최근 몇 페이지까지 넘겨 보며 모은다 */
+async function collectPages<T extends { id: number }>(
+  fetchPage: (cursor?: number) => Promise<{ items: T[]; hasNext: boolean }>,
+) {
+  const collected: T[] = []
+  let cursor: number | undefined
+
+  for (let page = 0; page < RECENT_MAX_PAGES; page += 1) {
+    const { items, hasNext } = await fetchPage(cursor)
+    collected.push(...items)
+    if (!hasNext || items.length === 0) break
+    cursor = items[items.length - 1].id
+  }
+  return collected
+}
+
+/**
+ * 내 코멘트에 받은 답장. 답장 목록 API가 없어서 받은 알림에서 답장 알림만 모은다.
+ * 각 답장의 feedMessageId로 어떤 코멘트에 단 답장인지 알 수 있다
+ */
+export async function getReceivedReplies() {
+  const items = await collectPages(getReceivedFeedMessages)
+  return items.filter((item) => item.kind === 'reply')
+}
+
+/** 최근에 보낸 코멘트. id가 코멘트 번호(feedMessageId)다 */
+export function getRecentSentComments() {
+  return collectPages(getSentFeedMessages)
+}
+
 export async function sendReply(
   target: ReplyTarget,
   body: { musicId: string; replyContent: string },
 ) {
-  const url =
-    target.type === 'comment'
-      ? `/api/v1/feeds/messages/${target.feedMessageId}/replies`
-      : `/api/v1/feeds/messages/replies/${target.replyId}/replies`
-  await instance.post<ApiResponse<unknown>>(url, body)
+  // 답장은 받은 코멘트에 한 번만 보낸다 (답장에 다시 답장하는 API는 쓰지 않는다)
+  await instance.post<ApiResponse<unknown>>(
+    `/api/v1/feeds/messages/${target.feedMessageId}/replies`,
+    body,
+  )
 }

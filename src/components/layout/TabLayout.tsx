@@ -9,7 +9,7 @@ import { preloadTabPages } from '@/routes/preloadTabPages'
 import type { ReceivedNotification } from '@/types/notification'
 import { getLastSeenCommentId, markCommentSeen } from '@/utils/commentAlert'
 import { getInviteJoinPath, takePendingInviteCode } from '@/utils/invite'
-import { ALERT_COPY, isFeedAlertKind, toPushAlert } from '@/utils/pushAlert'
+import { ALERT_COPY, getAlertDestination, toPushAlert } from '@/utils/pushAlert'
 import type { PushAlert } from '@/utils/pushAlert'
 import { hasSeenWelcomeGuide, markWelcomeGuideSeen } from '@/utils/welcomeGuide'
 import { BottomNav } from './BottomNav'
@@ -150,10 +150,7 @@ export function TabLayout() {
           confirmLabel={pushAlert.confirmLabel}
           onConfirm={() => {
             setPushAlert(null)
-            navigate(
-              pushAlert.path ??
-                (isFeedAlertKind(pushAlert.kind) ? ROUTES.exploreNotifications : ROUTES.letterbox),
-            )
+            navigate(getAlertDestination(pushAlert))
           }}
           onClose={() => setPushAlert(null)}
         />

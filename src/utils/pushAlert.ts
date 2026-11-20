@@ -1,6 +1,7 @@
 import type { MessagePayload } from 'firebase/messaging'
 import { getReceivedLetters } from '@/apis/letter'
 import { getReceivedFeedMessages } from '@/apis/notification'
+import { ROUTES } from '@/constants/routes'
 
 export type PushAlertKind = 'comment' | 'letter' | 'reply' | 'commentReply'
 
@@ -71,4 +72,9 @@ export async function toPushAlert({ data = {} }: MessagePayload): Promise<PushAl
   } catch {
     return createAlert(letterId ? 'letter' : 'comment', path)
   }
+}
+
+export function getAlertDestination({ kind, path }: PushAlert) {
+  if (isFeedAlertKind(kind)) return ROUTES.exploreNotifications
+  return path && LETTER_PATH.test(path) ? path : ROUTES.letterbox
 }

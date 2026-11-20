@@ -170,7 +170,7 @@ export function ExplorePage() {
           onEdit={() => navigate(getExploreEditPath(selectedFeed.id))}
           onDelete={() => handleDelete(selectedFeed.id)}
           onAuthorClick={getAuthorClick(selectedFeed)}
-          commentsFeedId={selectedFeed.isMine ? selectedFeed.id : undefined}
+          commentsFeedId={selectedFeed.id}
           onClose={closeFeed}
         />
       )}
