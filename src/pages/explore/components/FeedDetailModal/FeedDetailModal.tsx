@@ -204,15 +204,6 @@ export function FeedDetailModal({
                     <img src={replyIcon} alt="" width={20} height={19} />
                   </S.ActionButton>
                 )}
-                {commentsFeedId !== undefined && (
-                  <S.ActionButton
-                    type="button"
-                    aria-label="코멘트 전체보기"
-                    onClick={() => setIsViewingComments(true)}
-                  >
-                    <img src={fullChatsIcon} alt="" width={26} height={26} />
-                  </S.ActionButton>
-                )}
                 {!isMine && commentable && (
                   <S.ActionButton
                     type="button"
@@ -220,6 +211,15 @@ export function FeedDetailModal({
                     onClick={() => setIsCommenting(true)}
                   >
                     <img src={feedIcon} alt="" width={26} height={26} />
+                  </S.ActionButton>
+                )}
+                {commentsFeedId !== undefined && (
+                  <S.ActionButton
+                    type="button"
+                    aria-label="코멘트 전체보기"
+                    onClick={() => setIsViewingComments(true)}
+                  >
+                    <img src={fullChatsIcon} alt="" width={26} height={26} />
                   </S.ActionButton>
                 )}
               </S.ActionGroup>

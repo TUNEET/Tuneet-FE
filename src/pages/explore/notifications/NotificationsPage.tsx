@@ -44,11 +44,10 @@ const TAB_TEXT: Record<CommentTab, { confirm: string; toast: string; empty: stri
 function getReplyTarget(
   notification: Partial<ReceivedNotification> & { id: number },
 ): ReplyTarget | undefined {
-  const { kind, isReplied, feedMessageId, replyId } = notification
-  if (!kind || isReplied) return undefined
-  if (kind === 'reply' && replyId) return { type: 'reply', replyId }
-  if (kind === 'comment' && feedMessageId) return { type: 'comment', feedMessageId }
-  return undefined
+  // 받은 코멘트 중 아직 답장하지 않은 것만 답장할 수 있다. 받은 답장에는 다시 답장할 수 없다
+  const { kind, isReplied, feedMessageId } = notification
+  if (kind !== 'comment' || isReplied || !feedMessageId) return undefined
+  return { type: 'comment', feedMessageId }
 }
 
 export function NotificationsPage() {

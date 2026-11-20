@@ -1,19 +1,34 @@
 import { useEffect, useState } from 'react'
 import { getApiError } from '@/apis/error'
-import { getFeedComments } from '@/apis/notification'
+import {
+  getFeedComments,
+  getReceivedReplies,
+  getRecentSentComments,
+  toFeedComment,
+} from '@/apis/notification'
 import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 import { HeartIcon } from '@/components/common/HeartIcon/HeartIcon'
 import { useMusicLike } from '@/hooks/useMusicLike'
 import { useToast } from '@/hooks/useToast'
 import type { FeedComment } from '@/types/notification'
 import { formatTimeAgo } from '@/utils/format'
+import { ReplyPreview } from '../ReplyPreview/ReplyPreview'
 import * as S from './FeedCommentsCard.styles'
+
+const SAME_TIME_MS = 1000
+
+const isSameTime = (a: string, b: string) =>
+  Math.abs(new Date(a).getTime() - new Date(b).getTime()) < SAME_TIME_MS
 
 type FeedCommentsCardProps = {
   feedId: number
   onSelect?: (comment: FeedComment) => void
 }
 
+/**
+ * 한 피드에 달린 코멘트 전부(내가 단 것 포함)를 최신순으로 보여 주고,
+ * 내 코멘트에 받은 답장은 그 코멘트 아래에 대댓글처럼 붙인다
+ */
 export function FeedCommentsCard({ feedId, onSelect }: FeedCommentsCardProps) {
   const showToast = useToast()
   const [comments, setComments] = useState<FeedComment[] | null>(null)
@@ -21,9 +36,24 @@ export function FeedCommentsCard({ feedId, onSelect }: FeedCommentsCardProps) {
   useEffect(() => {
     let isStale = false
 
-    getFeedComments(feedId)
-      .then((found) => {
-        if (!isStale) setComments(found)
+    Promise.all([getFeedComments(feedId), getReceivedReplies(), getRecentSentComments()])
+      .then(([feedComments, replies, sentComments]) => {
+        if (isStale) return
+        const mySent = sentComments.filter((sent) => sent.feedId === feedId)
+        const feedReplies = replies.filter((reply) => reply.feedId === feedId)
+
+        // 코멘트 목록에는 번호가 없어서, 내용·시간이 같은 내 보낸 코멘트로 번호를 찾아 답장을 붙인다
+        const withReplies = feedComments.map((comment) => {
+          const mine = mySent.find(
+            (sent) =>
+              sent.message === comment.message && isSameTime(sent.createdAt, comment.createdAt),
+          )
+          const attached = mine
+            ? feedReplies.filter((reply) => reply.feedMessageId === mine.id)
+            : []
+          return { ...comment, replies: attached.map(toFeedComment) }
+        })
+        setComments(withReplies)
       })
       .catch((error) => {
         if (isStale) return
@@ -37,7 +67,14 @@ export function FeedCommentsCard({ feedId, onSelect }: FeedCommentsCardProps) {
   }, [feedId, showToast])
 
   const handleLikeToggle = useMusicLike((update) =>
-    setComments((current) => (current ? update(current) : current)),
+    setComments((current) =>
+      current
+        ? update(current).map((comment) => ({
+            ...comment,
+            replies: comment.replies && update(comment.replies),
+          }))
+        : current,
+    ),
   )
 
   return (
@@ -48,7 +85,7 @@ export function FeedCommentsCard({ feedId, onSelect }: FeedCommentsCardProps) {
         <S.List>
           {comments.map((comment) => (
             <S.Item
-              key={`${comment.nickname}-${comment.createdAt}`}
+              key={comment.key}
               $clickable={!!onSelect}
               role={onSelect ? 'button' : undefined}
               tabIndex={onSelect ? 0 : undefined}
@@ -87,6 +124,15 @@ export function FeedCommentsCard({ feedId, onSelect }: FeedCommentsCardProps) {
                   <HeartIcon filled={comment.liked} size={9} />
                 </S.Like>
               </S.ItemBody>
+              {comment.replies?.map((reply) => (
+                <ReplyPreview
+                  key={reply.key}
+                  reply={reply}
+                  indent="2.8rem"
+                  onSelect={onSelect && (() => onSelect(reply))}
+                  onLikeToggle={() => handleLikeToggle(reply)}
+                />
+              ))}
             </S.Item>
           ))}
         </S.List>
