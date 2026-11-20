@@ -56,7 +56,7 @@ export const Overlay = styled.div<VariantProps>`
   justify-content: flex-end;
   overflow: hidden;
   background-color: rgba(0, 0, 0, 0.5);
-  animation: ${fadeIn} 0.2s ease-out;
+  animation: ${fadeIn} 0.2s ease-out both;
 `
 
 export const Content = styled.div`
@@ -64,7 +64,8 @@ export const Content = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 0.6rem;
-  animation: ${slideUp} 0.25s ease-out;
+  animation: ${slideUp} 0.25s ease-out both;
+  will-change: transform;
 
   @media (prefers-reduced-motion: reduce) {
     animation: none;
