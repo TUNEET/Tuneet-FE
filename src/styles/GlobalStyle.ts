@@ -40,6 +40,7 @@ export const GlobalStyle = createGlobalStyle`
     background-color: ${({ theme }) => theme.colors.background};
     letter-spacing: 0.02em;
     -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
   }
 
   a {

@@ -20,6 +20,7 @@ export function SongField({ id, song, disabled = false, onOpenSearch }: SongFiel
           readOnly
           disabled={disabled}
           placeholder="노래 검색하기"
+          onMouseDown={(event) => event.preventDefault()}
           onClick={onOpenSearch}
           onKeyDown={(event) => {
             if (event.key === 'Enter') {

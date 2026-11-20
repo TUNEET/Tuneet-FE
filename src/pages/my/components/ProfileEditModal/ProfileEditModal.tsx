@@ -63,6 +63,7 @@ export function ProfileEditModal({
               readOnly
               placeholder="노래 검색하기"
               aria-label="노래 검색"
+              onMouseDown={(event) => event.preventDefault()}
               onClick={() => setIsSongSearchOpen(true)}
               onKeyDown={(event) => {
                 if (event.key === 'Enter') setIsSongSearchOpen(true)
@@ -122,6 +123,7 @@ export function ProfileEditModal({
               readOnly
               placeholder="아티스트 검색하기"
               aria-label="아티스트 검색"
+              onMouseDown={(event) => event.preventDefault()}
               onClick={() => setIsArtistSearchOpen(true)}
               onKeyDown={(event) => {
                 if (event.key === 'Enter') setIsArtistSearchOpen(true)
