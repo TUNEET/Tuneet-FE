@@ -1,22 +1,23 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-type CursorPage<T> = { items: T[]; hasNext: boolean; nextCursor?: number }
+/** 커서는 보통 마지막 항목 번호(number)지만, 서버가 문자열 nextCursor를 주는 목록도 있다 */
+type CursorPage<T, C> = { items: T[]; hasNext: boolean; nextCursor?: C }
 
 const MAX_EMPTY_PAGES = 5
 
-export function useCursorList<T>(
-  fetchPage: (cursor?: number) => Promise<CursorPage<T>>,
-  getCursor: (item: T) => number,
+export function useCursorList<T, C extends number | string = number>(
+  fetchPage: (cursor?: C) => Promise<CursorPage<T, C>>,
+  getCursor: (item: T) => C | undefined,
   onError?: (error: unknown) => void,
 ) {
   const [items, setItems] = useState<T[]>([])
   const [hasNext, setHasNext] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const loadingRef = useRef(true)
-  const nextCursorRef = useRef<number | undefined>(undefined)
+  const nextCursorRef = useRef<C | undefined>(undefined)
 
   const fetchNonEmptyPage = useCallback(
-    async (cursor?: number) => {
+    async (cursor?: C) => {
       let page = await fetchPage(cursor)
       for (
         let count = 1;

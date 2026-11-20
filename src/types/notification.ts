@@ -19,7 +19,13 @@ export type ReceivedNotification = BaseNotification & {
   replyId: number | null
 }
 
-export type SentNotification = BaseNotification & { receiverNickname: string }
+export type SentNotification = BaseNotification & {
+  /** comment: 남의 피드에 보낸 코멘트, reply: 받은 코멘트에 보낸 답장 */
+  kind: 'comment' | 'reply'
+  /** 코멘트와 답장은 번호 체계가 달라 목록 구분은 이 키로 한다 */
+  key: string
+  receiverNickname: string
+}
 
 export type NotificationResponse = {
   notificationId: number
@@ -40,23 +46,52 @@ export type NotificationListResponse = {
   hasNext: boolean
 }
 
-export type FeedMessageResponse = {
+/** 코멘트에 주고받은 답장 하나 */
+export type FeedReplyResponse = {
+  replyId: number
   senderNickname: string
   senderProfilePicture: string | null
-  music: FeedMusicResponse
-  messageContent: string
+  music: FeedMusicResponse | null
+  replyContent: string
   createdAt: string
 }
 
+/** 피드 하나에 달린 코멘트 (GET /feeds/{feed-id}/messages). 주고받은 답장도 함께 온다 */
+export type FeedMessageResponse = {
+  feedMessageId: number
+  senderNickname: string
+  senderProfilePicture: string | null
+  music: FeedMusicResponse | null
+  messageContent: string
+  createdAt: string
+  replies: FeedReplyResponse[]
+}
+
+/** 받은 답장 상세 (GET /feeds/messages/replies/{reply-id}). 원래 코멘트와 주고받은 답장 전체 */
+export type ReplyDetailResponse = {
+  replyId: number
+  feedId: number
+  isReplied: boolean
+  originalMessage: {
+    feedMessageId: number
+    senderNickname: string
+    senderProfilePicture: string | null
+    music: FeedMusicResponse | null
+    messageContent: string
+    createdAt: string
+  }
+  replies: FeedReplyResponse[]
+}
+
 export type FeedComment = {
-  /** 목록 구분용 키. 코멘트는 번호가 없어 보낸 사람·시간으로 만든다 */
+  /** 목록 구분용 키 (comment-번호 / reply-번호) */
   key: string
   nickname: string
   song: SearchedSong
   message: string
   liked: boolean
   createdAt: string
-  /** 이 코멘트에 받은 답장. 대댓글처럼 아래에 붙여 보여 준다 */
+  /** 이 코멘트에 주고받은 답장. 대댓글처럼 코멘트 아래에 붙여 보여 준다 */
   replies?: FeedComment[]
 }
 

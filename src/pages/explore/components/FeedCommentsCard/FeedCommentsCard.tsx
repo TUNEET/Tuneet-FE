@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getApiError } from '@/apis/error'
-import {
-  getFeedComments,
-  getReceivedReplies,
-  getRecentSentComments,
-  toFeedComment,
-} from '@/apis/notification'
+import { getFeedComments, getReplyThread } from '@/apis/notification'
 import { CoverImage } from '@/components/common/CoverImage/CoverImage'
 import { HeartIcon } from '@/components/common/HeartIcon/HeartIcon'
 import { useMusicLike } from '@/hooks/useMusicLike'
@@ -15,45 +10,35 @@ import { formatTimeAgo } from '@/utils/format'
 import { ReplyPreview } from '../ReplyPreview/ReplyPreview'
 import * as S from './FeedCommentsCard.styles'
 
-const SAME_TIME_MS = 1000
-
-const isSameTime = (a: string, b: string) =>
-  Math.abs(new Date(a).getTime() - new Date(b).getTime()) < SAME_TIME_MS
-
 type FeedCommentsCardProps = {
-  feedId: number
+  /** 피드의 코멘트 전체를 볼 때 */
+  feedId?: number
+  /** 받은 답장 알림에서, 그 답장이 이어진 코멘트 하나와 주고받은 답장만 볼 때 */
+  replyId?: number
   onSelect?: (comment: FeedComment) => void
 }
 
 /**
- * 한 피드에 달린 코멘트 전부(내가 단 것 포함)를 최신순으로 보여 주고,
- * 내 코멘트에 받은 답장은 그 코멘트 아래에 대댓글처럼 붙인다
+ * 한 피드에 달린 코멘트 전부를 최신순으로 보여 주고, 각 코멘트에 주고받은 답장은
+ * 그 코멘트 아래에 대댓글처럼 붙인다. 누가 보든 같은 내용이 보인다
  */
-export function FeedCommentsCard({ feedId, onSelect }: FeedCommentsCardProps) {
+export function FeedCommentsCard({ feedId, replyId, onSelect }: FeedCommentsCardProps) {
   const showToast = useToast()
   const [comments, setComments] = useState<FeedComment[] | null>(null)
 
   useEffect(() => {
     let isStale = false
 
-    Promise.all([getFeedComments(feedId), getReceivedReplies(), getRecentSentComments()])
-      .then(([feedComments, replies, sentComments]) => {
-        if (isStale) return
-        const mySent = sentComments.filter((sent) => sent.feedId === feedId)
-        const feedReplies = replies.filter((reply) => reply.feedId === feedId)
+    const load =
+      replyId !== undefined
+        ? getReplyThread(replyId)
+        : feedId !== undefined
+          ? getFeedComments(feedId)
+          : Promise.resolve([])
 
-        // 코멘트 목록에는 번호가 없어서, 내용·시간이 같은 내 보낸 코멘트로 번호를 찾아 답장을 붙인다
-        const withReplies = feedComments.map((comment) => {
-          const mine = mySent.find(
-            (sent) =>
-              sent.message === comment.message && isSameTime(sent.createdAt, comment.createdAt),
-          )
-          const attached = mine
-            ? feedReplies.filter((reply) => reply.feedMessageId === mine.id)
-            : []
-          return { ...comment, replies: attached.map(toFeedComment) }
-        })
-        setComments(withReplies)
+    load
+      .then((found) => {
+        if (!isStale) setComments(found)
       })
       .catch((error) => {
         if (isStale) return
@@ -64,7 +49,7 @@ export function FeedCommentsCard({ feedId, onSelect }: FeedCommentsCardProps) {
     return () => {
       isStale = true
     }
-  }, [feedId, showToast])
+  }, [feedId, replyId, showToast])
 
   const handleLikeToggle = useMusicLike((update) =>
     setComments((current) =>
@@ -79,7 +64,9 @@ export function FeedCommentsCard({ feedId, onSelect }: FeedCommentsCardProps) {
 
   return (
     <S.Card role="dialog" aria-labelledby="feed-comments-title">
-      <S.Title id="feed-comments-title">이 글에서 나눈 코멘트</S.Title>
+      <S.Title id="feed-comments-title">
+        {replyId !== undefined ? '주고받은 답장' : '이 글에서 나눈 코멘트'}
+      </S.Title>
       {comments && comments.length === 0 && <S.Empty>아직 나눈 코멘트가 없어요</S.Empty>}
       {comments && comments.length > 0 && (
         <S.List>
