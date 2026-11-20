@@ -23,6 +23,7 @@ export const Blob = styled.div`
   background-color: ${({ theme }) => theme.colors.primaryLight};
   box-shadow: 800px 800px 800px;
   filter: blur(400px);
+  transform: translateZ(0);
 `
 
 export const Heading = styled.h1`
