@@ -1,13 +1,16 @@
 import type { ApiResponse } from '@/types/api'
+import type { FeedMusicResponse } from '@/types/feed'
 import type {
   FeedComment,
   FeedMessageResponse,
+  FeedReplyResponse,
   NotificationListResponse,
   NotificationResponse,
   ReceivedNotification,
+  ReplyDetailResponse,
   ReplyTarget,
 } from '@/types/notification'
-import { getSentFeedMessages, toSearchedSong } from './feed'
+import { toSearchedSong } from './feed'
 import { instance } from './instance'
 
 const PAGE_SIZE = 20
@@ -66,67 +69,52 @@ export async function deleteFcmToken(token: string) {
   await instance.delete<ApiResponse<unknown>>('/api/v1/notifications/tokens', { data: { token } })
 }
 
+// 노래가 지워졌으면 music이 null로 와서 빈 노래로 채운다
+const toSongOrEmpty = (music: FeedMusicResponse | null) =>
+  music ? toSearchedSong(music) : { musicId: '', title: '', artist: '', albumImageUrl: '' }
+
+const toFeedReply = (reply: FeedReplyResponse): FeedComment => ({
+  key: `reply-${reply.replyId}`,
+  nickname: reply.senderNickname,
+  song: toSongOrEmpty(reply.music),
+  message: reply.replyContent,
+  liked: reply.music?.liked ?? false,
+  createdAt: reply.createdAt,
+})
+
+/** 피드 하나에 달린 코멘트 전체(최신순)와 각 코멘트에 주고받은 답장(오래된 순) */
 export async function getFeedComments(feedId: number): Promise<FeedComment[]> {
   const { data } = await instance.get<ApiResponse<{ messages: FeedMessageResponse[] }>>(
     `/api/v1/feeds/${feedId}/messages`,
   )
-  return data.data.messages.map(({ senderNickname, music, messageContent, createdAt }) => ({
-    key: `comment-${senderNickname}-${createdAt}`,
-    nickname: senderNickname,
-    song: toSearchedSong(music),
-    message: messageContent,
-    liked: music.liked ?? false,
-    createdAt,
+  return data.data.messages.map((message) => ({
+    key: `comment-${message.feedMessageId}`,
+    nickname: message.senderNickname,
+    song: toSongOrEmpty(message.music),
+    message: message.messageContent,
+    liked: message.music?.liked ?? false,
+    createdAt: message.createdAt,
+    replies: message.replies.map(toFeedReply),
   }))
 }
 
-const RECENT_MAX_PAGES = 5
-
-/** 받은 답장 알림을 코멘트 모아보기·보낸 코멘트에 붙일 수 있는 모양으로 바꾼다 */
-export const toFeedComment = ({
-  id,
-  senderNickname,
-  song,
-  message,
-  liked,
-  createdAt,
-}: ReceivedNotification): FeedComment => ({
-  key: `reply-${id}`,
-  nickname: senderNickname,
-  song,
-  message,
-  liked,
-  createdAt,
-})
-
-/** 커서 목록을 최근 몇 페이지까지 넘겨 보며 모은다 */
-async function collectPages<T extends { id: number }>(
-  fetchPage: (cursor?: number) => Promise<{ items: T[]; hasNext: boolean }>,
-) {
-  const collected: T[] = []
-  let cursor: number | undefined
-
-  for (let page = 0; page < RECENT_MAX_PAGES; page += 1) {
-    const { items, hasNext } = await fetchPage(cursor)
-    collected.push(...items)
-    if (!hasNext || items.length === 0) break
-    cursor = items[items.length - 1].id
-  }
-  return collected
-}
-
-/**
- * 내 코멘트에 받은 답장. 답장 목록 API가 없어서 받은 알림에서 답장 알림만 모은다.
- * 각 답장의 feedMessageId로 어떤 코멘트에 단 답장인지 알 수 있다
- */
-export async function getReceivedReplies() {
-  const items = await collectPages(getReceivedFeedMessages)
-  return items.filter((item) => item.kind === 'reply')
-}
-
-/** 최근에 보낸 코멘트. id가 코멘트 번호(feedMessageId)다 */
-export function getRecentSentComments() {
-  return collectPages(getSentFeedMessages)
+/** 받은 답장 알림을 눌렀을 때: 원래 코멘트 하나와 그 코멘트에 주고받은 답장 전체 */
+export async function getReplyThread(replyId: number): Promise<FeedComment[]> {
+  const { data } = await instance.get<ApiResponse<ReplyDetailResponse>>(
+    `/api/v1/feeds/messages/replies/${replyId}`,
+  )
+  const { originalMessage, replies } = data.data
+  return [
+    {
+      key: `comment-${originalMessage.feedMessageId}`,
+      nickname: originalMessage.senderNickname,
+      song: toSongOrEmpty(originalMessage.music),
+      message: originalMessage.messageContent,
+      liked: originalMessage.music?.liked ?? false,
+      createdAt: originalMessage.createdAt,
+      replies: replies.map(toFeedReply),
+    },
+  ]
 }
 
 export async function sendReply(

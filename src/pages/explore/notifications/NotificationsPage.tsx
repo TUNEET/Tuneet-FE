@@ -13,14 +13,19 @@ import { useMusicLike } from '@/hooks/useMusicLike'
 import { useToast } from '@/hooks/useToast'
 import replyIcon from '@/assets/icons/repplyy.svg'
 import { FeedDetailModal } from '@/pages/explore/components/FeedDetailModal/FeedDetailModal'
+import { ReplyThreadModal } from '@/pages/explore/components/ReplyThreadModal/ReplyThreadModal'
 import * as S from '@/pages/explore/ExplorePage.styles'
-import type { ReceivedNotification, ReplyTarget, SentNotification } from '@/types/notification'
+import type { ReceivedNotification, ReplyTarget } from '@/types/notification'
 import { markCommentSeen } from '@/utils/commentAlert'
 import { formatTimeAgo } from '@/utils/format'
 
 type CommentTab = 'received' | 'sent'
 
-const getNotificationId = ({ id }: ReceivedNotification | SentNotification) => id
+const getNotificationId = ({ id }: ReceivedNotification) => id
+// 보낸 코멘트는 서버가 주는 nextCursor로만 다음 페이지를 받는다
+const noCursor = () => undefined
+// 받은 알림은 번호로, 보낸 코멘트·답장은 번호 체계가 달라 key로 구분한다
+const getItemKey = (item: { id: number; key?: string }) => item.key ?? `notification-${item.id}`
 
 const TABS = [
   { value: 'received', label: '받은 코멘트' },
@@ -58,7 +63,7 @@ export function NotificationsPage() {
     [showToast],
   )
   const received = useCursorList(getReceivedFeedMessages, getNotificationId, handleLoadError)
-  const sent = useCursorList(getSentFeedMessages, getNotificationId, handleLoadError)
+  const sent = useCursorList(getSentFeedMessages, noCursor, handleLoadError)
   const current = tab === 'received' ? received : sent
   const latestReceivedId = received.items[0]?.id
 
@@ -91,8 +96,8 @@ export function NotificationsPage() {
         }))
   const isEmpty = notifications.length === 0
   // 누른 코멘트를 게시물 상세와 같은 모달로 보여 준다. reply면 바로 답장 작성으로 연다
-  const [selection, setSelection] = useState<{ id: number; mode: 'detail' | 'reply' } | null>(null)
-  const selected = notifications.find(({ id }) => id === selection?.id) ?? null
+  const [selection, setSelection] = useState<{ key: string; mode: 'detail' | 'reply' } | null>(null)
+  const selected = notifications.find((item) => getItemKey(item) === selection?.key) ?? null
   const isLoading = current.isLoading
 
   const markReplied = (id: number) =>
@@ -156,11 +161,12 @@ export function NotificationsPage() {
           ) : (
             <S.CardList>
               {notifications.map((notification) => {
-                const { id, nickname, message, song, createdAt } = notification
+                const { nickname, message, song, createdAt } = notification
+                const itemKey = getItemKey(notification)
                 const replyTarget = getReplyTarget(notification)
                 return (
                   <MusicCard
-                    key={id}
+                    key={itemKey}
                     tone="blue"
                     nickname={nickname}
                     meta={formatTimeAgo(createdAt)}
@@ -176,14 +182,14 @@ export function NotificationsPage() {
                           onClick={(event) => {
                             // 카드를 눌렀을 때처럼 상세가 열리지 않게 막고 바로 답장 작성을 연다
                             event.stopPropagation()
-                            setSelection({ id, mode: 'reply' })
+                            setSelection({ key: itemKey, mode: 'reply' })
                           }}
                         >
                           <img src={replyIcon} alt="" width={20} height={19} />
                         </button>
                       )
                     }
-                    onClick={() => setSelection({ id, mode: 'detail' })}
+                    onClick={() => setSelection({ key: itemKey, mode: 'detail' })}
                   />
                 )
               })}
@@ -193,25 +199,35 @@ export function NotificationsPage() {
         </S.Section>
       </S.ExploreSheet>
 
-      {selected && selection && (
-        <FeedDetailModal
-          key={`${selected.id}-${selection.mode}`}
-          feed={{
-            id: selected.id,
-            nickname: selected.nickname,
-            song: selected.song,
-            content: selected.message,
-            createdAt: selected.createdAt,
-          }}
-          liked={selected.liked}
-          onLikeToggle={() => handleLikeToggle(selected)}
-          commentable={false}
-          replyTarget={getReplyTarget(selected)}
-          onReplied={() => markReplied(selected.id)}
-          initialMode={selection.mode}
-          commentsFeedId={selected.feedId ?? undefined}
-          onClose={() => setSelection(null)}
-        />
+      {/* 받은 답장 알림은 원래 코멘트와 주고받은 답장을 대화로 보여 준다 */}
+      {selected &&
+      selection &&
+      'replyId' in selected &&
+      selected.kind === 'reply' &&
+      selected.replyId ? (
+        <ReplyThreadModal replyId={selected.replyId} onClose={() => setSelection(null)} />
+      ) : (
+        selected &&
+        selection && (
+          <FeedDetailModal
+            key={`${getItemKey(selected)}-${selection.mode}`}
+            feed={{
+              id: selected.id,
+              nickname: selected.nickname,
+              song: selected.song,
+              content: selected.message,
+              createdAt: selected.createdAt,
+            }}
+            liked={selected.liked}
+            onLikeToggle={() => handleLikeToggle(selected)}
+            commentable={false}
+            replyTarget={getReplyTarget(selected)}
+            onReplied={() => markReplied(selected.id)}
+            initialMode={selection.mode}
+            commentsFeedId={selected.feedId ?? undefined}
+            onClose={() => setSelection(null)}
+          />
+        )
       )}
     </S.Page>
   )
