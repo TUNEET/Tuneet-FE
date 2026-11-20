@@ -42,6 +42,7 @@ type SavedProfile = { nickname: string; imageFile: File | null }
 
 const MIN_GENRES = 1
 const MIN_ARTISTS = 3
+const MAX_ARTISTS = 20
 const MIN_SONGS = 1
 const MAX_SONGS = 20
 
@@ -125,11 +126,18 @@ export function ProfileSetupPage() {
 
   const addArtist = (newArtist: ProfileArtist) => {
     const key = newArtist.id ?? newArtist.name
+    const isAdded = selectedArtists.some((artist) => (artist.id ?? artist.name) === key)
+    // 검색 시트 안에서 바로 알 수 있게 추가하는 순간 최대 개수를 막는다
+    if (!isAdded && selectedArtists.length >= MAX_ARTISTS) {
+      showToast(`아티스트는 ${MAX_ARTISTS}팀까지만 선택할 수 있어요.`)
+      return false
+    }
     setSelectedArtists((artists) =>
       artists.some((artist) => (artist.id ?? artist.name) === key)
         ? artists
         : [...artists, newArtist],
     )
+    return true
   }
 
   const submitMusic = async () => {

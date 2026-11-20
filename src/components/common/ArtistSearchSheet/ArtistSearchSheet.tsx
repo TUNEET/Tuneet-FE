@@ -14,7 +14,8 @@ const PAGE_SIZE = 5
 const getArtistImage = ({ artistImage }: ArtistSearchItem) => artistImage
 
 type ArtistSearchSheetProps = {
-  onAdd: (artist: ProfileArtist) => void
+  /** false를 돌려주면 추가되지 않은 것으로 보고 '추가되었습니다' 토스트를 띄우지 않는다 */
+  onAdd: (artist: ProfileArtist) => boolean | void
   onClose: () => void
   addedIds?: string[]
 }
@@ -44,7 +45,7 @@ export function ArtistSearchSheet({ onAdd, onClose, addedIds }: ArtistSearchShee
 
   const addArtist = (artist: ArtistSearchItem) => {
     if (isAdded(artist.id)) return
-    onAdd({ id: artist.id, name: artist.name, image: artist.artistImage })
+    if (onAdd({ id: artist.id, name: artist.name, image: artist.artistImage }) === false) return
     setSheetAddedIds((ids) => [...ids, artist.id])
     showToast('아티스트가 추가되었습니다.')
   }

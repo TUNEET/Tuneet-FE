@@ -15,7 +15,7 @@ type ProfileEditModalProps = {
   selectedGenres: string[]
   onToggleGenre: (genre: string) => void
   selectedArtists: ProfileArtist[]
-  onAddArtist: (artist: ProfileArtist) => void
+  onAddArtist: (artist: ProfileArtist) => boolean | void
   onRemoveArtist: (artist: ProfileArtist) => void
   onClose: () => void
 }
