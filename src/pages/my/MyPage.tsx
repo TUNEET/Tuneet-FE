@@ -274,11 +274,18 @@ export function MyPage() {
   }
 
   const addArtist = (artist: ProfileArtist) => {
+    const isAdded = draftArtists.some((item) => getArtistKey(item) === getArtistKey(artist))
+    // 검색 시트 안에서 바로 알 수 있게 추가하는 순간 최대 개수를 막는다
+    if (!isAdded && draftArtists.length >= ARTIST_MAX) {
+      showToast(`아티스트는 ${ARTIST_MAX}팀까지만 선택할 수 있어요.`)
+      return false
+    }
     setDraftArtists((current) =>
       current.some((item) => getArtistKey(item) === getArtistKey(artist))
         ? current
         : [...current, artist],
     )
+    return true
   }
 
   const removeArtist = (artist: ProfileArtist) => {

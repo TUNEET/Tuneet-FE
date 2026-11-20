@@ -10,7 +10,7 @@ type TasteSelectProps = {
   selectedGenres: string[]
   onToggleGenre: (genre: string) => void
   selectedArtists: ProfileArtist[]
-  onAddArtist: (artist: ProfileArtist) => void
+  onAddArtist: (artist: ProfileArtist) => boolean | void
   onRemoveArtist: (name: string) => void
 }
 
