@@ -69,28 +69,41 @@ export async function sendFeedMessage(feedId: number, body: FeedMessageRequest) 
 }
 
 const toSentNotification = ({
+  type,
   feedMessageId,
+  replyId,
   feedId,
   receiverNickname,
   music,
   messageContent,
   createdAt,
-}: SentFeedMessageResponse): SentNotification => ({
-  id: feedMessageId,
-  feedId,
-  receiverNickname,
-  message: messageContent,
-  song: toSearchedSong(music),
-  liked: music.liked ?? false,
-  createdAt,
-})
+}: SentFeedMessageResponse): SentNotification => {
+  const isReply = type === 'REPLY' && replyId !== null
+  return {
+    // 코멘트와 답장은 번호 체계가 달라 목록 구분은 key로 한다
+    id: isReply ? replyId : feedMessageId,
+    key: isReply ? `reply-${replyId}` : `comment-${feedMessageId}`,
+    kind: isReply ? 'reply' : 'comment',
+    feedId,
+    receiverNickname,
+    message: messageContent,
+    song: toSearchedSong(music),
+    liked: music.liked ?? false,
+    createdAt,
+  }
+}
 
-export async function getSentFeedMessages(cursor?: number, size = PAGE_SIZE) {
+/** 보낸 코멘트와 답장 (최신순). 다음 페이지는 서버가 주는 nextCursor로 이어 받는다 */
+export async function getSentFeedMessages(cursor?: string, size = PAGE_SIZE) {
   const { data } = await instance.get<ApiResponse<SentFeedMessageListResponse>>(
     '/api/v1/feeds/messages/sent',
     { params: { cursor, size } },
   )
-  return { items: data.data.messages.map(toSentNotification), hasNext: data.data.hasNext }
+  return {
+    items: data.data.messages.map(toSentNotification),
+    hasNext: data.data.hasNext,
+    nextCursor: data.data.nextCursor ?? undefined,
+  }
 }
 
 export async function deleteAllSentFeedMessages() {
